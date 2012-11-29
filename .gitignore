@@ -1,0 +1,9 @@
+dist
+*.swp
+*.pdf
+*.log
+*.out
+*.o
+*.aux
+bin
+target
