@@ -225,7 +225,13 @@ toTeX' (BVerbatim "$" l : xs)
 toTeX' (BVerbatim "latex" l : xs)
     = "\n" : l : "\n" : toTeX' xs
 
+toTeX' (BVerbatim "table" l : xs)
+    = "\n" : l : "\n" : toTeX' xs
+
 toTeX' (BVerbatim "comment" l : xs)
+    = "\n" : (unlines $ map ('%':) $ lines l) : "\n" : toTeX' xs
+
+toTeX' (BVerbatim "%" l : xs)
     = "\n" : (unlines $ map ('%':) $ lines l) : "\n" : toTeX' xs
 
 toTeX' (BVerbatim _ l : xs)

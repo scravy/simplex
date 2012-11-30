@@ -2,7 +2,7 @@ module Main (main) where
 
 import Prelude hiding (lex)
 
-import System.Environment
+import System.Environment (getArgs)
 import System.Console.GetOpt
 import Simplex.Parser
 import Simplex.ToTeX
@@ -11,15 +11,18 @@ import System.IO
 import System.Cmd (rawSystem)
 import System.Exit (ExitCode (..))
 import System.Directory
-import Control.Monad
+import Control.Monad (liftM2)
+import Control.Concurrent
+import Data.Maybe
 
-data Flag = Clean | OnlyTeX | Help
+data Flag = Clean | OnlyTeX | Help | Poll Int
     deriving (Show, Eq)
 
 opts = [
         Option "c" ["clean"]    (NoArg Clean)   "Clean up after building.",
         Option "T" ["only-tex"] (NoArg OnlyTeX) "Do not run `pdflatex`.",
-        Option "h" ["help"]     (NoArg Help)    "Print this help text."
+        Option "h" ["help"]     (NoArg Help)    "Print this help text.",
+        Option "p" ["poll"]     (OptArg (Poll . read . fromMaybe "2000000") "") ""
        ]
 
 mkTeX = toTeX . parse . lex
@@ -41,20 +44,32 @@ report file result = putStrLn $ file ++ ": " ++ show result
 endsWith s xs = take (length s') (reverse xs) == s'
     where s' = reverse s
 
+tern a _ True = a
+tern _ b _    = b
+
 time simple =
     let pdf = takeBaseName simple ++ ".pdf"
         t1 = getModificationTime simple
         t2 = getModificationTime pdf
     in do
         ex <- doesFileExist pdf
-        if ex then liftM2 (>) t1 t2 >>= (\x -> if x then return simple else return "") else return simple
+        if ex then liftM2 (>) t1 t2 >>= (return . tern simple "") else return simple
+
+work x@([Poll ms], [], _) = do
+    dir <- getDirectoryContents "."
+    dir' <- fmap (filter (/= "")) $ mapM time $ filter (endsWith ".simple") dir
+    let filez = filter (endsWith ".simple") dir'
+    case filez of
+        [] -> threadDelay ms
+        _ -> main' $ ("-c":) $ filez
+    work x
 
 work (_, [], _) = do
     dir <- getDirectoryContents "."
     dir' <- fmap (filter (/= "")) $ mapM time $ filter (endsWith ".simple") dir
     let filez = filter (endsWith ".simple") dir'
     case filez of
-        [] -> putStrLn "* nothing to do"
+        [] -> return ()
         _ -> main' $ ("-c":) $ filez
 
 work (optz, argz, _)
