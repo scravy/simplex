@@ -10,7 +10,7 @@ import System.FilePath (takeBaseName)
 import System.IO
 import System.Cmd (rawSystem)
 import System.Exit (ExitCode (..))
-import System.Directory (removeFile)
+import System.Directory (removeFile, getDirectoryContents)
 
 data Flag = Clean | OnlyTeX | Help
     deriving (Show, Eq)
@@ -37,7 +37,11 @@ pdflatex file = do
 
 report file result = putStrLn $ file ++ ": " ++ show result
 
-work (_, [], _) = putStrLn "Usage: simplex [-c | -T] file1 [file2, ...]"
+endsWith s xs = take (length s') (reverse xs) == s'
+    where s' = reverse s
+
+work (_, [], _) = getDirectoryContents "." >>= main' . ("-c":) . filter (endsWith ".simple")
+
 work (optz, argz, _)
     | OnlyTeX `elem` optz = do
         filez <- mapM readFile argz
@@ -60,5 +64,6 @@ clean file = mapM removeFile $ zipWith (++) (repeat file) [".aux", ".log", ".tex
 
 cleanUp argz = mapM (clean . takeBaseName) argz >> return ()
 
-main = getArgs >>= work . getOpt Permute opts
+main' = work . getOpt Permute opts
+main = getArgs >>= main'
 
