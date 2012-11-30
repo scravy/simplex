@@ -2,9 +2,11 @@ module Simplex.ToTeX (toTeX) where
 
 import Simplex.Parser
 import Data.List
+import Data.Char
 
 import Prelude hiding (lex)
 
+-- chars that introduce an inline verbatim
 verbs = "#!@"
 
 tail' [] = []
@@ -59,6 +61,20 @@ escapeTeX' t (x:xs)
     | otherwise = x : escapeTeX' t xs
 escapeTeX' t [] = t
 
+symbols = ["alpha"]
+
+known w
+    | w `elem` symbols = Just ("\\ensuremath{\\" ++ w ++ "}")
+    | otherwise        = lookup w symbols'
+
+symbols' =
+   [
+    ("R", "\\ensuremath{\\mathbb{R}}"),
+   ]
+
+ensureTeX ('\\':xs) = let (w, ws) = break (not.isAlpha) xs
+                      in maybe ("", xs) (\x -> (x, ws)) (known w)
+
 ensureTeX ('≤':xs) = ("\\ensuremath{\\leq}", xs)
 ensureTeX ('≥':xs) = ("\\ensuremath{\\geq}", xs)
 
@@ -110,9 +126,32 @@ ensureTeX ('\935':xs) = ("X", xs)
 ensureTeX ('\936':xs) = ("\\ensuremath{\\Psi}", xs)
 ensureTeX ('\937':xs) = ("\\ensuremath{\\Omega}", xs)
 
+ensureTeX ('\945':xs) = ("\\ensuremath{\\alpha}", xs)
+ensureTeX ('\946':xs) = ("\\ensuremath{\\beta}", xs)
+ensureTeX ('\947':xs) = ("\\ensuremath{\\gamma}", xs)
+ensureTeX ('\948':xs) = ("\\ensuremath{\\delta}", xs)
+ensureTeX ('\949':xs) = ("\\ensuremath{\\epsilon}", xs)
+ensureTeX ('\950':xs) = ("\\ensuremath{\\zeta}", xs)
+ensureTeX ('\951':xs) = ("\\ensuremath{\\eta}", xs)
+ensureTeX ('\952':xs) = ("\\ensuremath{\\theta}", xs)
+ensureTeX ('\953':xs) = ("\\ensuremath{\\iota}", xs)
+ensureTeX ('\954':xs) = ("\\ensuremath{\\kappa}", xs)
+ensureTeX ('\955':xs) = ("\\ensuremath{\\lambda}", xs)
+ensureTeX ('\956':xs) = ("\\ensuremath{\\mu}", xs)
+ensureTeX ('\957':xs) = ("\\ensuremath{\\nu}", xs)
+ensureTeX ('\958':xs) = ("\\ensuremath{\\xi}", xs)
+ensureTeX ('\959':xs) = ("\\ensuremath{\\omicron}", xs)
+ensureTeX ('\960':xs) = ("\\ensuremath{\\pi}", xs)
+ensureTeX ('\961':xs) = ("\\ensuremath{\\rho}", xs)
+ensureTeX ('\963':xs) = ("\\ensuremath{\\sigma}", xs)
+ensureTeX ('\964':xs) = ("\\ensuremath{\\tau}", xs)
+ensureTeX ('\965':xs) = ("\\ensuremath{\\upsilon}", xs)
+ensureTeX ('\966':xs) = ("\\ensuremath{\\phi}", xs)
+ensureTeX ('\967':xs) = ("\\ensuremath{\\chi}", xs)
+ensureTeX ('\968':xs) = ("\\ensuremath{\\psi}", xs)
+ensureTeX ('\969':xs) = ("\\ensuremath{\\omega}", xs)
+
 ensureTeX xs = ("", xs)
-
-
 
 safeTeX s@(x:xs)
     | a /= "" = a ++ safeTeX b
@@ -187,7 +226,11 @@ toTeX (Document blocks props) = (concat . preamble . toTeX') blocks
 
           : "\n\\begin{document}\n"
 
-          : "\\maketitle\n\\thispagestyle{empty}\n\n" : xs
+          : maybe ""
+                (const "\\maketitle\n\\thispagestyle{empty}\n\n")
+                (lookup "title" props)
+
+          : xs
 
 toTeX' (BSection s : xs)
     = "\\section*{" : escapeTeX "}\n\n" s : toTeX' xs
