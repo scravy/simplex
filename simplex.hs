@@ -10,7 +10,8 @@ import System.FilePath (takeBaseName)
 import System.IO
 import System.Cmd (rawSystem)
 import System.Exit (ExitCode (..))
-import System.Directory (removeFile, getDirectoryContents)
+import System.Directory
+import Control.Monad
 
 data Flag = Clean | OnlyTeX | Help
     deriving (Show, Eq)
@@ -40,7 +41,21 @@ report file result = putStrLn $ file ++ ": " ++ show result
 endsWith s xs = take (length s') (reverse xs) == s'
     where s' = reverse s
 
-work (_, [], _) = getDirectoryContents "." >>= main' . ("-c":) . filter (endsWith ".simple")
+time simple =
+    let pdf = takeBaseName simple ++ ".pdf"
+        t1 = getModificationTime simple
+        t2 = getModificationTime pdf
+    in do
+        ex <- doesFileExist pdf
+        if ex then liftM2 (>) t1 t2 >>= (\x -> if x then return simple else return "") else return simple
+
+work (_, [], _) = do
+    dir <- getDirectoryContents "."
+    dir' <- fmap (filter (/= "")) $ mapM time $ filter (endsWith ".simple") dir
+    let filez = filter (endsWith ".simple") dir'
+    case filez of
+        [] -> putStrLn "* nothing to do"
+        _ -> main' $ ("-c":) $ filez
 
 work (optz, argz, _)
     | OnlyTeX `elem` optz = do
