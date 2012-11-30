@@ -5,6 +5,14 @@ import Data.List
 
 import Prelude hiding (lex)
 
+verbs = "#!@"
+
+tail' [] = []
+tail' xs = tail xs
+
+tail'' [] = []
+tail'' xs = tail' xs
+
 escapeTeX :: String -> String -> String
 
 escapeTeX t xs
@@ -13,19 +21,25 @@ escapeTeX t xs
 
 escapeTeX t ('$':' ':xs) = '\\' : '$' : escapeTeX t xs
 escapeTeX t ('$':xs) = let (m, ms) = break (== '$') xs
-                       in '$' : (safeTeX m) ++ '$' : escapeTeX t (tail ms)
+                       in '$' : (safeTeX m) ++ '$' : escapeTeX t (tail' ms)
+
+escapeTeX t ('\\':x:' ':xs)
+    | x `elem` verbs = '\\' : x : escapeTeX t xs
+escapeTeX t ('\\':x:xs)
+    | x `elem` verbs = let (m, ms) = break (== x) xs
+                       in "\\verb" ++ x : m ++ x : escapeTeX t (tail' ms)
 
 escapeTeX t ('_':' ':xs) = '\\' : '_' : escapeTeX t xs
 escapeTeX t ('_':xs) = let (m, ms) = break (== '_') xs
-                       in "\\underline{" ++ escapeTeX "" m ++ '}' : escapeTeX t (tail ms)
+                       in "\\underline{" ++ escapeTeX "" m ++ '}' : escapeTeX t (tail' ms)
 
-escapeTeX t ('*':'*':' ':xs) = '*' : escapeTeX t xs
+escapeTeX t ('*':'*':' ':xs) = '*' : '*' : escapeTeX t xs
 escapeTeX t ('*':'*':xs) = let (m, ms) = break (== '*') xs
-                       in "\\textbf{" ++ escapeTeX "" m ++ '}' : escapeTeX t (drop 2 ms)
+                       in "\\textbf{" ++ escapeTeX "" m ++ '}' : escapeTeX t (tail'' ms)
 
 escapeTeX t ('*':' ':xs) = '*' : escapeTeX t xs
 escapeTeX t ('*':xs) = let (m, ms) = break (== '*') xs
-                       in "\\emph{" ++ escapeTeX "" m ++ '}' : escapeTeX t (tail ms)
+                       in "\\emph{" ++ escapeTeX "" m ++ '}' : escapeTeX t (tail' ms)
 
 escapeTeX t s@(x:xs)
     | x `elem` "{}%#&" = '\\' : x : escapeTeX t xs
@@ -70,7 +84,35 @@ ensureTeX ('<':'-':xs) = ("\\ensuremath{\\leftarrow}", xs)
 ensureTeX ('=':'=':'=':xs) = ("\\ensuremath{\\equiv}", xs)
 ensureTeX ('!':'=':xs) = ("\\ensuremath{\\neq}", xs)
 
+ensureTeX ('\913':xs) = ("A", xs)
+ensureTeX ('\914':xs) = ("B", xs)
+ensureTeX ('\915':xs) = ("\\ensuremath{\\Gamma}", xs)
+ensureTeX ('\916':xs) = ("\\ensuremath{\\Delta}", xs)
+ensureTeX ('\917':xs) = ("E", xs)
+ensureTeX ('\918':xs) = ("Z", xs)
+ensureTeX ('\919':xs) = ("H", xs)
+ensureTeX ('\920':xs) = ("\\ensuremath{\\Theta}", xs)
+ensureTeX ('\921':xs) = ("I", xs)
+ensureTeX ('\922':xs) = ("K", xs)
+ensureTeX ('\923':xs) = ("\\ensuremath{\\Lambda}", xs)
+ensureTeX ('\924':xs) = ("M", xs)
+ensureTeX ('\925':xs) = ("N", xs)
+ensureTeX ('\926':xs) = ("\\ensuremath{\\Xi}", xs)
+ensureTeX ('\927':xs) = ("O", xs)
+ensureTeX ('\928':xs) = ("\\ensuremath{\\Pi}", xs)
+ensureTeX ('\929':xs) = ("P", xs)
+-- 930 / 03A2 is reserved
+ensureTeX ('\931':xs) = ("\\ensuremath{\\Sigma}", xs)
+ensureTeX ('\932':xs) = ("T", xs)
+ensureTeX ('\933':xs) = ("\\ensuremath{\\Upsilon}", xs)
+ensureTeX ('\934':xs) = ("\\ensuremath{\\Phi}", xs)
+ensureTeX ('\935':xs) = ("X", xs)
+ensureTeX ('\936':xs) = ("\\ensuremath{\\Psi}", xs)
+ensureTeX ('\937':xs) = ("\\ensuremath{\\Omega}", xs)
+
 ensureTeX xs = ("", xs)
+
+
 
 safeTeX s@(x:xs)
     | a /= "" = a ++ safeTeX b
