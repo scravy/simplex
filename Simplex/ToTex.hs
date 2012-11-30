@@ -1,4 +1,6 @@
-import Simplex
+module Simplex.ToTeX (toTeX) where
+
+import Simplex.Parser
 import Data.List
 
 import Prelude hiding (lex)
@@ -246,6 +248,4 @@ toTeX' (BCommand c a : xs)
 toTeX' [] = ["\n\\end{document}\n"]
 
 toTeX' (x : xs) = error ("Unknown Thingie: " ++ show x)
-
-main = getContents >>= putStrLn . toTeX . parse . lex
 

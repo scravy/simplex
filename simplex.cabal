@@ -1,0 +1,13 @@
+Name:                  simplex
+Version:               0.1
+Description:           Simple Latex
+License:               GPL-3
+License-File:          LICENSE
+Author:                Julian Fleischer
+Maintainer:            f.ju@fu-berlin.de
+Build-Type:            Simple
+Cabal-Version:         >= 1.2
+Executable simplex
+  Main-is:             simplex.hs
+  Build-Depends:       base >= 4, process >= 1, filepath >= 1.2, directory >= 1
+
