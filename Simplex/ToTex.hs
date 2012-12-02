@@ -142,7 +142,34 @@ specialSymbols =
     ("W", "\\ensuremath{\\mathbb{W}}"),
     ("X", "\\ensuremath{\\mathbb{X}}"),
     ("Y", "\\ensuremath{\\mathbb{Y}}"),
-    ("Z", "\\ensuremath{\\mathbb{Z}}")]
+    ("Z", "\\ensuremath{\\mathbb{Z}}"),
+
+    ("c", "\\text{\\copyright}"),
+    ("copyright", "\\text{\\copyright}"),
+    ("ae", "\\text{\\ae}"),
+    ("AE", "\\text{\\AE}"),
+    ("oe", "\\text{\\oe}"),
+    ("OE", "\\text{\\OE}"),
+
+    ("par", "\\text{\\P}"),
+    ("sec", "\\text{\\S}"),
+    ("sect", "\\text{\\S}"),
+    ("section", "\\text{\\S}"),
+
+    ("aa", "\\text{\\aa}"),
+    ("AA", "\\text{\\AA}"),
+    ("ss", "\\text{\\ss}"),
+    ("dag", "\\text{\\dag}"),
+    ("ddag", "\\text{\\ddag}"),
+    ("pounds", "\\text{\\pounds}"),
+
+    ("bullet", "\\text{\\textbullet}"),
+    ("backslash", "\\text{\\textbackslash}"),
+
+    ("clubs", "\\ensuremath{\\clubsuit}"),
+    ("hearts", "\\ensuremath{\\heartsuit}"),
+    ("spades", "\\ensuremath{\\spadesuit}"),
+    ("diamonds", "\\ensuremath{\\diamondsuit}")]
 
 knownCommands
  = ["newpage", "vfill", "hfill", "normalsize", "normalfont",
@@ -303,9 +330,12 @@ safeTeX [] = []
 toTeX (Document blocks props) = (concat . preamble . toTeX') blocks
     where
         preamble xs =
-            "\\documentclass[a4paper,"
+            "\\documentclass[a4paper"
 
-          : maybe "10pt" id (lookup "fontsize" props)
+          : maybe "" (',':) (lookup "fontsize" props)
+          : maybe "" (const ",draft") (lookup "draft" props)
+          : maybe "" (const ",landscape") (lookup "landscape" props)
+
           : "]{article}\n"
 
           : "\\usepackage{color}\n"
@@ -370,6 +400,9 @@ toTeX (Document blocks props) = (concat . preamble . toTeX') blocks
           : maybe ""
                 (const "\\maketitle\n\\thispagestyle{empty}\n\n")
                 (lookup "title" props)
+          : maybe ""
+                (("\\begin{abstract}\n" ++) . escapeTeX "\\end{abstract}\n\n")
+                (lookup "abstract" props)          
 
           : xs
 
