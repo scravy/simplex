@@ -1,8 +1,12 @@
-module Simplex.Parser (lex, parse, Token(..), Block(..), Document (Document)) where
+module Simplex.Parser (
+    lex, parse,
+    Token(..), Block(..), Document (Document),
+    Table, CellType(..), RowType(..)) where
 
 import Prelude hiding (lex)
-import Data.List (intersperse)
-import Data.Char (isAlpha)
+import Data.List (intersperse, elemIndex)
+import Data.Char
+import Data.Maybe
 
 data Block =
           BAny String String
@@ -23,7 +27,17 @@ data Block =
         | BNTherefore String
         | BNBecause String
         | BLine
+        | BTable Table
         | BCommand String [String]
+    deriving (Eq, Show)
+
+type Table = (String, [String], [(RowType, [(CellType, String)])])
+
+data CellType = Cell | CellMath | CellHead | CellVerb
+              | CustomCell (Maybe String) (Maybe Char) Int Int
+    deriving (Eq, Show)
+
+data RowType = NoBorder | SingleBorder | DoubleBorder
     deriving (Eq, Show)
 
 data Document = Document [Block] [(String, String)]
@@ -53,28 +67,31 @@ parse' doc s@(TControl ('.':cs@(_:_)) : xs)
     =   let (b, bs) = break (not.isBlock) xs
         in  upd doc bs $ BVerbatim cs $ unlines $ map (\(TBlock x) -> x) b
 
+parse' doc s@(TControl c@('>':_) : xs)
+    =   let (t, r) = parseTable s in upd doc r $ BTable t
+
 parse' doc s@(TControl c : TBlock b : xs)
     =   case c of
-            "." -> upd doc xs $ BParagraph b
-            "=" -> upd doc xs $ BSection b
-            "==" -> upd doc xs $ BSubsection b
+            "."   -> upd doc xs $ BParagraph b
+            "="   -> upd doc xs $ BSection b
+            "=="  -> upd doc xs $ BSubsection b
             "===" -> upd doc xs $ BSubsubsection b
 
-            "--" -> upd doc xs $ BLine
+            "--"  -> upd doc xs $ BLine
 
-            "=>" -> upd doc xs $ BTherefore b
-            "<=" -> upd doc xs $ BBecause b
+            "=>"  -> upd doc xs $ BTherefore b
+            "<="  -> upd doc xs $ BBecause b
             "=!>" -> upd doc xs $ BNTherefore b
             "<!=" -> upd doc xs $ BNBecause b
 
-            ":=" -> upd doc xs $ mkDefine b
-            ":-" -> upd doc xs $ mkRemark b
+            ":="  -> upd doc xs $ mkDefine b
+            ":-"  -> upd doc xs $ mkRemark b
 
-            "->" -> let (l, r) = parseAdvise s in upd doc r $ BAdvise l
-            "*" -> let (l, r)  = parseItemize s in upd doc r $ BItemize l
-            "-" -> let (l, r)  = parseEnumerate s in upd doc r $ BEnumerate l
-            ":" -> let (l, r)  = parseDescription s in upd doc r $ BDescription l
-            "::" -> let (l, r) = parseDescribeItems s in upd doc r $ BDescribeItems l
+            "->"  -> let (l, r) = parseAdvise s in upd doc r $ BAdvise l
+            "*"   -> let (l, r) = parseItemize s in upd doc r $ BItemize l
+            "-"   -> let (l, r) = parseEnumerate s in upd doc r $ BEnumerate l
+            ":"   -> let (l, r) = parseDescription s in upd doc r $ BDescription l
+            "::"  -> let (l, r) = parseDescribeItems s in upd doc r $ BDescribeItems l
 
             _ -> upd doc xs $ BAny c b
 
@@ -133,6 +150,84 @@ parseItem i
     | r == ""   = ("", w)
     | otherwise = (w, tail r)
         where (w, r) = break (== ':') i
+
+parseTable :: [Token] -> (Table, [Token])
+parseTable = parseTable' ("", [], [(NoBorder, [])])
+
+parseTable' :: Table -> [Token] -> (Table, [Token])
+
+parseTable' (caption, opt, rows) (TControl ">@" : TBlock b : xs)
+  = parseTable' (caption, (b:opt), rows) xs
+
+parseTable' (caption, opt, rows) (TControl ">=" : TBlock b : xs)
+  = parseTable' (b, opt, rows) xs
+
+parseTable' (caption, opt, ((t,r):rs)) (TControl ">!" : TBlock b : xs)
+  = parseTable' (caption, opt, ((t, (CellHead, b):r):rs)) xs
+
+parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">$" : TBlock b : xs)
+  = parseTable' (caption, opt, ((t, (CellMath, b):r):rs)) xs
+
+parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">#" : TBlock b : xs)
+  = parseTable' (caption, opt, ((t, (CellVerb, b):r):rs)) xs
+
+parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">" : TBlock b : xs)
+  = parseTable' (caption, opt, ((t, (Cell, b):r):rs)) xs
+
+parseTable' (caption, opt, rows@((t,r):rs)) (TControl ('>':c) : TBlock b : xs)
+  = parseTable' (caption, opt, ((t, (parseCellType c, b):r):rs)) xs
+
+parseTable' (caption, opt, rows@((t,r):rs)) (TControl "--" : TBlock b : xs)
+  = parseTable' (caption, opt, ((NoBorder, []) : (SingleBorder, r) : rs)) xs
+
+parseTable' (caption, opt, rows@((t,r):rs)) (TControl "==" : TBlock b : xs)
+  = parseTable' (caption, opt, ((NoBorder, []) : (DoubleBorder, r) : rs)) xs
+
+parseTable' (caption, opt, rows@((t,r):rs)) (TControl "\\\\" : TBlock b : xs)
+  = parseTable' (caption, opt, ((NoBorder, []) : (NoBorder, r) : rs)) xs
+
+parseTable' (caption, opt, rows) xs
+  = ((caption, reverse opt, map (\(t,r) -> (t, reverse r)) $ reverse rows), xs)
+
+parseCellType c
+  = let
+        digits = filter isDigit c
+        upper  = filter isUpper c
+        lower  = filter isLower c
+        comma  = elemIndex ',' c
+
+        split  = splitAt (fromJust comma) c
+        left   = filter isDigit $ fst split
+        right  = filter isDigit $ snd split
+
+        pos x
+            | x < 1 = 1
+            | otherwise = x
+
+        colSpan
+            | isJust comma && left /= [] = pos $ read left
+            | isNothing comma && digits /= [] = pos $ read digits
+            | otherwise    = 1
+
+        rowSpan
+            | isJust comma && right /= [] = read right
+            | otherwise    = 1
+
+        color = case lower of
+            "red" -> Just "red"
+            "yellow" -> Just "yellow"
+            "blue" -> Just "blue"
+            "green" -> Just "green"
+            "gray" -> Just "gray"
+            _ -> Nothing
+
+        align = case upper of
+            "L" -> Just 'l'
+            "R" -> Just 'r'
+            "C" -> Just 'c'
+            _ -> Nothing
+
+    in  CustomCell color align colSpan rowSpan
 
 lex :: String -> [Token]
 lex xs = lex' 1 1 [] SStart (xs ++ "\n\n")

@@ -227,6 +227,7 @@ escapeTeX t ('*':xs) = let (m, ms) = break (== '*') xs
 escapeTeX t s@(x:xs)
     | x `elem` "{}%#&" = '\\' : x : escapeTeX t xs
     | x == '~' = "$\\sim$" ++ escapeTeX t xs
+    | x == '|' = "\\textbar " ++ escapeTeX t xs
     | x == '^' = "\\^{}" ++ escapeTeX t xs
     | x == '\\' = "\\textbackslash " ++ escapeTeX t xs
     | x == '<' = "\\textless " ++ escapeTeX t xs
@@ -377,13 +378,18 @@ toTeX (Document blocks props) = (concat . preamble . toTeX') blocks
 
           : "]{article}\n"
 
-          : "\\usepackage{color}\n"
           : "\\usepackage[utf8]{inputenc}\n"
+
           : "\\usepackage{amsmath}\n"
           : "\\usepackage{amsfonts}\n"
+          : "\\usepackage{amssymb}\n"
+
           : "\\usepackage{verbatim}\n"
           : "\\usepackage{listings}\n"
-          : "\\usepackage{amssymb}\n"
+
+          : "\\usepackage{color}\n"
+          : "\\usepackage[table]{xcolor}\n"
+          : "\\usepackage{multirow}\n"
 
           : "\\lstset{"
           : "basicstyle=\\small\\ttfamily,"
@@ -545,6 +551,9 @@ toTeX' (BVerbatim "%" l : xs)
 toTeX' (BVerbatim _ l : xs)
     = "\\begin{verbatim}\n" : l : "\\end{verbatim}\n" : toTeX' xs
 
+toTeX' (BTable table : xs)
+    = mkTable table : toTeX' xs
+
 -- maybe report unknown BAny here
 toTeX' (BAny _ s : xs)
     = escapeTeX "\n\n" s : toTeX' xs
@@ -566,3 +575,60 @@ toTeX' [] = ["\n\\end{document}\n"]
 
 -- toTeX' (x : xs) = error ("Unknown Thingie: " ++ show x)
 
+mkTable :: Table -> String
+mkTable (caption, opt, rows@((t,r):rs))
+  = let
+        spec
+            | opt == [] = intersperse '|' $ take numCols $ repeat 'l'
+            | otherwise = head opt
+        numCols = maximum (map (length.snd) rows)
+
+        mkRows ((NoBorder,[]):rs) = mkRows rs
+        mkRows ((NoBorder,cs):rs) = mkCells cs : " \\\\\n" : mkRows rs
+
+        mkRows ((SingleBorder,cs):rs) = mkCells cs : " \\\\ \\hline\n" : mkRows rs
+        mkRows ((DoubleBorder,cs):rs) = mkCells cs : " \\\\ \\hline \\hline\n" : mkRows rs
+
+        mkRows [] = []
+
+        body
+            | r == [] && t == SingleBorder = concat ("\\hline \n" : mkRows rs)
+            | r == [] && t == DoubleBorder = concat ("\\hline \\hline \n" : mkRows rs)
+            | otherwise = concat (mkRows rows)
+
+        mkCells = concat . intersperse " & " . map mkCell
+
+        mkCell (Cell, c) = escapeTeX "" c
+        mkCell (CellVerb, c) = "\\verb#" ++ c ++ "#"
+        mkCell (CellMath, c) = '$' : c ++ "$"
+        mkCell (CellHead, c) = "\\multicolumn{1}{c}{\\bfseries " ++ escapeTeX "}" c
+
+        mkCell (CustomCell color Nothing 1 rowSpan, c)
+          = rowCell color rowSpan c
+        mkCell (CustomCell color (Just a) colSpan rowSpan, c)
+          = "\\multicolumn{" ++ show colSpan ++ "}{" ++ [a] ++ "}{" ++ rowCell color rowSpan c ++ "}"
+        mkCell (CustomCell color _ colSpan rowSpan, c)
+          = "\\multicolumn{" ++ show colSpan ++ "}{c}{" ++ rowCell color rowSpan c ++ "}"
+
+        rowCell color 1 c       = colorCell color c
+        rowCell color rowSpan c = "\\multirow{" ++ show rowSpan ++ "}{*}{" ++ colorCell color c ++ "}"
+        
+        colorCell Nothing c      = mkCell (Cell, c)
+        colorCell (Just color) c = "\\cellcolor{" ++ color ++ "}" ++ mkCell (Cell, c)
+
+    in  "\\begin{table}[!h]\n"
+     ++ "\\begin{center}\n"
+     ++ "\\begin{tabular}{" ++ spec ++ "}\n"
+     ++ body
+     ++ "\n\\end{tabular}\n"
+     ++ "\n\\end{center}\n"
+     ++ when (caption /= "") ("\\caption{" ++ escapeTeX "}\n" caption)
+     ++ "\\end{table}\n\n"
+
+     ++ escapeTeX "\n" (map f $ show rows)
+
+f ',' = '\n'
+f x   = x
+
+when True x = x
+when False _ = []
