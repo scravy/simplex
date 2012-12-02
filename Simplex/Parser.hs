@@ -16,7 +16,8 @@ data Block =
         | BAdvise [String]
         | BItemize [String]
         | BEnumerate [String]
-        | BDescribe [(String, String)]
+        | BDescription [(String, String)]
+        | BDescribeItems [(String, String)]
         | BTherefore String
         | BBecause String
         | BNTherefore String
@@ -70,8 +71,10 @@ parse' doc s@(TControl c : TBlock b : xs)
             ":-" -> upd doc xs $ mkRemark b
 
             "->" -> let (l, r) = parseAdvise s in upd doc r $ BAdvise l
-            "*" -> let (l, r) = parseItemize s in upd doc r $ BItemize l
-            "-" -> let (l, r) = parseEnumerate s in upd doc r $ BEnumerate l
+            "*" -> let (l, r)  = parseItemize s in upd doc r $ BItemize l
+            "-" -> let (l, r)  = parseEnumerate s in upd doc r $ BEnumerate l
+            ":" -> let (l, r)  = parseDescription s in upd doc r $ BDescription l
+            "::" -> let (l, r) = parseDescribeItems s in upd doc r $ BDescribeItems l
 
             _ -> upd doc xs $ BAny c b
 
@@ -83,13 +86,13 @@ parse' (Document blocks prop) []
 
 
 mkDefine :: String -> Block
-mkDefine xs =
-    let (w, rs) = break (== ':') xs
+mkDefine xs
+  = let (w, rs) = break (== ':') xs
     in  BDefine w $ tail rs
 
 mkRemark :: String -> Block
-mkRemark xs =
-    let (w, rs) = break (== ':') xs
+mkRemark xs
+  = let (w, rs) = break (== ':') xs
     in  BRemark w $ tail rs
 
 
@@ -97,23 +100,39 @@ upd :: Document -> [Token] -> Block -> Document
 upd (Document blocks prop) xs block = parse' (Document (block:blocks) prop) xs
 
 parseAdvise :: [Token] -> ([String], [Token])
-parseAdvise (TControl "->" : TBlock b : xs) =
-    let (l, r) = parseAdvise xs
+parseAdvise (TControl "->" : TBlock b : xs)
+  = let (l, r) = parseAdvise xs
     in  (b:l, r)
 parseAdvise xs = ([], xs)
 
 parseItemize :: [Token] -> ([String], [Token])
-parseItemize (TControl "*" : TBlock b : xs) =
-    let (l, r) = parseItemize xs
+parseItemize (TControl "*" : TBlock b : xs)
+  = let (l, r) = parseItemize xs
     in  (b:l, r)
 parseItemize xs = ([], xs)
 
 parseEnumerate :: [Token] -> ([String], [Token])
-parseEnumerate (TControl "-" : TBlock b : xs) =
-    let (l, r) = parseEnumerate xs
+parseEnumerate (TControl "-" : TBlock b : xs)
+  = let (l, r) = parseEnumerate xs
     in  (b:l, r)
 parseEnumerate xs = ([], xs)
 
+parseDescription :: [Token] -> ([(String, String)], [Token])
+parseDescription (TControl ":" : TBlock b : xs)
+  = let (l, r) = parseDescription xs
+    in  ((parseItem b):l, r)
+parseDescription xs = ([], xs)
+
+parseDescribeItems :: [Token] -> ([(String, String)], [Token])
+parseDescribeItems (TControl "::" : TBlock b : xs)
+  = let (l, r) = parseDescribeItems xs
+    in  ((parseItem b):l, r)
+parseDescribeItems xs = ([], xs)
+
+parseItem i
+    | r == ""   = ("", w)
+    | otherwise = (w, tail r)
+        where (w, r) = break (== ':') i
 
 lex :: String -> [Token]
 lex xs = lex' 1 1 [] SStart (xs ++ "\n\n")

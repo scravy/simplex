@@ -7,7 +7,6 @@ import System.Console.GetOpt
 import Simplex.Parser
 import Simplex.ToTeX
 import System.FilePath (takeBaseName)
-import System.IO
 import System.Cmd (rawSystem)
 import System.Exit (ExitCode (..))
 import System.Directory
@@ -76,7 +75,7 @@ work (optz, argz, _)
     | OnlyTeX `elem` optz = do
         filez <- mapM readFile argz
         let texz = zipWith proc argz filez
-        mapM (uncurry write) texz
+        _ <- mapM (uncurry write) texz
         return ()
     | Clean `elem` optz = doIt argz >> cleanUp argz
     | otherwise = doIt argz
@@ -84,10 +83,10 @@ work (optz, argz, _)
 doIt argz = do        
     filez <- mapM readFile argz
     let texz = zipWith proc argz filez
-    mapM (uncurry write) texz
+    _ <- mapM (uncurry write) texz
     resultz <- mapM (pdflatex . fst) texz
     putStrLn ""
-    mapM (uncurry report) (zip argz resultz)
+    _ <- mapM (uncurry report) (zip argz resultz)
     return ()
 
 clean file = mapM removeFile $ zipWith (++) (repeat file) [".aux", ".log", ".tex"] 

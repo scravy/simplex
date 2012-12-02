@@ -490,6 +490,16 @@ toTeX' (BEnumerate l : xs)
     : (concat ("\\item " : intersperse "\\item " (map (escapeTeX "\n") l)))
     : "\\end{enumerate}\n" : toTeX' xs
 
+toTeX' (BDescription l : xs)
+    = "\\begin{description}\n"
+    : concat (map (\(dt, dd) -> "\\item[" ++ escapeTeX (']' : ' ' : escapeTeX "\n" dd) dt) l)
+    : "\\end{description}\n" : toTeX' xs
+
+toTeX' (BDescribeItems l : xs)
+    = "\\begin{itemize}\n"
+    : concat (map (\(dt, dd) -> "\\item[\\textbf{" ++ escapeTeX ('}' : ']' : ' ' : escapeTeX "\n" dd) dt) l)
+    : "\\end{itemize}\n" : toTeX' xs
+
 toTeX' (BVerbatim "ascii" l : xs)
     = "\\begin{verbatim}\n" : l : "\\end{verbatim}\n" : toTeX' xs
 
@@ -535,7 +545,8 @@ toTeX' (BVerbatim "%" l : xs)
 toTeX' (BVerbatim _ l : xs)
     = "\\begin{verbatim}\n" : l : "\\end{verbatim}\n" : toTeX' xs
 
-toTeX' (BAny t s : xs)
+-- maybe report unknown BAny here
+toTeX' (BAny _ s : xs)
     = escapeTeX "\n\n" s : toTeX' xs
 
 toTeX' (BParagraph s : xs)
@@ -544,7 +555,8 @@ toTeX' (BParagraph s : xs)
 toTeX' (BCommand "break" [x] : xs)
     = "\\hfill \\\\[" : x : "]" : toTeX' xs
 
-toTeX' (BCommand c a : xs)
+-- use arguments “a” (!!) - “_” by now
+toTeX' (BCommand c _ : xs)
     | c `elem` knownCommands = ('\\' : c) : "\n" : toTeX' xs
     | isJust c' = ('\\' : fromJust c') : "\n" : toTeX' xs
     | otherwise = "\\textcolor{red}{Unknown Command: " : c : "}\n\n" : toTeX' xs
@@ -552,5 +564,5 @@ toTeX' (BCommand c a : xs)
 
 toTeX' [] = ["\n\\end{document}\n"]
 
-toTeX' (x : xs) = error ("Unknown Thingie: " ++ show x)
+-- toTeX' (x : xs) = error ("Unknown Thingie: " ++ show x)
 
