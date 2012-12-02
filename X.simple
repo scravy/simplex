@@ -1,9 +1,16 @@
+@title
+    Working title
+
 @abstract
     Some funny text
 
 Huge
+    \spades  $\c$\copyright+7 \ae  \AE  \oe  \OE  \backslash  \bullet
 
-    \spades \spade $\c$ \copyright \ae \AE \oe \OE \backslash \bullet
+LARGE
+    \_ \& \% _  & % \ hallo
+
+    \H uklapp H\=allo Welt H\"allo
 
 normalsize
 

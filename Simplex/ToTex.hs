@@ -169,7 +169,10 @@ specialSymbols =
     ("clubs", "\\ensuremath{\\clubsuit}"),
     ("hearts", "\\ensuremath{\\heartsuit}"),
     ("spades", "\\ensuremath{\\spadesuit}"),
-    ("diamonds", "\\ensuremath{\\diamondsuit}")]
+    ("diamonds", "\\ensuremath{\\diamondsuit}"),
+
+    ("space", "~"),
+    ("nbsp", "~")]
 
 knownCommands
  = ["newpage", "vfill", "hfill", "normalsize", "normalfont",
@@ -189,6 +192,9 @@ tail' xs = tail xs
 
 tail'' [] = []
 tail'' xs = tail' xs
+
+skipOneSpace (' ':xs) = xs
+skipOneSpace s = s
 
 escapeTeX :: String -> String -> String
 
@@ -240,8 +246,41 @@ known w
     | w `elem` knownSymbols = Just ("\\ensuremath{\\" ++ w ++ "}")
     | otherwise             = lookup w specialSymbols
 
+ensureTeX ('\\':'´':x:xs)
+    | isAlpha x = ("\\´" ++ [x], xs)
+ensureTeX ('\\':'`':x:xs)
+    | isAlpha x = ("\\`" ++ [x], xs)
+ensureTeX ('\\':'^':x:xs)
+    | isAlpha x = ("\\^" ++ [x], xs)
+ensureTeX ('\\':'~':x:xs)
+    | isAlpha x = ("\\~" ++ [x], xs)
+ensureTeX ('\\':'=':x:xs)
+    | isAlpha x = ("\\=" ++ [x], xs)
+ensureTeX ('\\':'.':x:xs)
+    | isAlpha x = ("\\." ++ [x], xs)
+ensureTeX ('\\':'"':x:xs)
+    | isAlpha x = ("\\\"" ++ [x], xs)
+
+ensureTeX ('\\':'v':' ':x:xs)
+    | isAlpha x = ("\\v" ++ [' ', x], xs)
+ensureTeX ('\\':'H':' ':x:xs)
+    | isAlpha x = ("\\H" ++ [' ', x], xs)
+ensureTeX ('\\':'c':' ':x:xs)
+    | isAlpha x = ("\\c" ++ [' ', x], xs)
+ensureTeX ('\\':'d':' ':x:xs)
+    | isAlpha x = ("\\d" ++ [' ', x], xs)
+ensureTeX ('\\':'b':' ':x:xs)
+    | isAlpha x = ("\\b" ++ [' ', x], xs)
+ensureTeX ('\\':'t':' ':x:xs)
+    | isAlpha x = ("\\t" ++ [' ', x], xs)
+
+ensureTeX ('\\':'_':xs) = ("\\_", xs)
+ensureTeX ('\\':'%':xs) = ("\\%", xs)
+ensureTeX ('\\':'&':xs) = ("\\&", xs)
+ensureTeX ('\\':'#':xs) = ("\\#", xs)
+
 ensureTeX ('\\':xs) = let (w, ws) = break (not.isAlpha) xs
-                      in maybe ("", xs) (\x -> (x, ws)) (known w)
+                      in maybe ("", xs) (\x -> (x, skipOneSpace ws)) (known w)
 
 ensureTeX ('≤':xs) = ("\\ensuremath{\\leq}", xs)
 ensureTeX ('≥':xs) = ("\\ensuremath{\\geq}", xs)
