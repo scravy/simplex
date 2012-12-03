@@ -1,0 +1,930 @@
+@preamble
+    \usepackage{anysize}
+    \marginsize{1cm}{1cm}{1cm}{1cm}
+
+>@  lc | lc | lc | lc
+--
+>   \ Bbbk
+>   \Bbbk
+>   \ Box
+>   \Box
+>   \ Bumpeq
+>   \Bumpeq
+>   \ Cap
+>   \Cap
+--
+>   \ Cup
+>   \Cup
+>   \ Delta
+>   \Delta
+>   \ Diamond
+>   \Diamond
+>   \ Downarrow
+>   \Downarrow
+--
+>   \ Finv
+>   \Finv
+>   \ Game
+>   \Game
+>   \ Gamma
+>   \Gamma
+>   \ Im
+>   \Im
+--
+>   \ Join
+>   \Join
+>   \ Lambda
+>   \Lambda
+>   \ Leftarrow
+>   \Leftarrow
+>   \ Leftrightarrow
+>   \Leftrightarrow
+--
+>   \ Lleftarrow
+>   \Lleftarrow
+>   \ Longleftarrow
+>   \Longleftarrow
+>   \ Longleftrightarrow
+>   \Longleftrightarrow
+>   \ Longrightarrow
+>   \Longrightarrow
+--
+>   \ Lsh
+>   \Lsh
+>   \ Omega
+>   \Omega
+>   \ Phi
+>   \Phi
+>   \ Pi
+>   \Pi
+--
+>   \ Psi
+>   \Psi
+>   \ Re
+>   \Re
+>   \ Rightarrow
+>   \Rightarrow
+>   \ Rsh
+>   \Rsh
+--
+>   \ Sigma
+>   \Sigma
+>   \ Subset
+>   \Subset
+>   \ Supset
+>   \Supset
+>   \ Theta
+>   \Theta
+--
+>   \ Uparrow
+>   \Uparrow
+>   \ Updownarrow
+>   \Updownarrow
+>   \ Upsilon
+>   \Upsilon
+>   \ Vdash
+>   \Vdash
+--
+>   \ Vert
+>   \Vert
+>   \ Vvdash
+>   \Vvdash
+>   \ Xi
+>   \Xi
+>   \ aleph
+>   \aleph
+--
+>   \ alpha
+>   \alpha
+>   \ amalg
+>   \amalg
+>   \ angle
+>   \angle
+>   \ approx
+>   \approx
+--
+>   \ approxeq
+>   \approxeq
+>   \ ast
+>   \ast
+>   \ asymp
+>   \asymp
+>   \ backepsilon
+>   \backepsilon
+--
+>   \ backprime
+>   \backprime
+>   \ backsim
+>   \backsim
+>   \ backsimeq
+>   \backsimeq
+>   \ barwedge
+>   \barwedge
+--
+>   \ because
+>   \because
+>   \ beta
+>   \beta
+>   \ beth
+>   \beth
+>   \ between
+>   \between
+--
+>   \ bigcap
+>   \bigcap
+>   \ bigcirc
+>   \bigcirc
+>   \ bigcup
+>   \bigcup
+>   \ bigodot
+>   \bigodot
+--
+>   \ bigoplus
+>   \bigoplus
+>   \ bigotimes
+>   \bigotimes
+>   \ bigsqcup
+>   \bigsqcup
+>   \ bigstar
+>   \bigstar
+--
+>   \ bigtriangledown
+>   \bigtriangledown
+>   \ bigtriangleup
+>   \bigtriangleup
+>   \ biguplus
+>   \biguplus
+>   \ bigvee
+>   \bigvee
+--
+>   \ bigwedge
+>   \bigwedge
+>   \ blacklozenge
+>   \blacklozenge
+>   \ blacksquare
+>   \blacksquare
+>   \ blacktriangle
+>   \blacktriangle
+--
+>   \ blacktriangledown
+>   \blacktriangledown
+>   \ blacktriangleleft
+>   \blacktriangleleft
+>   \ blacktriangleright
+>   \blacktriangleright
+>   \ bot
+>   \bot
+--
+>   \ bowtie
+>   \bowtie
+>   \ boxdot
+>   \boxdot
+>   \ boxminus
+>   \boxminus
+>   \ boxplus
+>   \boxplus
+--
+>   \ boxtimes
+>   \boxtimes
+>   \ bullet
+>   \bullet
+>   \ bumpeq
+>   \bumpeq
+>   \ cap
+>   \cap
+--
+>   \ cdot
+>   \cdot
+>   \ cdots
+>   \cdots
+>   \ centerdot
+>   \centerdot
+>   \ chi
+>   \chi
+--
+>   \ circ
+>   \circ
+>   \ circeq
+>   \circeq
+>   \ circlearrowleft
+>   \circlearrowleft
+>   \ circlearrowright
+>   \circlearrowright
+--
+>   \ circledS
+>   \circledS
+>   \ circledast
+>   \circledast
+>   \ circledcirc
+>   \circledcirc
+>   \ circleddash
+>   \circleddash
+--
+>   \ clubsuit
+>   \clubsuit
+>   \ complement
+>   \complement
+>   \ cong
+>   \cong
+>   \ coprod
+>   \coprod
+--
+>   \ cup
+>   \cup
+>   \ curlyeqprec
+>   \curlyeqprec
+>   \ curlyeqsucc
+>   \curlyeqsucc
+>   \ curlyvee
+>   \curlyvee
+--
+>   \ curlywedge
+>   \curlywedge
+>   \ curvearrowleft
+>   \curvearrowleft
+>   \ curvearrowright
+>   \curvearrowright
+>   \ dagger
+>   \dagger
+--
+>   \ daleth
+>   \daleth
+>   \ dashleftarrow
+>   \dashleftarrow
+>   \ dashrightarrow
+>   \dashrightarrow
+>   \ dashv
+>   \dashv
+--
+>   \ ddagger
+>   \ddagger
+>   \ ddots
+>   \ddots
+>   \ delta
+>   \delta
+>   \ diagdown
+>   \diagdown
+--
+>   \ diagup
+>   \diagup
+>   \ diamond
+>   \diamond
+>   \ diamondsuit
+>   \diamondsuit
+>   \ digamma
+>   \digamma
+--
+>   \ div
+>   \div
+>   \ divideontimes
+>   \divideontimes
+>   \ doteq
+>   \doteq
+>   \ doteqdot
+>   \doteqdot
+--
+>   \ dotplus
+>   \dotplus
+>   \ doublebarwedge
+>   \doublebarwedge
+>   \ downarrow
+>   \downarrow
+>   \ downdownarrows
+>   \downdownarrows
+--
+>   \ downharpoonleft
+>   \downharpoonleft
+>   \ downharpoonright
+>   \downharpoonright
+>   \ ell
+>   \ell
+>   \ emptyset
+>   \emptyset
+--
+>   \ epsilon
+>   \epsilon
+>   \ eqcirc
+>   \eqcirc
+>   \ eqslantgtr
+>   \eqslantgtr
+>   \ eqslantless
+>   \eqslantless
+--
+>   \ equiv
+>   \equiv
+>   \ eta
+>   \eta
+>   \ eth
+>   \eth
+>   \ exists
+>   \exists
+--
+>   \ fallingdotseq
+>   \fallingdotseq
+>   \ flat
+>   \flat
+>   \ forall
+>   \forall
+>   \ frown
+>   \frown
+--
+>   \ gamma
+>   \gamma
+>   \ geq
+>   \geq
+>   \ geqq
+>   \geqq
+>   \ geqslant
+>   \geqslant
+--
+>   \ gg
+>   \gg
+>   \ ggg
+>   \ggg
+>   \ gimel
+>   \gimel
+>   \ gnapprox
+>   \gnapprox
+--
+>   \ gneq
+>   \gneq
+>   \ gneqq
+>   \gneqq
+>   \ gnsim
+>   \gnsim
+>   \ gtrapprox
+>   \gtrapprox
+--
+>   \ gtrdot
+>   \gtrdot
+>   \ gtreqless
+>   \gtreqless
+>   \ gtreqqless
+>   \gtreqqless
+>   \ gtrless
+>   \gtrless
+--
+>   \ gtrsim
+>   \gtrsim
+>   \ gvertneqq
+>   \gvertneqq
+>   \ hbar
+>   \hbar
+>   \ heartsuit
+>   \heartsuit
+--
+>   \ hookleftarrow
+>   \hookleftarrow
+>   \ hookrightarrow
+>   \hookrightarrow
+>   \ hslash
+>   \hslash
+>   \ iiiint
+>   \iiiint
+--
+>   \ iiint
+>   \iiint
+>   \ iint
+>   \iint
+>   \ imath
+>   \imath
+>   \ in
+>   \in
+--
+>   \ infty
+>   \infty
+>   \ int
+>   \int
+>   \ intercal
+>   \intercal
+>   \ iota
+>   \iota
+--
+>   \ jmath
+>   \jmath
+>   \ kappa
+>   \kappa
+>   \ lambda
+>   \lambda
+>   \ langle
+>   \langle
+--
+>   \ lceil
+>   \lceil
+>   \ ldots
+>   \ldots
+>   \ leadsto
+>   \leadsto
+>   \ leftarrow
+>   \leftarrow
+--
+>   \ leftarrowtail
+>   \leftarrowtail
+>   \ leftharpoondown
+>   \leftharpoondown
+>   \ leftharpoonup
+>   \leftharpoonup
+>   \ leftleftarrows
+>   \leftleftarrows
+--
+>   \ leftrightarrow
+>   \leftrightarrow
+>   \ leftrightarrows
+>   \leftrightarrows
+>   \ leftrightharpoons
+>   \leftrightharpoons
+>   \ leftrightsquigarrow
+>   \leftrightsquigarrow
+--
+>   \ leftthreetimes
+>   \leftthreetimes
+>   \ leq
+>   \leq
+>   \ leqq
+>   \leqq
+>   \ leqslant
+>   \leqslant
+--
+>   \ lessapprox
+>   \lessapprox
+>   \ lessdot
+>   \lessdot
+>   \ lesseqgtr
+>   \lesseqgtr
+>   \ lessgtr
+>   \lessgtr
+--
+>   \ lesssim
+>   \lesssim
+>   \ lfloor
+>   \lfloor
+>   \ lhd
+>   \lhd
+>   \ ll
+>   \ll
+--
+>   \ llcorner
+>   \llcorner
+>   \ lll
+>   \lll
+>   \ lnapprox
+>   \lnapprox
+>   \ lneq
+>   \lneq
+--
+
+.
+
+>@  lc | lc | lc | lc
+--
+>   \ lneqq
+>   \lneqq
+>   \ lnsim
+>   \lnsim
+>   \ longleftarrow
+>   \longleftarrow
+>   \ longleftrightarrow
+>   \longleftrightarrow
+--
+>   \ longmapsto
+>   \longmapsto
+>   \ longrightarrow
+>   \longrightarrow
+>   \ looparrowleft
+>   \looparrowleft
+>   \ looparrowright
+>   \looparrowright
+--
+>   \ lozenge
+>   \lozenge
+>   \ lrcorner
+>   \lrcorner
+>   \ ltimes
+>   \ltimes
+>   \ lvertneqq
+>   \lvertneqq
+--
+>   \ mapsto
+>   \mapsto
+>   \ measuredangle
+>   \measuredangle
+>   \ mho
+>   \mho
+>   \ mid
+>   \mid
+--
+>   \ models
+>   \models
+>   \ mp
+>   \mp
+>   \ mu
+>   \mu
+>   \ multimap
+>   \multimap
+--
+>   \ nLeftarrow
+>   \nLeftarrow
+>   \ nLeftrightarrow
+>   \nLeftrightarrow
+>   \ nRightarrow
+>   \nRightarrow
+>   \ nVDash
+>   \nVDash
+--
+>   \ nabla
+>   \nabla
+>   \ natural
+>   \natural
+>   \ ncong
+>   \ncong
+>   \ nearrow
+>   \nearrow
+--
+>   \ neq
+>   \neq
+>   \ nexists
+>   \nexists
+>   \ ngeq
+>   \ngeq
+>   \ ngeqq
+>   \ngeqq
+--
+>   \ ngeqslant
+>   \ngeqslant
+>   \ ngtr
+>   \ngtr
+>   \ ni
+>   \ni
+>   \ nleftarrow
+>   \nleftarrow
+--
+>   \ nleftrightarrow
+>   \nleftrightarrow
+>   \ nleq
+>   \nleq
+>   \ nleqq
+>   \nleqq
+>   \ nleqslant
+>   \nleqslant
+--
+>   \ nless
+>   \nless
+>   \ nmid
+>   \nmid
+>   \ notin
+>   \notin
+>   \ nparallel
+>   \nparallel
+--
+>   \ nprec
+>   \nprec
+>   \ npreceq
+>   \npreceq
+>   \ nrightarrow
+>   \nrightarrow
+>   \ nshortmid
+>   \nshortmid
+--
+>   \ nshortparallel
+>   \nshortparallel
+>   \ nsim
+>   \nsim
+>   \ nsubseteq
+>   \nsubseteq
+>   \ nsubseteqq
+>   \nsubseteqq
+--
+>   \ nsucc
+>   \nsucc
+>   \ nsucceq
+>   \nsucceq
+>   \ nsupseteq
+>   \nsupseteq
+>   \ nsupseteqq
+>   \nsupseteqq
+--
+>   \ ntriangleleft
+>   \ntriangleleft
+>   \ ntrianglelefteq
+>   \ntrianglelefteq
+>   \ ntriangleright
+>   \ntriangleright
+>   \ ntrianglerighteq
+>   \ntrianglerighteq
+--
+>   \ nu
+>   \nu
+>   \ nvDash
+>   \nvDash
+>   \ nvdash
+>   \nvdash
+>   \ nwarrow
+>   \nwarrow
+--
+>   \ odot
+>   \odot
+>   \ oint
+>   \oint
+>   \ omega
+>   \omega
+>   \ ominus
+>   \ominus
+--
+>   \ oplus
+>   \oplus
+>   \ oslash
+>   \oslash
+>   \ otimes
+>   \otimes
+>   \ parallel
+>   \parallel
+--
+>   \ partial
+>   \partial
+>   \ perp
+>   \perp
+>   \ phi
+>   \phi
+>   \ pi
+>   \pi
+--
+>   \ pitchfork
+>   \pitchfork
+>   \ pm
+>   \pm
+>   \ prec
+>   \prec
+>   \ precapprox
+>   \precapprox
+--
+>   \ preccurlyeq
+>   \preccurlyeq
+>   \ preceq
+>   \preceq
+>   \ precnapprox
+>   \precnapprox
+>   \ precnsim
+>   \precnsim
+--
+>   \ precsim
+>   \precsim
+>   \ prime
+>   \prime
+>   \ prod
+>   \prod
+>   \ propto
+>   \propto
+--
+>   \ psi
+>   \psi
+>   \ rangle
+>   \rangle
+>   \ rceil
+>   \rceil
+>   \ rfloor
+>   \rfloor
+--
+>   \ rhd
+>   \rhd
+>   \ rho
+>   \rho
+>   \ rightarrow
+>   \rightarrow
+>   \ rightarrowtail
+>   \rightarrowtail
+--
+>   \ rightharpoondown
+>   \rightharpoondown
+>   \ rightharpoonup
+>   \rightharpoonup
+>   \ rightleftarrows
+>   \rightleftarrows
+>   \ rightleftharpoons
+>   \rightleftharpoons
+--
+>   \ rightrightarrows
+>   \rightrightarrows
+>   \ rightsquigarrow
+>   \rightsquigarrow
+>   \ rightthreetimes
+>   \rightthreetimes
+>   \ risingdotseq
+>   \risingdotseq
+--
+>   \ rtimes
+>   \rtimes
+>   \ searrow
+>   \searrow
+>   \ setminus
+>   \setminus
+>   \ sharp
+>   \sharp
+--
+>   \ shortmid
+>   \shortmid
+>   \ shortparallel
+>   \shortparallel
+>   \ sigma
+>   \sigma
+>   \ sim
+>   \sim
+--
+>   \ simeq
+>   \simeq
+>   \ smallfrown
+>   \smallfrown
+>   \ smallsmile
+>   \smallsmile
+>   \ smile
+>   \smile
+--
+>   \ spadesuit
+>   \spadesuit
+>   \ sphericalangle
+>   \sphericalangle
+>   \ sqcap
+>   \sqcap
+>   \ sqcup
+>   \sqcup
+--
+>   \ sqsubset
+>   \sqsubset
+>   \ sqsubseteq
+>   \sqsubseteq
+>   \ sqsupset
+>   \sqsupset
+>   \ sqsupseteq
+>   \sqsupseteq
+--
+>   \ square
+>   \square
+>   \ star
+>   \star
+>   \ subset
+>   \subset
+>   \ subseteq
+>   \subseteq
+--
+>   \ subseteqq
+>   \subseteqq
+>   \ subsetneq
+>   \subsetneq
+>   \ subsetneqq
+>   \subsetneqq
+>   \ succ
+>   \succ
+--
+>   \ succapprox
+>   \succapprox
+>   \ succcurlyeq
+>   \succcurlyeq
+>   \ succeq
+>   \succeq
+>   \ succnapprox
+>   \succnapprox
+--
+>   \ succnsim
+>   \succnsim
+>   \ succsim
+>   \succsim
+>   \ sum
+>   \sum
+>   \ supset
+>   \supset
+--
+>   \ supseteq
+>   \supseteq
+>   \ supseteqq
+>   \supseteqq
+>   \ supsetneq
+>   \supsetneq
+>   \ supsetneqq
+>   \supsetneqq
+--
+>   \ surd
+>   \surd
+>   \ swarrow
+>   \swarrow
+>   \ tau
+>   \tau
+>   \ therefore
+>   \therefore
+--
+>   \ theta
+>   \theta
+>   \ thickapprox
+>   \thickapprox
+>   \ thicksim
+>   \thicksim
+>   \ times
+>   \times
+--
+>   \ top
+>   \top
+>   \ triangle
+>   \triangle
+>   \ triangledown
+>   \triangledown
+>   \ triangleleft
+>   \triangleleft
+--
+>   \ trianglelefteq
+>   \trianglelefteq
+>   \ triangleq
+>   \triangleq
+>   \ triangleright
+>   \triangleright
+>   \ trianglerighteq
+>   \trianglerighteq
+--
+>   \ twoheadleftarrow
+>   \twoheadleftarrow
+>   \ twoheadrightarrow
+>   \twoheadrightarrow
+>   \ ulcorner
+>   \ulcorner
+>   \ unlhd
+>   \unlhd
+--
+>   \ unrhd
+>   \unrhd
+>   \ uparrow
+>   \uparrow
+>   \ updownarrow
+>   \updownarrow
+>   \ upharpoonleft
+>   \upharpoonleft
+--
+>   \ upharpoonright
+>   \upharpoonright
+>   \ uplus
+>   \uplus
+>   \ upsilon
+>   \upsilon
+>   \ upuparrows
+>   \upuparrows
+--
+>   \ urcorner
+>   \urcorner
+>   \ vDash
+>   \vDash
+>   \ varepsilon
+>   \varepsilon
+>   \ varkappa
+>   \varkappa
+--
+>   \ varnothing
+>   \varnothing
+>   \ varphi
+>   \varphi
+>   \ varpi
+>   \varpi
+>   \ varpropto
+>   \varpropto
+--
+>   \ varrho
+>   \varrho
+>   \ varsigma
+>   \varsigma
+>   \ varsubsetneq
+>   \varsubsetneq
+>   \ varsubsetneqq
+>   \varsubsetneqq
+--
+>   \ varsupsetneq
+>   \varsupsetneq
+>   \ varsupsetneqq
+>   \varsupsetneqq
+>   \ vartheta
+>   \vartheta
+>   \ vartriangle
+>   \vartriangle
+--
+>   \ vartriangleleft
+>   \vartriangleleft
+>   \ vartriangleright
+>   \vartriangleright
+>   \ vdash
+>   \vdash
+>   \ vdots
+>   \vdots
+--
+>   \ vee
+>   \vee
+>   \ veebar
+>   \veebar
+>   \ vert
+>   \vert
+>   \ wedge
+>   \wedge
+--
+>   \ wp
+>   \wp
+>   \ wr
+>   \wr
+>   \ xi
+>   \xi
+>   \ zeta
+>   \zeta
+--
+

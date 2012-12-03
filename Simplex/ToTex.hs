@@ -406,8 +406,8 @@ toTeX' opt (BAny "%" _ : xs)
     = toTeX' opt xs
 
 -- maybe report unknown BAny here
-toTeX' opt (BAny _ s : xs)
-    = escapeTeX "\n\n" s : toTeX' opt xs
+toTeX' opt (BAny t s : xs)
+    = "\\textcolor{red}{Unknown Block: " : escapeTeX "}\n\n" t : toTeX' opt xs
 
 toTeX' opt (BParagraph s : xs)
     = escapeTeX "\n\n" s : toTeX' opt xs
@@ -431,7 +431,7 @@ toTeX' opt (BCommand c (x:_) : xs)
 toTeX' opt (BCommand c _ : xs)
     | c `elem` knownCommands = ('\\' : c) : "\n" : toTeX' opt xs
     | isJust c' = ('\\' : fromJust c') : "\n" : toTeX' opt xs
-    | otherwise = "\\textcolor{red}{Unknown Command: " : c : "}\n\n" : toTeX' opt xs
+    | otherwise = "\\textcolor{red}{Unknown Command: " : escapeTeX "}\n\n" c : toTeX' opt xs
         where c' = lookup c specialCommands
               
 toTeX' _ [] = ["\n\\end{document}\n"]

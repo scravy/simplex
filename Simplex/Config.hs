@@ -4,6 +4,7 @@ module Simplex.Config (
     Config (..), config) where
 
 import Simplex.Parser
+import Data.List (sort)
 
 data Config
  = Config {
@@ -222,5 +223,15 @@ knownCommands
     "upshape", "itshape", "slshape", "scschape", "em"]
 
 specialCommands
- = [("pagebreak", "newpage")]
+ = [("pagebreak", "newpage"),
+    ("italic", "itshape"),
+    ("bold", "bfseries")]
+
+showSymbols = do
+    let symbols = sort knownSymbols
+    let p x = "\n>   " ++ "\\ " ++ x ++ "\n>   \\" ++ x
+    let f a b
+         | b == 4 = p a ++ "\n--"
+         | True   = p a
+    writeFile "doc/Symbols.simple" $ concat $ zipWith f symbols (cycle [1,2,3,4])
 
