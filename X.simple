@@ -4,3 +4,263 @@
 @authors
     Julian Fleischer
 
+=   Basic examples
+
+    A three-by-three table, but without any lines:
+
+columns 2
+.verbatim
+    >   1
+    >   2
+    >   3
+    \\
+    >   4
+    >   5
+    >   6
+    \\
+    >   7
+    >   8
+    >   9
+
+colbreak
+>   1
+>   2
+>   3
+\\
+>   4
+>   5
+>   6
+\\
+>   7
+>   8
+>   9
+endcolumns
+
+    Expanding upon that by including some vertical lines:
+
+columns 2
+.verbatim
+    >@  l|c||r
+    >   1
+    >   2
+    >   3
+    \\
+    >   4
+    >   5
+    >   6
+    \\
+    >   7
+    >   8
+    >   9
+
+colbreak
+>@  l|c||r
+>   1
+>   2
+>   3
+\\
+>   4
+>   5
+>   6
+\\
+>   7
+>   8
+>   9
+endcolumns
+
+newpage
+
+    To add horizontal lines to the very top and bottom edges of the table:
+
+columns 2
+.verbatim
+    >@  l|c||r
+    --
+    >   1
+    >   2
+    >   3
+    \\
+    >   4
+    >   5
+    >   6
+    \\
+    >   7
+    >   8
+    >   9
+    --
+
+colbreak
+>@  l|c||r
+--
+>   1
+>   2
+>   3
+\\
+>   4
+>   5
+>   6
+\\
+>   7
+>   8
+>   9
+--
+endcolumns
+
+    And finally, to add lines between all rows:
+
+columns 2
+.verbatim
+    >@  l|c||r
+    --
+    >   1
+    >   2
+    >   3
+    --
+    >   4
+    >   5
+    >   6
+    --
+    >   7
+    >   8
+    >   9
+    --
+
+colbreak
+>@  l|c||r
+--
+>   1
+>   2
+>   3
+--
+>   4
+>   5
+>   6
+--
+>   7
+>   8
+>   9
+--
+endcolumns
+
+newpage
+
+=   Spanning
+
+==  Rows spanning multiple columns
+
+    This is a table with a single cell spanning two columns:
+
+>@  |l|l|
+--
+>|2|
+    Team sheet
+--
+>   GK
+>   Paul Robinson
+\\
+>   LB
+>   Lucus Radebe
+\\
+>   DC
+>   Michael Duberry
+\\
+>   DC
+>   Dominic Matteo
+\\
+>   RB
+>   Dider Domi
+\\
+>   MC
+>   David Batty
+\\
+>   MC
+>   Eirik Bakke
+\\
+>   MC
+>   Jody Morris
+\\
+>   FW
+>   Jamie McMaster
+\\
+>   ST
+>   Alan Smith
+\\
+>   ST
+>   Mark Viduka
+--
+.
+
+==  Columns spanning multiple rows
+
+    The following table shows how to span multiple rows
+    and columns.
+
+
+>@  |l|l|l|
+--
+>|3|
+    Team sheet
+--
+>   Goalkeeper
+>   GK
+>   Paul Robinson
+--
+>,4 Defenders
+>   LB
+>   Lucus Radabe
+\\
+>
+>   DC
+>   Michael Duberry
+\\
+>
+>   DC
+>   Dominic Matteo
+\\
+>
+>   RB
+>   Didier Domi
+--
+>,3 Midfielders
+>   MC
+>   David Batty
+\\
+>
+>   MC
+>   Eirik Bakke
+\\
+>
+>   MC
+>   Jody Morris
+--
+>   Forward
+>   FW
+>   Jamie McMaster
+--
+>,2 Strikers
+>   ST
+>   Alan Smith
+\\
+>
+>   ST
+>   Mark Viduka
+--
+
+
+=   Colors
+==  Colored Cells
+
+    These are four coloured cells:
+
+>@  cc
+>red
+    A
+>blue
+    B
+\\
+>green
+    C
+>yellow
+    D
+
+    

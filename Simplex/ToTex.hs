@@ -386,6 +386,7 @@ toTeX (Document blocks props) = (concat . preamble . toTeX') blocks
 
           : "\\usepackage{verbatim}\n"
           : "\\usepackage{listings}\n"
+          : "\\usepackage{multicol}\n"
 
           : "\\usepackage{color}\n"
           : "\\usepackage[table]{xcolor}\n"
@@ -564,6 +565,15 @@ toTeX' (BParagraph s : xs)
 toTeX' (BCommand "break" [x] : xs)
     = "\\hfill \\\\[" : x : "]" : toTeX' xs
 
+toTeX' (BCommand "columns" (x:_) : xs)
+    = "\\begin{multicols}{" : x : "}\n\n" : toTeX' xs
+
+toTeX' (BCommand "colbreak" _ : xs)
+    = "\\vfill\n\\columnbreak\n" : toTeX' xs
+
+toTeX' (BCommand "endcolumns" _ : xs)
+    = "\\end{multicols}\n\n" : toTeX' xs
+
 -- use arguments “a” (!!) - “_” by now
 toTeX' (BCommand c _ : xs)
     | c `elem` knownCommands = ('\\' : c) : "\n" : toTeX' xs
@@ -579,7 +589,7 @@ mkTable :: Table -> String
 mkTable (caption, opt, rows@((t,r):rs))
   = let
         spec
-            | opt == [] = intersperse '|' $ take numCols $ repeat 'l'
+            | opt == [] = take numCols $ repeat 'l'
             | otherwise = head opt
         numCols = maximum (map (length.snd) rows)
 
@@ -598,37 +608,44 @@ mkTable (caption, opt, rows@((t,r):rs))
 
         mkCells = concat . intersperse " & " . map mkCell
 
-        mkCell (Cell, c) = escapeTeX "" c
-        mkCell (CellVerb, c) = "\\verb#" ++ c ++ "#"
-        mkCell (CellMath, c) = '$' : c ++ "$"
-        mkCell (CellHead, c) = "\\multicolumn{1}{c}{\\bfseries " ++ escapeTeX "}" c
+        mkCell (Cell color Nothing 1 rowSpan l r t, c)
+          = rowCell color rowSpan t c
+        mkCell (Cell color (Just a) colSpan rowSpan l r t, c)
+          = "\\multicolumn{" ++ show colSpan ++ "}{" ++ colSpec l r a ++ "}{" ++ rowCell color rowSpan t c ++ "}"
+        mkCell (Cell color _ colSpan rowSpan l r t, c)
+          = "\\multicolumn{" ++ show colSpan ++ "}{" ++ colSpec l r 'c' ++ "}{" ++ rowCell color rowSpan t c ++ "}"
 
-        mkCell (CustomCell color Nothing 1 rowSpan, c)
-          = rowCell color rowSpan c
-        mkCell (CustomCell color (Just a) colSpan rowSpan, c)
-          = "\\multicolumn{" ++ show colSpan ++ "}{" ++ [a] ++ "}{" ++ rowCell color rowSpan c ++ "}"
-        mkCell (CustomCell color _ colSpan rowSpan, c)
-          = "\\multicolumn{" ++ show colSpan ++ "}{c}{" ++ rowCell color rowSpan c ++ "}"
+        colSpec True  False a = '|' : [a]
+        colSpec False True  a = a : "|"
+        colSpec True  True  a = '|' : a : "|"
+        colSpec False False a = [a]
 
-        rowCell color 1 c       = colorCell color c
-        rowCell color rowSpan c = "\\multirow{" ++ show rowSpan ++ "}{*}{" ++ colorCell color c ++ "}"
+        rowCell color 1 t c       = colorCell color t c
+        rowCell color rowSpan t c = "\\multirow{" ++ show rowSpan ++ "}{*}{" ++ colorCell color t c ++ "}"
         
-        colorCell Nothing c      = mkCell (Cell, c)
-        colorCell (Just color) c = "\\cellcolor{" ++ color ++ "}" ++ mkCell (Cell, c)
+        colorCell Nothing t c      = cellContent t c
+        colorCell (Just color) t c = "\\cellcolor{" ++ color ++ "}" ++ cellContent t c
 
-    in  "\\begin{table}[!h]\n"
+        cellContent Verb c = "\\verb#" ++ c ++ "#"
+        cellContent Head c = "{\\bfseries " ++ escapeTeX "}" c
+        cellContent Math c = '$' : c ++ "$"
+        cellContent _ c = escapeTeX "" c
+
+    in  when (caption /= "") "\\begin{table}[!h]\n"
      ++ "\\begin{center}\n"
      ++ "\\begin{tabular}{" ++ spec ++ "}\n"
      ++ body
      ++ "\n\\end{tabular}\n"
      ++ "\n\\end{center}\n"
-     ++ when (caption /= "") ("\\caption{" ++ escapeTeX "}\n" caption)
-     ++ "\\end{table}\n\n"
+     ++ when (caption /= "") ("\\caption{" ++ escapeTeX "}\n" caption ++ "\\end{table}\n")
+     ++ "\n"
 
+{-
      ++ escapeTeX "\n" (map f $ show rows)
 
 f ',' = '\n'
 f x   = x
+-}
 
 when True x = x
 when False _ = []

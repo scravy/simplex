@@ -1,7 +1,7 @@
 module Simplex.Parser (
     lex, parse,
     Token(..), Block(..), Document (Document),
-    Table, CellType(..), RowType(..)) where
+    Table, Cell(..), CellType(..), RowType(..)) where
 
 import Prelude hiding (lex)
 import Data.List (intersperse, elemIndex)
@@ -31,10 +31,12 @@ data Block =
         | BCommand String [String]
     deriving (Eq, Show)
 
-type Table = (String, [String], [(RowType, [(CellType, String)])])
+type Table = (String, [String], [(RowType, [(Cell, String)])])
 
-data CellType = Cell | CellMath | CellHead | CellVerb
-              | CustomCell (Maybe String) (Maybe Char) Int Int
+data Cell = Cell (Maybe String) (Maybe Char) Int Int Bool Bool CellType
+    deriving (Eq, Show)
+
+data CellType = Default | Math | Verb | Head
     deriving (Eq, Show)
 
 data RowType = NoBorder | SingleBorder | DoubleBorder
@@ -162,20 +164,8 @@ parseTable' (caption, opt, rows) (TControl ">@" : TBlock b : xs)
 parseTable' (caption, opt, rows) (TControl ">=" : TBlock b : xs)
   = parseTable' (b, opt, rows) xs
 
-parseTable' (caption, opt, ((t,r):rs)) (TControl ">!" : TBlock b : xs)
-  = parseTable' (caption, opt, ((t, (CellHead, b):r):rs)) xs
-
-parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">$" : TBlock b : xs)
-  = parseTable' (caption, opt, ((t, (CellMath, b):r):rs)) xs
-
-parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">#" : TBlock b : xs)
-  = parseTable' (caption, opt, ((t, (CellVerb, b):r):rs)) xs
-
-parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">" : TBlock b : xs)
-  = parseTable' (caption, opt, ((t, (Cell, b):r):rs)) xs
-
 parseTable' (caption, opt, rows@((t,r):rs)) (TControl ('>':c) : TBlock b : xs)
-  = parseTable' (caption, opt, ((t, (parseCellType c, b):r):rs)) xs
+  = parseTable' (caption, opt, ((t, (parseCell c, b):r):rs)) xs
 
 parseTable' (caption, opt, rows@((t,r):rs)) (TControl "--" : TBlock b : xs)
   = parseTable' (caption, opt, ((NoBorder, []) : (SingleBorder, r) : rs)) xs
@@ -189,7 +179,7 @@ parseTable' (caption, opt, rows@((t,r):rs)) (TControl "\\\\" : TBlock b : xs)
 parseTable' (caption, opt, rows) xs
   = ((caption, reverse opt, map (\(t,r) -> (t, reverse r)) $ reverse rows), xs)
 
-parseCellType c
+parseCell c
   = let
         digits = filter isDigit c
         upper  = filter isUpper c
@@ -227,7 +217,13 @@ parseCellType c
             "C" -> Just 'c'
             _ -> Nothing
 
-    in  CustomCell color align colSpan rowSpan
+        typ
+            | '$' `elem` c = Math
+            | '#' `elem` c = Verb
+            | '!' `elem` c = Head
+            | otherwise    = Default
+
+    in  Cell color align colSpan rowSpan (head c == '|') (last c == '|') typ
 
 lex :: String -> [Token]
 lex xs = lex' 1 1 [] SStart (xs ++ "\n\n")
