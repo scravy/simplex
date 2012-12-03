@@ -300,13 +300,13 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
           : xs
 
 toTeX' opt (BSection s : xs)
-    = "\\section" : when (dontNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
+    = "\\section" : when (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
 toTeX' opt (BSubsection s : xs)
-    = "\\subsection" : when (dontNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
+    = "\\subsection" : when (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
 toTeX' opt (BSubsubsection s : xs)
-    = "\\subsubsection" : when (dontNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
+    = "\\subsubsection" : when (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
 toTeX' opt (BLine : xs)
     = "\n\n\\hspace{\\fill}\\rule{0.8\\linewidth}{0.7pt}\\hspace{\\fill}\n\n" : toTeX' opt xs

@@ -1,15 +1,25 @@
-module Simplex.Config where
+module Simplex.Config (
+    verbs, knownLengths, knownSymbols, knownCommands,
+    specialCommands, specialSymbols,
+    Config (..), config) where
 
 import Simplex.Parser
 
-config (Document blocks props) = findToC blocks
+data Config
+ = Config {
+    doNumberSections :: Bool
+   }           
 
-findToC (BCommand "tableofcontents" _ : _) = True
-findToC (x : xs) = findToC xs
-findToC _ = False
+defaultConfig = Config {
+    doNumberSections = False
+}
 
-doNumberSections x = x
-dontNumberSections = not . doNumberSections
+config (Document blocks props)
+ = conf defaultConfig blocks
+
+conf c (BCommand "tableofcontents" [] : xs) = conf (c { doNumberSections = True }) xs
+conf c (x : xs) = conf c xs
+conf c _ = c
 
 -- chars that introduce an inline verbatim
 verbs = "#!@"
@@ -212,5 +222,7 @@ knownCommands
     "upshape", "itshape", "slshape", "scschape", "em"]
 
 specialCommands
- = [("pagebreak", "newpage")]
+ = [("pagebreak", "newpage"),
+    ("newcolumn", "colbreak"),
+    ("columnbreak", "colbreak")]
 
