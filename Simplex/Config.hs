@@ -15,22 +15,22 @@ dontNumberSections = not . doNumberSections
 verbs = "#!@"
 
 knownLengths
- = ["baselineskip",     -- The normal vertical distance between lines in a paragraph
-    "baselinestretch",  -- Multiplies \baselineskip
-    "columnsep",        -- The distance between columns
-    "columnwidth",      -- The width of the column
-    "evensidemargin",   -- The margin for 'even' pages (think of a printed booklet)
-    "oddsidemargin",    -- The margin for 'odd' pages (think of a printed booklet)
-    "paperwidth",       -- The width of the page
-    "paperheight",      -- The height of the page
-    "textfloatsep",
-    "parskip",          -- The extra vertical space between paragraphs
-    "parindent",        -- The normal paragraph indentation
-    "textwidth",        -- The width of the text on the page
-    "textheight",       -- The height of text on the page
-    "tabcolsep",        -- The default separation between columns in a tabular environment
-    "topmargin",        -- The size of the top margin
-    "columnseprule"]
+ = [("baselineskip",    (Nothing, "The normal vertical distance between lines in a paragraph")),
+    ("baselinestretch", (Nothing, "Multiplies @baselineskip")),
+    ("columnsep",       (Just "20pt",  "The distance between columns")),
+    ("columnwidth",     (Nothing, "The width of the column")),
+    ("evensidemargin",  (Nothing, "The margin for 'even' pages (think of a printed booklet)")),
+    ("oddsidemargin",   (Nothing, "The margin for 'odd' pages (think of a printed booklet)")),
+    ("paperwidth",      (Nothing, "The width of the page")),
+    ("paperheight",     (Nothing, "The height of the page")),
+    ("textfloatsep",    (Just "10pt plus 4pt minus 3pt", "")),
+    ("parskip",         (Just "1ex",  "The extra vertical space between paragraphs")),
+    ("parindent",       (Just "0cm",   "The normal paragraph indentation")),
+    ("textwidth",       (Nothing, "The width of the text on the page")),
+    ("textheight",      (Nothing, "The height of text on the page")),
+    ("tabcolsep",       (Nothing, "The default separation between columns in a tabular environment")),
+    ("topmargin",       (Nothing, "The size of the top margin")),
+    ("columnseprule",   (Nothing, ""))]
 
 knownSymbols
  = ["alpha", "beta", "chi", "delta", "epsilon", "eta", "gamma",

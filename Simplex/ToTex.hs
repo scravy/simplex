@@ -188,6 +188,13 @@ safeTeX s@(x:xs)
         where (a, b) = ensureTeX s
 safeTeX [] = []
 
+makePreambleLengths p
+  = let s x v = "\\setlength{\\" ++ x ++ "}{" ++ v ++ "}\n"
+        f (x, (def, _))
+            | isJust def = maybe (s x $ fromJust def) (s x) (lookup x p)
+            | otherwise  = maybe ""                   (s x) (lookup x p)
+    in  concat $ map f knownLengths
+
 toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ blocks
     where
         preamble xs =
@@ -243,17 +250,19 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
 
           : "\\makeatletter\n"
           : "\\def\\advise{\\par\\list\\labeladvise\n"
-          : " {\\advance\\linewidth\\@totalleftmargin\n"
-          : " \\@totalleftmargin\\z@\n"
-          : " \\@listi\n"
-          : " \\let\\small\\footnotesize \\small\\sffamily\n"
-          : " \\parsep \\z@ \\@plus\\z@ \\@minus\\z@\n"
-          : " \\topsep6\\p@ \\@plus1\\p@\\@minus2\\p@\n"
-          : " \\def\\makelabel##1{\\hss\\llap{##1}}}}\n"
-          : " \\let\\endadvise\\endlist\n"
-          : " \\def\\advisespace{\\hbox{}\\qquad}\n"
-          : " \\def\\labeladvise{$\\to$}\n"
-          : " \\makeatother\n"
+          : "{\\advance\\linewidth\\@totalleftmargin\n"
+          : "\\@totalleftmargin\\z@\n"
+          : "\\@listi\n"
+          : "\\let\\small\\footnotesize \\small\\sffamily\n"
+          : "\\parsep \\z@ \\@plus\\z@ \\@minus\\z@\n"
+          : "\\topsep6\\p@ \\@plus1\\p@\\@minus2\\p@\n"
+          : "\\def\\makelabel##1{\\hss\\llap{##1}}}}\n"
+          : "\\let\\endadvise\\endlist\n"
+          : "\\def\\advisespace{\\hbox{}\\qquad}\n"
+          : "\\def\\labeladvise{$\\to$}\n"
+          : "\\makeatother\n"
+
+          : makePreambleLengths props
 
           : maybe "" id (lookup "preamble" props)
           : "\n\n"
@@ -267,23 +276,6 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
                 ""
                 (\x -> "\\setcounter{tocdepth}{" ++ x ++ "}\n")
                 (lookup "tocdepth" props)
-
-          : maybe
-                "\\setlength{\\parindent}{0cm}\n"
-                (\x -> "\\setlength{\\parindent}{" ++ x ++ "}\n")
-                (lookup "parindent" props)
-          : maybe
-                "\\setlength{\\parskip}{1ex}\n"
-                (\x -> "\\setlength{\\parskip}{" ++ x ++ "}\n")
-                (lookup "parskip" props)
-          : maybe
-                "\\setlength{\\columnsep}{20pt}\n"
-                (\x -> "\\setlength{\\columnsep}{" ++ x ++ "}\n")
-                (lookup "columnsep" props)
-          : maybe
-                "\\setlength{\\textfloatsep}{10pt plus 4pt minus 3pt}\n"
-                (\x -> "\\setlength{\\textfloatsep}{" ++ x ++ "}\n")
-                (lookup "textfloatsep" props)
 
           : maybe ""
                 (("\\author{" ++) . escapeTeX "}\n" . concat . intersperse ", " . lines)
@@ -423,28 +415,17 @@ toTeX' opt (BParagraph s : xs)
 toTeX' opt (BCommand "break" [x] : xs)
     = "\\hfill \\\\[" : x : "]" : toTeX' opt xs
 
-toTeX' opt (BCommand "columns" (x:_) : xs)
-    = "\\begin{multicols}{" : x : "}\n\n" : toTeX' opt xs
+toTeX' opt (BCommand c (x:_) : xs)
+    | isJust l = "\\setlength{\\" : c : "}{" : x : "}\n" : toTeX' opt xs
+        where l = lookup c knownLengths
 
-toTeX' opt (BCommand "colbreak" _ : xs)
-    = "\\vfill\n\\columnbreak\n" : toTeX' opt xs
-
-toTeX' opt (BCommand "endcolumns" _ : xs)
-    = "\\end{multicols}\n\n" : toTeX' opt xs
-
-toTeX' opt (BCommand "columnseprule" (x:_) : xs)
-    = "\\setlength{\\columnseprule}{" : x : "}\n" : toTeX' opt xs
-
--- use arguments “a” (!!) - “_” by now
 toTeX' opt (BCommand c _ : xs)
     | c `elem` knownCommands = ('\\' : c) : "\n" : toTeX' opt xs
     | isJust c' = ('\\' : fromJust c') : "\n" : toTeX' opt xs
     | otherwise = "\\textcolor{red}{Unknown Command: " : c : "}\n\n" : toTeX' opt xs
         where c' = lookup c specialCommands
-
+              
 toTeX' _ [] = ["\n\\end{document}\n"]
-
--- toTeX' opt (x : xs) = error ("Unknown Thingie: " ++ show x)
 
 mkTable :: Table -> String
 mkTable (caption, opt, rows@((t,r):rs))

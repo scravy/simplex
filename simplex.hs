@@ -89,7 +89,7 @@ doIt argz = do
     _ <- mapM (uncurry report) (zip argz resultz)
     return ()
 
-clean file = mapM removeFile $ zipWith (++) (repeat file) [".aux", ".log", ".tex"] 
+clean file = mapM removeFile $ zipWith (++) (repeat file) [".aux", ".log", ".tex", ".out", ".toc"] 
 
 cleanUp argz = mapM (clean . takeBaseName) argz >> return ()
 
