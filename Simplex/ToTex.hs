@@ -12,7 +12,7 @@ tail' [] = []
 tail' xs = tail xs
 
 tail'' [] = []
-tail'' xs = tail' xs
+tail'' xs = tail' $ tail' xs
 
 skipOneSpace (' ':xs) = xs
 skipOneSpace s = s
@@ -128,6 +128,13 @@ ensureTeX ('<':'-':xs) = ("\\ensuremath{\\leftarrow}", xs)
 
 ensureTeX ('=':'=':'=':xs) = ("\\ensuremath{\\equiv}", xs)
 ensureTeX ('!':'=':xs) = ("\\ensuremath{\\neq}", xs)
+
+ensureTeX ('ä':xs) = ("\\text{\\\"a}", xs)
+ensureTeX ('ö':xs) = ("\\text{\\\"o}", xs)
+ensureTeX ('ü':xs) = ("\\text{\\\"u}", xs)
+ensureTeX ('Ä':xs) = ("\\text{\\\"A}", xs)
+ensureTeX ('Ö':xs) = ("\\text{\\\"O}", xs)
+ensureTeX ('Ü':xs) = ("\\text{\\\"U}", xs)
 
 ensureTeX ('\913':xs) = ("A", xs)
 ensureTeX ('\914':xs) = ("B", xs)
