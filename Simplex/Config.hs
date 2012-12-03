@@ -15,7 +15,22 @@ dontNumberSections = not . doNumberSections
 verbs = "#!@"
 
 knownLengths
- = ["columnsep", "textfloatsep", "parskip", "parindent", "columnseprule"]
+ = ["baselineskip",     -- The normal vertical distance between lines in a paragraph
+    "baselinestretch",  -- Multiplies \baselineskip
+    "columnsep",        -- The distance between columns
+    "columnwidth",      -- The width of the column
+    "evensidemargin",   -- The margin for 'even' pages (think of a printed booklet)
+    "oddsidemargin",    -- The margin for 'odd' pages (think of a printed booklet)
+    "paperwidth",       -- The width of the page
+    "paperheight",      -- The height of the page
+    "textfloatsep",
+    "parskip",          -- The extra vertical space between paragraphs
+    "parindent",        -- The normal paragraph indentation
+    "textwidth",        -- The width of the text on the page
+    "textheight",       -- The height of text on the page
+    "tabcolsep",        -- The default separation between columns in a tabular environment
+    "topmargin",        -- The size of the top margin
+    "columnseprule"]
 
 knownSymbols
  = ["alpha", "beta", "chi", "delta", "epsilon", "eta", "gamma",
@@ -179,7 +194,12 @@ specialSymbols =
     ("diamonds", "\\ensuremath{\\diamondsuit}"),
 
     ("space", "~"),
-    ("nbsp", "~")]
+    ("nbsp", "~"),
+
+    ("today", "\\text{\\today}"),
+    ("TeX", "\\text{\\TeX}"),
+    ("LaTeX", "\\text{\\LaTeX}"),
+    ("LaTeXe", "\\text{\\LaTeXe}")]
 
 knownCommands
  = ["newpage", "vfill", "hfill", "normalsize", "normalfont",

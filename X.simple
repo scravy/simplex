@@ -4,10 +4,14 @@
 @authors
     Julian Fleischer
 
+%   @tocdepth 1
+
 %   @doublespacing
 
 tableofcontents
 newpage
+
+    \TeX  \LaTeX  \LaTeXe  \today
 
 =   Basic examples
 

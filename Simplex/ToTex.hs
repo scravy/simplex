@@ -201,6 +201,9 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
 
           : "\\usepackage[utf8]{inputenc}\n"
 
+          : "\\usepackage{eurosym}\n"
+          : "\\DeclareUnicodeCharacter{20AC}{\\euro{}}\n"
+
           : "\\usepackage{amsmath}\n"
           : "\\usepackage{amsfonts}\n"
           : "\\usepackage{amssymb}\n"
