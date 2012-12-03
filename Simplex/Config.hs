@@ -14,6 +14,9 @@ dontNumberSections = not . doNumberSections
 -- chars that introduce an inline verbatim
 verbs = "#!@"
 
+knownLengths
+ = ["columnsep", "textfloatsep", "parskip", "parindent", "columnseprule"]
+
 knownSymbols
  = ["alpha", "beta", "chi", "delta", "epsilon", "eta", "gamma",
     "iota", "kappa", "lambda", "mu", "nu", "omega", "phi",

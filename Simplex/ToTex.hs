@@ -261,6 +261,11 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
                 (lookup "doublespacing" props)
 
           : maybe
+                ""
+                (\x -> "\\setcounter{tocdepth}{" ++ x ++ "}\n")
+                (lookup "tocdepth" props)
+
+          : maybe
                 "\\setlength{\\parindent}{0cm}\n"
                 (\x -> "\\setlength{\\parindent}{" ++ x ++ "}\n")
                 (lookup "parindent" props)
@@ -492,13 +497,6 @@ mkTable (caption, opt, rows@((t,r):rs))
      ++ "\n\\end{center}\n"
      ++ when (caption /= "") ("\\caption{" ++ escapeTeX "}\n" caption ++ "\\end{table}\n")
      ++ "\n"
-
-{-
-     ++ escapeTeX "\n" (map f $ show rows)
-
-f ',' = '\n'
-f x   = x
--}
 
 when True x = x
 when False _ = []
