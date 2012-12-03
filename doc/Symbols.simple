@@ -2,6 +2,32 @@
     \usepackage{anysize}
     \marginsize{1cm}{1cm}{1cm}{1cm}
 
+@title
+    Symbols
+
+
+.!  \A  \B  \C  \D  \E  \F  \G  \H  \I  \J  \K  \L  \M
+    \N  \O  \P  \Q  \R  \S  \T  \U  \V  \W  \X  \Y  \Z
+.
+    \A  \B  \C  \D  \E  \F  \G  \H  \I  \J  \K  \L  \M
+    \N  \O  \P  \Q  \R  \S  \T  \U  \V  \W  \X  \Y  \Z
+
+.!  \Ac  \Bc  \Cc  \Dc  \Ec  \Fc  \Gc  \Hc  \Ic  \Jc  \Kc  \Lc  \Mc
+    \Nc  \Oc  \Pc  \Qc  \Rc  \Sc  \Tc  \Uc  \Vc  \Wc  \Xc  \Yc  \Zc
+.
+
+    \Ac  \Bc  \Cc  \Dc  \Ec  \Fc  \Gc  \Hc  \Ic  \Jc  \Kc  \Lc  \Mc
+    \Nc  \Oc  \Pc  \Qc  \Rc  \Sc  \Tc  \Uc  \Vc  \Wc  \Xc  \Yc  \Zc
+
+.!  \Af  \Bf  \Cf  \Df  \Ef  \Ff  \Gf  \Hf  \If  \Jf  \Kf  \Lf  \Mf
+    \Nf  \Of  \Pf  \Qf  \Rf  \Sf  \Tf  \Uf  \Vf  \Wf  \Xf  \Yf  \Zf
+.
+
+    \Af  \Bf  \Cf  \Df  \Ef  \Ff  \Gf  \Hf  \If  \Jf  \Kf  \Lf  \Mf
+    \Nf  \Of  \Pf  \Qf  \Rf  \Sf  \Tf  \Uf  \Vf  \Wf  \Xf  \Yf  \Zf
+
+newpage
+
 >@  lc | lc | lc | lc
 --
 >   \ Bbbk
