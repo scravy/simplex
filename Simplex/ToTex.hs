@@ -209,9 +209,22 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
           : "\\usepackage{listings}\n"
           : "\\usepackage{multicol}\n"
 
-          : "\\usepackage{color}\n"
+          : "\\usepackage[usenames,dvipsnames]{color}\n"
           : "\\usepackage[table]{xcolor}\n"
           : "\\usepackage{multirow}\n"
+
+          : "\\usepackage["
+          : "colorlinks,"
+          : "pdfpagelabels,"
+          : "pdfstartview=FitH,"
+          : "bookmarksopen=true,"
+          : "bookmarksnumbered=true,"
+          : "linkcolor=black,"
+          : "plainpages=false,"
+          : "hypertexnames=false,"
+          : "citecolor=black,"
+          : "urlcolor=black]"
+          : "{hyperref}\n"
 
           : "\\lstset{"
           : "basicstyle=\\small\\ttfamily,"
@@ -243,6 +256,11 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
           : "\n\n"
 
           : maybe
+                ""
+                (const "\\usepackage{setspace}\n\\doublespacing\n")
+                (lookup "doublespacing" props)
+
+          : maybe
                 "\\setlength{\\parindent}{0cm}\n"
                 (\x -> "\\setlength{\\parindent}{" ++ x ++ "}\n")
                 (lookup "parindent" props)
@@ -250,6 +268,14 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
                 "\\setlength{\\parskip}{1ex}\n"
                 (\x -> "\\setlength{\\parskip}{" ++ x ++ "}\n")
                 (lookup "parskip" props)
+          : maybe
+                "\\setlength{\\columnsep}{20pt}\n"
+                (\x -> "\\setlength{\\columnsep}{" ++ x ++ "}\n")
+                (lookup "columnsep" props)
+          : maybe
+                "\\setlength{\\textfloatsep}{10pt plus 4pt minus 3pt}\n"
+                (\x -> "\\setlength{\\textfloatsep}{" ++ x ++ "}\n")
+                (lookup "textfloatsep" props)
 
           : maybe ""
                 (("\\author{" ++) . escapeTeX "}\n" . concat . intersperse ", " . lines)
@@ -376,6 +402,9 @@ toTeX' opt (BVerbatim _ l : xs)
 toTeX' opt (BTable table : xs)
     = mkTable table : toTeX' opt xs
 
+toTeX' opt (BAny "%" _ : xs)
+    = toTeX' opt xs
+
 -- maybe report unknown BAny here
 toTeX' opt (BAny _ s : xs)
     = escapeTeX "\n\n" s : toTeX' opt xs
@@ -394,6 +423,9 @@ toTeX' opt (BCommand "colbreak" _ : xs)
 
 toTeX' opt (BCommand "endcolumns" _ : xs)
     = "\\end{multicols}\n\n" : toTeX' opt xs
+
+toTeX' opt (BCommand "columnseprule" (x:_) : xs)
+    = "\\setlength{\\columnseprule}{" : x : "}\n" : toTeX' opt xs
 
 -- use arguments “a” (!!) - “_” by now
 toTeX' opt (BCommand c _ : xs)

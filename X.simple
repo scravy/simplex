@@ -4,28 +4,15 @@
 @authors
     Julian Fleischer
 
+%   @doublespacing
+
 tableofcontents
 newpage
 
 =   Basic examples
 
-    A three-by-three table, but without any lines:
+columns 4
 
-columns 2
-.verbatim
-    >   1
-    >   2
-    >   3
-    \\
-    >   4
-    >   5
-    >   6
-    \\
-    >   7
-    >   8
-    >   9
-
-colbreak
 >   1
 >   2
 >   3
@@ -37,26 +24,8 @@ colbreak
 >   7
 >   8
 >   9
-endcolumns
-
-    Expanding upon that by including some vertical lines:
-
-columns 2
-.verbatim
-    >@  l|c||r
-    >   1
-    >   2
-    >   3
-    \\
-    >   4
-    >   5
-    >   6
-    \\
-    >   7
-    >   8
-    >   9
-
 colbreak
+
 >@  l|c||r
 >   1
 >   2
@@ -69,30 +38,8 @@ colbreak
 >   7
 >   8
 >   9
-endcolumns
-
-newpage
-
-    To add horizontal lines to the very top and bottom edges of the table:
-
-columns 2
-.verbatim
-    >@  l|c||r
-    --
-    >   1
-    >   2
-    >   3
-    \\
-    >   4
-    >   5
-    >   6
-    \\
-    >   7
-    >   8
-    >   9
-    --
-
 colbreak
+
 >@  l|c||r
 --
 >   1
@@ -107,28 +54,8 @@ colbreak
 >   8
 >   9
 --
-endcolumns
-
-    And finally, to add lines everywhere:
-
-columns 2
-.verbatim
-    >@  |l|c||r|
-    --
-    >   1
-    >   2
-    >   3
-    --
-    >   4
-    >   5
-    >   6
-    --
-    >   7
-    >   8
-    >   9
-    --
-
 colbreak
+
 >@  |l|c||r|
 --
 >   1
@@ -138,11 +65,75 @@ colbreak
 >   4
 >   5
 >   6
---
+==
 >   7
 >   8
 >   9
 --
+endcolumns
+
+    The Code to create these four tables can be seen below:
+
+columns 4
+columnseprule 0.4pt
+
+.!  >   1
+    >   2
+    >   3
+    \\
+    >   4
+    >   5
+    >   6
+    \\
+    >   7
+    >   8
+    >   9
+colbreak
+
+.!  >@  l|c||r
+    >   1
+    >   2
+    >   3
+    \\
+    >   4
+    >   5
+    >   6
+    \\
+    >   7
+    >   8
+    >   9
+colbreak
+
+.!  >@  l|c||r
+    --
+    >   1
+    >   2
+    >   3
+    \\
+    >   4
+    >   5
+    >   6
+    \\
+    >   7
+    >   8
+    >   9
+    --
+colbreak
+
+.!  >@  |l|c||r|
+    --
+    >   1
+    >   2
+    >   3
+    --
+    >   4
+    >   5
+    >   6
+    ==
+    >   7
+    >   8
+    >   9
+    --
 endcolumns
 
 newpage
