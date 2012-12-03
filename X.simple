@@ -4,6 +4,9 @@
 @authors
     Julian Fleischer
 
+tableofcontents
+newpage
+
 =   Basic examples
 
     A three-by-three table, but without any lines:
@@ -106,11 +109,11 @@ colbreak
 --
 endcolumns
 
-    And finally, to add lines between all rows:
+    And finally, to add lines everywhere:
 
 columns 2
 .verbatim
-    >@  l|c||r
+    >@  |l|c||r|
     --
     >   1
     >   2
@@ -126,7 +129,7 @@ columns 2
     --
 
 colbreak
->@  l|c||r
+>@  |l|c||r|
 --
 >   1
 >   2

@@ -33,9 +33,9 @@ write file content = writeFile (file ++ ".tex") content
 pdflatex file = do
     putStrLn ("\n:=  Processing: " ++ file ++ ".tex\n")
     result <- rawSystem "pdflatex" ["-halt-on-error", file ++ ".tex"]
-    putStrLn $ case result of
-                ExitSuccess -> "\n=>  Success!"
-                ExitFailure code -> "\n=>  Fail (" ++ show code ++ ")"
+    case result of
+                ExitSuccess -> rawSystem "pdflatex" ["-halt-on-error", file ++ ".tex"] >> putStrLn "\n=>  Success!"
+                ExitFailure code -> putStrLn $ "\n=>  Fail (" ++ show code ++ ")"
     return result
 
 report file result = putStrLn $ file ++ ": " ++ show result

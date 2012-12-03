@@ -4,188 +4,9 @@ import Simplex.Parser
 import Data.List
 import Data.Char
 import Data.Maybe
+import Simplex.Config
 
 import Prelude hiding (lex)
-
--- chars that introduce an inline verbatim
-verbs = "#!@"
-
-knownSymbols
- = ["alpha", "beta", "chi", "delta", "epsilon", "eta", "gamma",
-    "iota", "kappa", "lambda", "mu", "nu", "omega", "phi",
-    "pi", "psi", "rho", "sigma", "tau", "theta", "upsilon",
-    "xi", "zeta", "digamma", "varepsilon", "varkappa", "varphi",
-    "varpi", "varrho", "varsigma", "vartheta",
-
-    "Delta", "Gamma", "Lambda", "Omega", "Phi", "Pi", "Psi",
-    "Sigma", "Theta", "Upsilon", "Xi",
-
-    "aleph", "beth", "daleth", "gimel",
-
-    "vert", "Vert",
-    "langle", "rangle", "lfloor", "rfloor", "lceil", "rceil",
-    "llcorner", "lrcorner", "ulcorner", "urcorner",
-
-    "leftarrow", "Leftarrow", "rightarrow", "Rightarrow",
-    "leftrightarrow", "Leftrightarrow", "longleftarrow",
-    "Longleftarrow", "longrightarrow", "Longrightarrow",
-    "longleftrightarrow", "Longleftrightarrow",
-
-    "uparrow", "Uparrow", "downarrow", "Downarrow",
-    "updownarrow", "Updownarrow", "mapsto", "hookleftarrow",
-    "leftharpoonup", "leftharpoondown", "rightleftharpoons",
-    "longmapsto", "hookrightarrow", "rightharpoonup",
-    "rightharpoondown", "leadsto",
-    "nearrow", "searrow", "swarrow", "nwarrow",
-
-    "dashrightarrow", "leftrightarrows", "leftarrowtail",
-    "curvearrowleft", "upuparrows", "multimap",
-    "rightleftarrows", "twoheadrightarrow",
-    "Rsh", "downharpoonright", "nleftarrow", "nRightarrow",
-    "nrightarrow", "nleftrightarrow", "nLeftarrow",
-    "nLeftrightarrow",
-    "dashleftarrow", "Lleftarrow", "looparrowleft",
-    "circlearrowleft", "upharpoonleft", "leftrightsquigarrow",
-    "rightarrowtail", "curvearrowright",
-    "downdownarrows", "rightsquigarrow", "leftleftarrows",
-    "twoheadleftarrow", "leftrightharpoons", "Lsh",
-    "downharpoonleft", "rightrightarrows",
-    "looparrowright", "circlearrowright", "upharpoonright",
-
-    "sum", "prod", "coprod", "int", "oint", "iint",
-    "biguplus", "bigcap", "bigcup",
-    "bigoplus", "bigotimes", "bigodot",
-    "bigvee", "bigwedge", "bigsqcup",
-
-    "ast", "star", "cdot", "circ", "bullet", "bigcirc", "diamond",
-    "times", "div", "centerdot", "circledast", "circledcirc",
-    "circleddash", "dotplus", "divideontimes", "pm", "mp",
-    "amalg", "odot", "ominus", "oplus", "oslash", "otimes",
-    "wr", "Box", "boxplus", "boxminus", "boxtimes", "boxdot",
-    "square", "cap", "cup", "uplus", "sqcap", "sqcup",
-    "wedge", "vee", "dagger", "ddagger", "barwedge", "curlywedge",
-    "Cap", "bot", "intercal", "doublebarwedge", "lhd", "rhd",
-    "triangleleft", "triangleright", "unlhd", "unrhd",
-    "bigtriangledown", "bigtriangleup", "setminus", "veebar",
-    "curlyvee", "Cup", "top", "rightthreetimes", "leftthreetimes",
-
-    "equiv", "cong", "neq", "sim", "simeq", "approx", "asymp",
-    "doteq", "propto", "models", "leq", "prec", "preceq", "ll",
-    "subset", "subseteq", "sqsubset", "sqsubseteq", "dashv",
-    "in", "ni", "notin", "geq", "succ", "succeq", "gg", "supset",
-    "supseteq", "sqsupset", "sqsupseteq", "vdash", "perp", "mid",
-    "parallel", "bowtie", "Join", "ltimes", "rtimes", "smile",
-    "frown",
-
-    "approxeq", "thicksim", "backsim", "backsimeq", "triangleq",
-    "circeq", "bumpeq", "Bumpeq", "doteqdot", "thickapprox",
-    "fallingdotseq", "risingdotseq", "varpropto", "therefore",
-    "because", "eqcirc", "leqq", "leqslant", "lessapprox",
-    "lll", "lessdot", "lesssim", "eqslantless", "precsim",
-    "precapprox", "Subset", "subseteqq", "preccurlyeq",
-    "curlyeqprec", "blacktriangleleft", "trianglelefteq",
-    "vartriangleleft", "geqq", "geqslant", "gtrapprox", "ggg",
-    "gtrdot", "gtrsim", "eqslantgtr", "succsim", "succapprox",
-    "Supset", "supseteqq", "succcurlyeq",
-    "curlyeqsucc", "blacktriangleright", "trianglerighteq",
-    "vartriangleright", "lessgtr", "lesseqgtr", "gtreqqless",
-    "gtreqless", "gtrless", "backepsilon", "between", "pitchfork",
-    "shortmid", "smallfrown", "smallsmile", "Vdash", "vDash",
-    "Vvdash", "shortparallel",
-
-    "ncong", "nmid", "nparallel", "nshortmid", "nshortparallel",
-    "nsim", "nVDash", "nvDash", "nvdash", "ntriangleleft",
-    "ntrianglelefteq", "ntriangleright", "ntrianglerighteq",
-    "nleq", "nleqq", "nleqslant", "nless", "nprec", "npreceq",
-    "precnapprox", "precnsim", "lnapprox", "lneq", "lneqq", "lnsim",
-    "lvertneqq", "ngeq", "ngeqq", "ngeqslant", "ngtr", "nsucc",
-    "nsucceq", "succnapprox", "succnsim", "gnapprox", "gneq",
-    "gneqq", "gnsim", "gvertneqq", "nsubseteq", "nsupseteq",
-    "nsubseteqq", "nsupseteqq", "subsetneq", "supsetneq",
-    "subsetneqq", "supsetneqq", "varsubsetneq", "varsupsetneq",
-    "varsubsetneqq", "varsupsetneqq",
-
-    "infty", "nabla", "partial", "eth", "clubsuit", "diamondsuit",
-    "heartsuit", "spadesuit", "cdots", "vdots", "ldots", "ddots",
-    "Im", "Re", "forall", "exists", "nexists", "emptyset",
-    "varnothing", "imath", "jmath", "ell", "iiiint", "iiint",
-    "sharp", "flat", "natural", "Bbbk", "bigstar", "diagdown",
-    "diagup", "Diamond", "Finv", "Game", "hbar", "hslash", "lozenge",
-    "mho", "prime", "surd", "wp", "angle", "complement",
-    "measuredangle", "sphericalangle", "triangledown", "triangle",
-    "vartriangle", "blacklozenge", "blacksquare", "blacktriangle",
-    "blacktriangledown", "backprime", "circledS" ]
-
-specialSymbols =
-   [("A", "\\ensuremath{\\mathbb{A}}"),
-    ("B", "\\ensuremath{\\mathbb{B}}"),
-    ("C", "\\ensuremath{\\mathbb{C}}"),
-    ("D", "\\ensuremath{\\mathbb{D}}"),
-    ("E", "\\ensuremath{\\mathbb{E}}"),
-    ("F", "\\ensuremath{\\mathbb{F}}"),
-    ("G", "\\ensuremath{\\mathbb{G}}"),
-    ("H", "\\ensuremath{\\mathbb{H}}"),
-    ("I", "\\ensuremath{\\mathbb{I}}"),
-    ("J", "\\ensuremath{\\mathbb{J}}"),
-    ("K", "\\ensuremath{\\mathbb{K}}"),
-    ("L", "\\ensuremath{\\mathbb{L}}"),
-    ("M", "\\ensuremath{\\mathbb{M}}"),
-    ("N", "\\ensuremath{\\mathbb{N}}"),
-    ("O", "\\ensuremath{\\mathbb{O}}"),
-    ("P", "\\ensuremath{\\mathbb{P}}"),
-    ("Q", "\\ensuremath{\\mathbb{Q}}"),
-    ("R", "\\ensuremath{\\mathbb{R}}"),
-    ("S", "\\ensuremath{\\mathbb{S}}"),
-    ("T", "\\ensuremath{\\mathbb{T}}"),
-    ("U", "\\ensuremath{\\mathbb{U}}"),
-    ("V", "\\ensuremath{\\mathbb{V}}"),
-    ("W", "\\ensuremath{\\mathbb{W}}"),
-    ("X", "\\ensuremath{\\mathbb{X}}"),
-    ("Y", "\\ensuremath{\\mathbb{Y}}"),
-    ("Z", "\\ensuremath{\\mathbb{Z}}"),
-
-    ("c", "\\text{\\copyright}"),
-    ("copyright", "\\text{\\copyright}"),
-    ("ae", "\\text{\\ae}"),
-    ("AE", "\\text{\\AE}"),
-    ("oe", "\\text{\\oe}"),
-    ("OE", "\\text{\\OE}"),
-
-    ("par", "\\text{\\P}"),
-    ("sec", "\\text{\\S}"),
-    ("sect", "\\text{\\S}"),
-    ("section", "\\text{\\S}"),
-
-    ("aa", "\\text{\\aa}"),
-    ("AA", "\\text{\\AA}"),
-    ("ss", "\\text{\\ss}"),
-    ("dag", "\\text{\\dag}"),
-    ("ddag", "\\text{\\ddag}"),
-    ("pounds", "\\text{\\pounds}"),
-
-    ("bullet", "\\text{\\textbullet}"),
-    ("backslash", "\\text{\\textbackslash}"),
-
-    ("clubs", "\\ensuremath{\\clubsuit}"),
-    ("hearts", "\\ensuremath{\\heartsuit}"),
-    ("spades", "\\ensuremath{\\spadesuit}"),
-    ("diamonds", "\\ensuremath{\\diamondsuit}"),
-
-    ("space", "~"),
-    ("nbsp", "~")]
-
-knownCommands
- = ["newpage", "vfill", "hfill", "normalsize", "normalfont",
-    "noindent",
-
-    "tiny", "scriptsize", "footnotesize", "small",
-    "large", "Large", "LARGE", "huge", "Huge",
-
-    "rmfamily", "sffamily", "ttfamily", "mdseries", "bfseries",
-    "upshape", "itshape", "slshape", "scschape", "em"]
-
-specialCommands
- = [("pagebreak", "newpage")]
 
 tail' [] = []
 tail' xs = tail xs
@@ -367,7 +188,7 @@ safeTeX s@(x:xs)
         where (a, b) = ensureTeX s
 safeTeX [] = []
 
-toTeX (Document blocks props) = (concat . preamble . toTeX') blocks
+toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ blocks
     where
         preamble xs =
             "\\documentclass[a4paper"
@@ -452,138 +273,138 @@ toTeX (Document blocks props) = (concat . preamble . toTeX') blocks
 
           : xs
 
-toTeX' (BSection s : xs)
-    = "\\section*{" : escapeTeX "}\n\n" s : toTeX' xs
+toTeX' opt (BSection s : xs)
+    = "\\section" : when (dontNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
-toTeX' (BSubsection s : xs)
-    = "\\subsection*{" : escapeTeX "}\n\n" s : toTeX' xs
+toTeX' opt (BSubsection s : xs)
+    = "\\subsection" : when (dontNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
-toTeX' (BSubsubsection s : xs)
-    = "\\subsubsection*{" : escapeTeX "}\n\n" s : toTeX' xs
+toTeX' opt (BSubsubsection s : xs)
+    = "\\subsubsection" : when (dontNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
-toTeX' (BLine : xs)
-    = "\n\n\\hspace{\\fill}\\rule{0.8\\linewidth}{0.7pt}\\hspace{\\fill}\n\n" : toTeX' xs
+toTeX' opt (BLine : xs)
+    = "\n\n\\hspace{\\fill}\\rule{0.8\\linewidth}{0.7pt}\\hspace{\\fill}\n\n" : toTeX' opt xs
 
-toTeX' (BTherefore s : xs)
-    = "\\paragraph{$\\Rightarrow$} " : escapeTeX "\n\n" s : toTeX' xs
+toTeX' opt (BTherefore s : xs)
+    = "\\paragraph{$\\Rightarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
 
-toTeX' (BNTherefore s : xs)
-    = "\\paragraph{$\\nRightarrow$} " : escapeTeX "\n\n" s : toTeX' xs
+toTeX' opt (BNTherefore s : xs)
+    = "\\paragraph{$\\nRightarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
 
-toTeX' (BBecause s : xs)
-    = "\\paragraph{$\\Leftarrow$} " : escapeTeX "\n\n" s : toTeX' xs
+toTeX' opt (BBecause s : xs)
+    = "\\paragraph{$\\Leftarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
 
-toTeX' (BNBecause s : xs)
-    = "\\paragraph{$\\nLeftarrow$} " : escapeTeX "\n\n" s : toTeX' xs
+toTeX' opt (BNBecause s : xs)
+    = "\\paragraph{$\\nLeftarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
 
-toTeX' (BDefine w s : xs)
-    = "\\paragraph{" : escapeTeX ('}' : escapeTeX "\n\n" s) w : toTeX' xs
+toTeX' opt (BDefine w s : xs)
+    = "\\paragraph{" : escapeTeX ('}' : escapeTeX "\n\n" s) w : toTeX' opt xs
 
-toTeX' (BRemark w s : xs)
-    = "\\underline{" : escapeTeX ('}' : escapeTeX "\n\n" s) w : toTeX' xs
+toTeX' opt (BRemark w s : xs)
+    = "\\underline{" : escapeTeX ('}' : escapeTeX "\n\n" s) w : toTeX' opt xs
 
-toTeX' (BAdvise l : xs)
+toTeX' opt (BAdvise l : xs)
     = "\\begin{advise}\n"
     : (concat ("\\item " : intersperse "\\item " (map (escapeTeX "\n") l)))
-    : "\\end{advise}\n" : toTeX' xs
+    : "\\end{advise}\n" : toTeX' opt xs
 
-toTeX' (BItemize l : xs)
+toTeX' opt (BItemize l : xs)
     = "\\begin{itemize}\n"
     : (concat ("\\item " : intersperse "\\item " (map (escapeTeX "\n") l)))
-    : "\\end{itemize}\n" : toTeX' xs
+    : "\\end{itemize}\n" : toTeX' opt xs
 
-toTeX' (BEnumerate l : xs)
+toTeX' opt (BEnumerate l : xs)
     = "\\begin{enumerate}\n"
     : (concat ("\\item " : intersperse "\\item " (map (escapeTeX "\n") l)))
-    : "\\end{enumerate}\n" : toTeX' xs
+    : "\\end{enumerate}\n" : toTeX' opt xs
 
-toTeX' (BDescription l : xs)
+toTeX' opt (BDescription l : xs)
     = "\\begin{description}\n"
     : concat (map (\(dt, dd) -> "\\item[" ++ escapeTeX (']' : ' ' : escapeTeX "\n" dd) dt) l)
-    : "\\end{description}\n" : toTeX' xs
+    : "\\end{description}\n" : toTeX' opt xs
 
-toTeX' (BDescribeItems l : xs)
+toTeX' opt (BDescribeItems l : xs)
     = "\\begin{itemize}\n"
     : concat (map (\(dt, dd) -> "\\item[\\textbf{" ++ escapeTeX ('}' : ']' : ' ' : escapeTeX "\n" dd) dt) l)
-    : "\\end{itemize}\n" : toTeX' xs
+    : "\\end{itemize}\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "ascii" l : xs)
-    = "\\begin{verbatim}\n" : l : "\\end{verbatim}\n" : toTeX' xs
+toTeX' opt (BVerbatim "ascii" l : xs)
+    = "\\begin{verbatim}\n" : l : "\\end{verbatim}\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "verbatim" l : xs)
-    = "\\begin{verbatim}\n" : l : "\\end{verbatim}\n" : toTeX' xs
+toTeX' opt (BVerbatim "verbatim" l : xs)
+    = "\\begin{verbatim}\n" : l : "\\end{verbatim}\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "!" l : xs)
-    = "\\begin{verbatim}\n" : l : "\\end{verbatim}\n" : toTeX' xs
+toTeX' opt (BVerbatim "!" l : xs)
+    = "\\begin{verbatim}\n" : l : "\\end{verbatim}\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "code" l : xs)
-    = "\\begin{lstlisting}[mathescape]\n" : l : "\\end{lstlisting}\n" : toTeX' xs
+toTeX' opt (BVerbatim "code" l : xs)
+    = "\\begin{lstlisting}[mathescape]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "#" l : xs)
-    = "\\begin{lstlisting}[mathescape]\n" : l : "\\end{lstlisting}\n" : toTeX' xs
+toTeX' opt (BVerbatim "#" l : xs)
+    = "\\begin{lstlisting}[mathescape]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "php" l : xs)
-    = "\\begin{lstlisting}[language = php]\n" : l : "\\end{lstlisting}\n" : toTeX' xs
+toTeX' opt (BVerbatim "php" l : xs)
+    = "\\begin{lstlisting}[language = php]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "java" l : xs)
-    = "\\begin{lstlisting}[language = java]\n" : l : "\\end{lstlisting}\n" : toTeX' xs
+toTeX' opt (BVerbatim "java" l : xs)
+    = "\\begin{lstlisting}[language = java]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "haskell" l : xs)
-    = "\\begin{lstlisting}[language = haskell]\n" : l : "\\end{lstlisting}\n" : toTeX' xs
+toTeX' opt (BVerbatim "haskell" l : xs)
+    = "\\begin{lstlisting}[language = haskell]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "math" l : xs)
-    = "\\begin{displaymath}\n" : l : "\\end{displaymath}\n" : toTeX' xs
+toTeX' opt (BVerbatim "math" l : xs)
+    = "\\begin{displaymath}\n" : l : "\\end{displaymath}\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "$" l : xs)
-    = "\\begin{displaymath}\n" : l : "\\end{displaymath}\n" : toTeX' xs
+toTeX' opt (BVerbatim "$" l : xs)
+    = "\\begin{displaymath}\n" : l : "\\end{displaymath}\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "latex" l : xs)
-    = "\n" : l : "\n" : toTeX' xs
+toTeX' opt (BVerbatim "latex" l : xs)
+    = "\n" : l : "\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "table" l : xs)
-    = "\n" : l : "\n" : toTeX' xs
+toTeX' opt (BVerbatim "table" l : xs)
+    = "\n" : l : "\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "comment" l : xs)
-    = "\n" : (unlines $ map ('%':) $ lines l) : "\n" : toTeX' xs
+toTeX' opt (BVerbatim "comment" l : xs)
+    = "\n" : (unlines $ map ('%':) $ lines l) : "\n" : toTeX' opt xs
 
-toTeX' (BVerbatim "%" l : xs)
-    = "\n" : (unlines $ map ('%':) $ lines l) : "\n" : toTeX' xs
+toTeX' opt (BVerbatim "%" l : xs)
+    = "\n" : (unlines $ map ('%':) $ lines l) : "\n" : toTeX' opt xs
 
-toTeX' (BVerbatim _ l : xs)
-    = "\\begin{verbatim}\n" : l : "\\end{verbatim}\n" : toTeX' xs
+toTeX' opt (BVerbatim _ l : xs)
+    = "\\begin{verbatim}\n" : l : "\\end{verbatim}\n" : toTeX' opt xs
 
-toTeX' (BTable table : xs)
-    = mkTable table : toTeX' xs
+toTeX' opt (BTable table : xs)
+    = mkTable table : toTeX' opt xs
 
 -- maybe report unknown BAny here
-toTeX' (BAny _ s : xs)
-    = escapeTeX "\n\n" s : toTeX' xs
+toTeX' opt (BAny _ s : xs)
+    = escapeTeX "\n\n" s : toTeX' opt xs
 
-toTeX' (BParagraph s : xs)
-    = escapeTeX "\n\n" s : toTeX' xs
+toTeX' opt (BParagraph s : xs)
+    = escapeTeX "\n\n" s : toTeX' opt xs
 
-toTeX' (BCommand "break" [x] : xs)
-    = "\\hfill \\\\[" : x : "]" : toTeX' xs
+toTeX' opt (BCommand "break" [x] : xs)
+    = "\\hfill \\\\[" : x : "]" : toTeX' opt xs
 
-toTeX' (BCommand "columns" (x:_) : xs)
-    = "\\begin{multicols}{" : x : "}\n\n" : toTeX' xs
+toTeX' opt (BCommand "columns" (x:_) : xs)
+    = "\\begin{multicols}{" : x : "}\n\n" : toTeX' opt xs
 
-toTeX' (BCommand "colbreak" _ : xs)
-    = "\\vfill\n\\columnbreak\n" : toTeX' xs
+toTeX' opt (BCommand "colbreak" _ : xs)
+    = "\\vfill\n\\columnbreak\n" : toTeX' opt xs
 
-toTeX' (BCommand "endcolumns" _ : xs)
-    = "\\end{multicols}\n\n" : toTeX' xs
+toTeX' opt (BCommand "endcolumns" _ : xs)
+    = "\\end{multicols}\n\n" : toTeX' opt xs
 
 -- use arguments “a” (!!) - “_” by now
-toTeX' (BCommand c _ : xs)
-    | c `elem` knownCommands = ('\\' : c) : "\n" : toTeX' xs
-    | isJust c' = ('\\' : fromJust c') : "\n" : toTeX' xs
-    | otherwise = "\\textcolor{red}{Unknown Command: " : c : "}\n\n" : toTeX' xs
+toTeX' opt (BCommand c _ : xs)
+    | c `elem` knownCommands = ('\\' : c) : "\n" : toTeX' opt xs
+    | isJust c' = ('\\' : fromJust c') : "\n" : toTeX' opt xs
+    | otherwise = "\\textcolor{red}{Unknown Command: " : c : "}\n\n" : toTeX' opt xs
         where c' = lookup c specialCommands
 
-toTeX' [] = ["\n\\end{document}\n"]
+toTeX' _ [] = ["\n\\end{document}\n"]
 
--- toTeX' (x : xs) = error ("Unknown Thingie: " ++ show x)
+-- toTeX' opt (x : xs) = error ("Unknown Thingie: " ++ show x)
 
 mkTable :: Table -> String
 mkTable (caption, opt, rows@((t,r):rs))
@@ -649,3 +470,7 @@ f x   = x
 
 when True x = x
 when False _ = []
+
+ifElse True x _ = x
+ifElse _    _ y = y
+
