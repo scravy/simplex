@@ -1,7 +1,7 @@
 module Simplex.ToTeX (toTeX) where
 
 import Simplex.Parser
-import Data.List
+import Data.List (intersperse)
 import Data.Char
 import Data.Maybe
 import Simplex.Config
@@ -414,6 +414,15 @@ toTeX' opt (BParagraph s : xs)
 
 toTeX' opt (BCommand "break" [x] : xs)
     = "\\hfill \\\\[" : x : "]" : toTeX' opt xs
+
+toTeX' opt (BCommand "columns" (x:_) : xs)
+    = "\\begin{multicols}{" : x : "}\n\n" : toTeX' opt xs
+
+toTeX' opt (BCommand "colbreak" _ : xs)
+    = "\\vfill\n\\columnbreak\n" : toTeX' opt xs
+
+toTeX' opt (BCommand "endcolumns" _ : xs)
+    = "\\end{multicols}\n\n" : toTeX' opt xs
 
 toTeX' opt (BCommand c (x:_) : xs)
     | isJust l = "\\setlength{\\" : c : "}{" : x : "}\n" : toTeX' opt xs

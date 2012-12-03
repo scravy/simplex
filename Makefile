@@ -8,7 +8,7 @@ all: X.pdf A7.pdf
 	cat $^ | runhaskell mktex.hs > $@
 
 clean:
-	rm -rf *.log *.aux *.out *.tex
+	rm -rf *.log *.aux *.out *.tex *.toc
 
 purge: clean
 	rm -rf *.pdf

@@ -222,7 +222,5 @@ knownCommands
     "upshape", "itshape", "slshape", "scschape", "em"]
 
 specialCommands
- = [("pagebreak", "newpage"),
-    ("newcolumn", "colbreak"),
-    ("columnbreak", "colbreak")]
+ = [("pagebreak", "newpage")]
 
