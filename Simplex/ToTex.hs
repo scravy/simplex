@@ -415,7 +415,7 @@ toTeX' opt (BParagraph s : xs)
 toTeX' opt (BCommand "break" [x] : xs)
     = "\\hfill \\\\[" : x : "]" : toTeX' opt xs
 
-toTeX' opt (BCommand "columns" (x:_) : xs)
+toTeX' opt (BCommand "columns" [x] : xs)
     = "\\begin{multicols}{" : x : "}\n\n" : toTeX' opt xs
 
 toTeX' opt (BCommand "colbreak" _ : xs)
