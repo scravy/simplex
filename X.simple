@@ -1,10 +1,23 @@
-@title
-    Simplex
+@preamble
+    \usepackage{fancyhdr}
+    \setlength{\headheight}{2cm}
+    \pagestyle{fancy}
+    \lhead{\textbf{Telematik}\\1. Übungsblatt}
+    \chead{}
+    \rhead{Julian Fleischer\\2012-12-04}
+    \lfoot{}
+    \cfoot{}
+    \rfoot{}
 
-@authors
-    Julian Fleischer
+@fontsize 11pt
 
-@nicesections
+.comment
+    @title
+        Simplex
+
+    @authors
+        Julian Fleischer
+.
 
 columns 2
 
