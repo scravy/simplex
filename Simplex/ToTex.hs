@@ -309,7 +309,11 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
                 (("\\begin{abstract}\n" ++) . escapeTeX "\\end{abstract}\n\n")
                 (lookup "abstract" props)          
 
+          : "\n{\n"
           : xs
+
+toTeX' opt []
+    = when (oColumns opt > 0) "\\end{multicols}" : ["\n}\n\\end{document}\n"]
 
 toTeX' opt (BSection s : xs)
     = "\\section" : when (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
@@ -438,7 +442,11 @@ toTeX' opt (BCommand "colbreak" _ : xs)
         = "\\vfill\n\\columnbreak\n" : toTeX' opt xs
 
 toTeX' opt (BCommand "endcolumns" _ : xs)
-    = "\\end{multicols}\n\n" : toTeX' (opt { oColumns = 0 }) xs
+    | oColumns opt > 0
+        = "\\end{multicols}\n\n" : toTeX' (opt { oColumns = 0 }) xs
+    | otherwise
+        = "\\textcolor{orange}{Columns already ended.}"
+        : toTeX' (opt { oColumns = 0 }) xs
 
 toTeX' opt (BCommand c (x:_) : xs)
     | isJust l = "\\setlength{\\" : c : "}{" : x : "}\n" : toTeX' opt xs
@@ -446,13 +454,10 @@ toTeX' opt (BCommand c (x:_) : xs)
 
 toTeX' opt (BCommand c args : xs)
     | c `elem` knownCommands = ('\\' : c) : "\n" : toTeX' opt xs
-    | isJust c' = f args : "\n" : toTeX' opt xs
+    | isJust c' = snd r : "\n" : toTeX' (fst r) xs
     | otherwise = "\\textcolor{red}{Unknown Command: " : escapeTeX "}\n\n" c : toTeX' opt xs
         where c' = lookup c specialCommands
-              f  = fromJust c'
-
-toTeX' opt []
-    = when (oColumns opt > 0) "\\end{multicols}\n" : ["\n\\end{document}\n"]
+              r  = (fromJust c') opt args
 
 mkTable :: Table -> String
 mkTable (caption, opt, rows@((t,r):rs))
@@ -460,6 +465,7 @@ mkTable (caption, opt, rows@((t,r):rs))
         spec
             | opt == [] = take numCols $ repeat 'l'
             | otherwise = head opt
+
         numCols = maximum (map (length.snd) rows)
 
         mkRows ((NoBorder,[]):rs) = mkRows rs
@@ -501,13 +507,13 @@ mkTable (caption, opt, rows@((t,r):rs))
         cellContent _ c = escapeTeX "" c
 
     in  when (caption /= "") "\\begin{table}[!h]\n"
-     ++ "\\begin{center}\n"
-     ++ "\\begin{tabular}{" ++ spec ++ "}\n"
-     ++ body
-     ++ "\n\\end{tabular}\n"
-     ++ "\n\\end{center}\n"
-     ++ when (caption /= "") ("\\caption{" ++ escapeTeX "}\n" caption ++ "\\end{table}\n")
-     ++ "\n"
+        ++ "\\begin{center}\n"
+        ++ "\\begin{tabular}{" ++ spec ++ "}\n"
+        ++ body
+        ++ "\n\\end{tabular}\n"
+        ++ "\n\\end{center}\n"
+        ++ when (caption /= "") ("\\caption{" ++ escapeTeX "}\n" caption ++ "\\end{table}\n")
+        ++ "\n"
 
 when True x = x
 when False _ = []

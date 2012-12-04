@@ -279,12 +279,17 @@ knownCommands
     "upshape", "itshape", "slshape", "scschape", "em"]
 
 specialCommands
- = [("pagebreak", \_ -> "\\newpage"),
-    ("italic", \_ -> "\\itshape"),
-    ("bold", \_ -> "\\bfseries"),
-    ("left", \_ -> "\\raggedleft"),
-    ("right", \_ -> "\\raggedright"),
-    ("center", \_ -> "\\centering")]
+ = [("pagebreak",   \o _ -> (o, "\\newpage")),
+    ("italic",      \o _ -> (o, "\\itshape")),
+    ("bold",        \o _ -> (o, "\\bfseries")),
+    ("right",       \o _ -> (o, "\\raggedleft")),
+    ("left",        \o _ -> (o, "\\raggedright")),
+    ("center",      \o _ -> (o, "\\centering")),
+    ("reset",       reset)]
+
+reset opt _
+    | oColumns opt > 0 = (opt {oColumns = 0}, "\\end{multicols}}{")
+    | otherwise        = (opt, "}{")
 
 showSymbols = do
     let symbols = sort knownSymbols
