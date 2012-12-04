@@ -8,11 +8,13 @@ import Data.List (sort)
 
 data Config
  = Config {
-    doNumberSections :: Bool
-   }           
+    doNumberSections :: Bool,
+    oColumns :: Int
+}           
 
 defaultConfig = Config {
-    doNumberSections = False
+    doNumberSections = False,
+    oColumns = 0
 }
 
 config (Document blocks props)
@@ -277,9 +279,12 @@ knownCommands
     "upshape", "itshape", "slshape", "scschape", "em"]
 
 specialCommands
- = [("pagebreak", "newpage"),
-    ("italic", "itshape"),
-    ("bold", "bfseries")]
+ = [("pagebreak", \_ -> "\\newpage"),
+    ("italic", \_ -> "\\itshape"),
+    ("bold", \_ -> "\\bfseries"),
+    ("left", \_ -> "\\raggedleft"),
+    ("right", \_ -> "\\raggedright"),
+    ("center", \_ -> "\\centering")]
 
 showSymbols = do
     let symbols = sort knownSymbols

@@ -202,6 +202,11 @@ makePreambleLengths p
             | otherwise  = maybe ""                   (s x) (lookup x p)
     in  concat $ map f knownLengths
 
+articleType ((x, _): xs)
+    | x `elem` [] = ""
+    | otherwise = articleType xs
+articleType [] = "article"
+
 toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ blocks
     where
         preamble xs =
@@ -211,7 +216,7 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
           : maybe "" (const ",draft") (lookup "draft" props)
           : maybe "" (const ",landscape") (lookup "landscape" props)
 
-          : "]{article}\n"
+          : "]{" : articleType props : "}\n"
 
           : "\\usepackage[utf8]{inputenc}\n"
 
@@ -423,25 +428,31 @@ toTeX' opt (BCommand "break" [x] : xs)
     = "\\hfill \\\\[" : x : "]" : toTeX' opt xs
 
 toTeX' opt (BCommand "columns" [x] : xs)
-    = "\\begin{multicols}{" : x : "}\n\n" : toTeX' opt xs
+    | all isDigit x
+        = when (oColumns opt > 0) "\\end{multicols}\n\n"
+        : "\\begin{multicols}{" : x : "}\n\n"
+        : toTeX' (opt { oColumns = read x } ) xs
 
 toTeX' opt (BCommand "colbreak" _ : xs)
-    = "\\vfill\n\\columnbreak\n" : toTeX' opt xs
+    | oColumns opt > 0
+        = "\\vfill\n\\columnbreak\n" : toTeX' opt xs
 
 toTeX' opt (BCommand "endcolumns" _ : xs)
-    = "\\end{multicols}\n\n" : toTeX' opt xs
+    = "\\end{multicols}\n\n" : toTeX' (opt { oColumns = 0 }) xs
 
 toTeX' opt (BCommand c (x:_) : xs)
     | isJust l = "\\setlength{\\" : c : "}{" : x : "}\n" : toTeX' opt xs
         where l = lookup c knownLengths
 
-toTeX' opt (BCommand c _ : xs)
+toTeX' opt (BCommand c args : xs)
     | c `elem` knownCommands = ('\\' : c) : "\n" : toTeX' opt xs
-    | isJust c' = ('\\' : fromJust c') : "\n" : toTeX' opt xs
+    | isJust c' = f args : "\n" : toTeX' opt xs
     | otherwise = "\\textcolor{red}{Unknown Command: " : escapeTeX "}\n\n" c : toTeX' opt xs
         where c' = lookup c specialCommands
-              
-toTeX' _ [] = ["\n\\end{document}\n"]
+              f  = fromJust c'
+
+toTeX' opt []
+    = when (oColumns opt > 0) "\\end{multicols}\n" : ["\n\\end{document}\n"]
 
 mkTable :: Table -> String
 mkTable (caption, opt, rows@((t,r):rs))
