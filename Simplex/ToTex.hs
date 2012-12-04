@@ -1,7 +1,7 @@
 module Simplex.ToTeX (toTeX) where
 
 import Simplex.Parser
-import Data.List (intersperse)
+import Data.List (intersperse, nubBy)
 import Data.Char
 import Data.Maybe
 import Simplex.Config
@@ -13,6 +13,13 @@ tail' xs = tail xs
 
 tail'' [] = []
 tail'' xs = tail' $ tail' xs
+
+explode _ [] = []
+explode f xs
+    | null zs = [z]
+    | null z  = explode f (tail zs)
+    | True    = z : explode f (tail zs)
+        where (z, zs) = break f xs
 
 skipOneSpace (' ':xs) = xs
 skipOneSpace s = s
@@ -202,6 +209,24 @@ makePreambleLengths p
             | otherwise  = maybe ""                   (s x) (lookup x p)
     in  concat $ map f knownLengths
 
+gatherDimensions :: [(String, String)] -> [String]
+gatherDimensions (("margin-left", v) : xs)   = ("left="   ++ v) : gatherDimensions xs
+gatherDimensions (("margin-right", v) : xs)  = ("right="  ++ v) : gatherDimensions xs
+gatherDimensions (("margin-top", v) : xs)    = ("top="    ++ v) : gatherDimensions xs
+gatherDimensions (("margin-bottom", v) : xs) = ("bottom=" ++ v) : gatherDimensions xs
+gatherDimensions (("margins", v) : xs)       = zipWith (++) ["left=", "right=", "top=", "bottom="] $ explode (== ' ') v
+gatherDimensions (_ : xs) = gatherDimensions xs
+gatherDimensions [] = []
+
+makeDimensions p
+    | dim == [] = ""
+    | otherwise = "\\usepackage[" ++ (concat (intersperse "," dim)) ++ "]{geometry}\n"
+        where
+            dim = nubBy (\a b -> pref a == pref b ) $ gatherDimensions p
+            pref = fst . break (== '=')
+
+-- \usepackage[left=2.5cm, right=3cm]{geometry}
+
 articleType ((x, _): xs)
     | x `elem` [] = ""
     | otherwise = articleType xs
@@ -275,6 +300,7 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
           : "\\makeatother\n"
 
           : makePreambleLengths props
+          : makeDimensions props
 
           : maybe "" id (lookup "preamble" props)
           : "\n\n"
@@ -446,7 +472,7 @@ toTeX' opt (BCommand "endcolumns" _ : xs)
         = "\\end{multicols}\n\n" : toTeX' (opt { oColumns = 0 }) xs
     | otherwise
         = "\\textcolor{orange}{Columns already ended.}"
-        : toTeX' (opt { oColumns = 0 }) xs
+        : toTeX' opt xs
 
 toTeX' opt (BCommand c (x:_) : xs)
     | isJust l = "\\setlength{\\" : c : "}{" : x : "}\n" : toTeX' opt xs

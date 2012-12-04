@@ -9,7 +9,17 @@
     \cfoot{}
     \rfoot{}
 
-@fontsize 11pt
+@fontsize
+    10pt
+
+@margins
+    2cm 2cm 2cm 2cm
+
+.java
+    public static void main(String... args) {
+        // Ich hasse Java
+    }
+.
 
 .comment
     @title
@@ -31,7 +41,6 @@ columns 3
     Curabitur blandit tempus porttitor. Cras justo odio,
     dapibus ac facilisis in, egestas eget quam.
 
-reset
 endcolumns
 
 =   Section
