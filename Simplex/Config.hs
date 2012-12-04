@@ -1,3 +1,5 @@
+{-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
+
 module Simplex.Config (
     verbs, knownLengths, knownSymbols, knownCommands,
     specialCommands, specialSymbols,
@@ -9,11 +11,13 @@ import Data.List (sort)
 data Config
  = Config {
     doNumberSections :: Bool,
+    doSectionsCutColumns :: Bool,
     oColumns :: Int
-}           
+}
 
 defaultConfig = Config {
     doNumberSections = False,
+    doSectionsCutColumns = True,
     oColumns = 0
 }
 
@@ -43,7 +47,8 @@ knownLengths
     ("textheight",      (Nothing, "The height of text on the page")),
     ("tabcolsep",       (Nothing, "The default separation between columns in a tabular environment")),
     ("topmargin",       (Nothing, "The size of the top margin")),
-    ("columnseprule",   (Nothing, ""))]
+    ("columnseprule",   (Nothing, "")),
+    ("headheight",      (Nothing, ""))]
 
 knownSymbols
  = ["alpha", "beta", "chi", "delta", "epsilon", "eta", "gamma",
@@ -279,14 +284,29 @@ knownCommands
     "upshape", "itshape", "slshape", "scschape", "em"]
 
 specialCommands
- = [("pagebreak",   \o _ -> (o, "\\newpage")),
-    ("italic",      \o _ -> (o, "\\itshape")),
-    ("bold",        \o _ -> (o, "\\bfseries")),
-    ("right",       \o _ -> (o, "\\raggedleft")),
-    ("left",        \o _ -> (o, "\\raggedright")),
-    ("center",      \o _ -> (o, "\\centering")),
-    ("reset",       reset)]
+ = ["pagebreak" ~> "\\newpage",
+    "italic" ~> "\\itshape",
+    "bold" ~> "\\bfseries",
+    "right" ~> "\\raggedleft",
+    "left" ~> "\\raggedright",
+    "center" ~> "\\centering",
+    "reset" ~> reset,
+    "pagestyle" ~> (\[x] -> "\\pagestyle{" ++ x ++ "}"),
+    "thispagestyle" ~> (\[x] -> "\\thispagestyle{" ++ x ++ "}")]
 
+class Command a where
+    (~>) :: String -> a -> (String, Config -> [String] -> (Config, String))
+
+instance Command String where
+    a ~> b = (a, \o _ -> (o, a))
+
+instance Command (Config -> [String] -> (Config, String)) where
+    a ~> f = (a, f)
+
+instance Command ([String] -> String) where
+    a ~> f = (a, \o x -> (o, f x))
+
+reset :: Config -> [String] -> (Config, String)
 reset opt _
     | oColumns opt > 0 = (opt {oColumns = 0}, "\\end{multicols}}{")
     | otherwise        = (opt, "}{")

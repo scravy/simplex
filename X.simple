@@ -1,33 +1,16 @@
-@preamble
-    \usepackage{fancyhdr}
-    \setlength{\headheight}{2cm}
-    \pagestyle{fancy}
-    \lhead{\textbf{Telematik}\\1. Übungsblatt}
-    \chead{}
-    \rhead{Julian Fleischer\\2012-12-04}
-    \lfoot{}
-    \cfoot{}
-    \rfoot{}
+@lhead
+    **Telematik**
+    N. Übung
 
-@fontsize
-    10pt
+@rhead
+    Julian Fleischer
+    \today
 
-@margins
-    2cm 2cm 2cm 2cm
+@pagestyle plain
 
-.java
-    public static void main(String... args) {
-        // Ich hasse Java
-    }
-.
+@fontsize 10pt
 
-.comment
-    @title
-        Simplex
-
-    @authors
-        Julian Fleischer
-.
+@margins 2.5cm 2.5cm
 
 columns 2
 
@@ -39,7 +22,10 @@ columns 2
 columns 3
 
     Curabitur blandit tempus porttitor. Cras justo odio,
-    dapibus ac facilisis in, egestas eget quam.
+    dapibus ac facilisis in, egestas eget quam. Vivamus
+    sagittis lacus vel augue laoreet rutrum faucibus dolor
+    auctor. Donec ullamcorper nulla non metus auctor
+    fringilla.
 
 endcolumns
 

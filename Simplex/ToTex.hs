@@ -65,11 +65,7 @@ escapeTeX t s@(x:xs)
 escapeTeX t [] = t
 
 escapeTeX' :: String -> String -> String
-escapeTeX' t (x:xs)
-    | x `elem` "\\{}$^_%~#&" = '\\' : x : escapeTeX' t xs
-    | x == '\n' = '\\' : '\\' : ' ' : escapeTeX' t xs
-    | otherwise = x : escapeTeX' t xs
-escapeTeX' t [] = t
+escapeTeX' t = concat . (++ [t]) . intersperse "\\\\" . map (escapeTeX "") . lines
 
 known w
     | w `elem` knownSymbols = Just ("\\ensuremath{\\" ++ w ++ "}")
@@ -225,10 +221,10 @@ makeDimensions p
             dim = nubBy (\a b -> pref a == pref b ) $ gatherDimensions p
             pref = fst . break (== '=')
 
--- \usepackage[left=2.5cm, right=3cm]{geometry}
+makeFancyHeader p = ""
 
 articleType ((x, _): xs)
-    | x `elem` [] = ""
+    | x `elem` ["article", "book", "report", "slides"] = ""
     | otherwise = articleType xs
 articleType [] = "article"
 
@@ -244,6 +240,7 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
           : "]{" : articleType props : "}\n"
 
           : "\\usepackage[utf8]{inputenc}\n"
+          : "\\usepackage{fancyhdr}\n"
 
           : "\\usepackage{eurosym}\n"
           : "\\DeclareUnicodeCharacter{20AC}{\\euro{}}\n"
@@ -301,9 +298,41 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
 
           : makePreambleLengths props
           : makeDimensions props
+          : makeFancyHeader props
 
           : maybe "" id (lookup "preamble" props)
           : "\n\n"
+
+          : maybe
+                ""
+                (\x -> "\\pagestyle{" ++ x ++ "}\n")
+                (lookup "pagestyle" props)
+
+          : maybe
+                ""
+                (\x -> "\\chead{" ++ escapeTeX' "}\n" x)
+                (lookup "chead" props)
+          : maybe
+                ""
+                (\x -> "\\lhead{" ++ escapeTeX' "}\n" x)
+                (lookup "lhead" props)
+          : maybe
+                ""
+                (\x -> "\\rhead{" ++ escapeTeX' "}\n" x)
+                (lookup "rhead" props)
+
+          : maybe
+                ""
+                (\x -> "\\cfoot{" ++ escapeTeX' "}\n" x)
+                (lookup "cfoot" props)
+          : maybe
+                ""
+                (\x -> "\\lfoot{" ++ escapeTeX' "}\n" x)
+                (lookup "lfoot" props)
+          : maybe
+                ""
+                (\x -> "\\rfoot{" ++ escapeTeX' "}\n" x)
+                (lookup "rfoot" props)
 
           : maybe
                 ""
