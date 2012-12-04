@@ -298,7 +298,7 @@ class Command a where
     (~>) :: String -> a -> (String, Config -> [String] -> (Config, String))
 
 instance Command String where
-    a ~> b = (a, \o _ -> (o, a))
+    a ~> b = (a, \o _ -> (o, b))
 
 instance Command (Config -> [String] -> (Config, String)) where
     a ~> f = (a, f)
