@@ -12,6 +12,19 @@
 
 @margins 2.5cm 2.5cm
 
+>@  |c|l|
+--
+>   One
+>   Two
+>   Three
+>   Four
+--
+>   A
+>   B
+>   C
+>   D
+--
+
 columns 2
 
     Lorem ipsum dolor sit amet, consectetur adipiscing elit.

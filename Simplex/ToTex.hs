@@ -505,7 +505,12 @@ mkTable (caption, opt, rows@((t,r):rs))
   = let
         spec
             | opt == [] = take numCols $ repeat 'l'
-            | otherwise = head opt
+            | otherwise = mkSpec $ filter (`elem` "crl|") $ head opt
+
+        mkSpec s
+            | len < numCols = s ++ (take (numCols - len) $ repeat 'l')
+            | otherwise = s
+                where len = length (filter (`elem` "crl") s) 
 
         numCols = maximum (map (length.snd) rows)
 
