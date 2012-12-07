@@ -2,27 +2,13 @@ module Simplex.ToTeX (toTeX) where
 
 import Simplex.Parser
 import Data.List (intersperse, nubBy)
+import Data.List.Split
 import Data.Char
 import Data.Maybe
 import Simplex.Config
+import Simplex.Util
 
 import Prelude hiding (lex)
-
-tail' [] = []
-tail' xs = tail xs
-
-tail'' [] = []
-tail'' xs = tail' $ tail' xs
-
-explode _ [] = []
-explode f xs
-    | null zs = [z]
-    | null z  = explode f (tail zs)
-    | True    = z : explode f (tail zs)
-        where (z, zs) = break f xs
-
-skipOneSpace (' ':xs) = xs
-skipOneSpace s = s
 
 escapeTeX :: String -> String -> String
 
@@ -210,7 +196,7 @@ gatherDimensions (("margin-left", v) : xs)   = ("left="   ++ v) : gatherDimensio
 gatherDimensions (("margin-right", v) : xs)  = ("right="  ++ v) : gatherDimensions xs
 gatherDimensions (("margin-top", v) : xs)    = ("top="    ++ v) : gatherDimensions xs
 gatherDimensions (("margin-bottom", v) : xs) = ("bottom=" ++ v) : gatherDimensions xs
-gatherDimensions (("margins", v) : xs)       = zipWith (++) ["left=", "right=", "top=", "bottom="] $ explode (== ' ') v
+gatherDimensions (("margins", v) : xs)       = zipWith (++) ["left=", "right=", "top=", "bottom="] $ words v
 gatherDimensions (_ : xs) = gatherDimensions xs
 gatherDimensions [] = []
 
@@ -569,10 +555,4 @@ mkTable (caption, opt, rows@((t,r):rs))
         ++ "\n\\end{center}\n"
         ++ when (caption /= "") ("\\caption{" ++ escapeTeX "}\n" caption ++ "\\end{table}\n")
         ++ "\n"
-
-when True x = x
-when False _ = []
-
-ifElse True x _ = x
-ifElse _    _ y = y
 

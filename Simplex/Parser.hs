@@ -7,6 +7,7 @@ import Prelude hiding (lex)
 import Data.List (intersperse, elemIndex)
 import Data.Char
 import Data.Maybe
+import Simplex.Util
 
 data Block =
           BAny String String
@@ -150,7 +151,7 @@ parseDescribeItems xs = ([], xs)
 
 parseItem i
     | r == ""   = ("", w)
-    | otherwise = (w, tail r)
+    | otherwise = (w, tail' r)
         where (w, r) = break (== ':') i
 
 parseTable :: [Token] -> (Table, [Token])
