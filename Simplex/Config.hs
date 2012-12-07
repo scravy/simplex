@@ -51,7 +51,9 @@ knownLengths
     ("headheight",      (Nothing, ""))]
 
 knownSymbols
- = ["alpha", "beta", "chi", "delta", "epsilon", "eta", "gamma",
+ = ["thepage", "thechapter",
+
+    "alpha", "beta", "chi", "delta", "epsilon", "eta", "gamma",
     "iota", "kappa", "lambda", "mu", "nu", "omega", "phi",
     "pi", "psi", "rho", "sigma", "tau", "theta", "upsilon",
     "xi", "zeta", "digamma", "varepsilon", "varkappa", "varphi",
@@ -157,7 +159,9 @@ knownSymbols
     "blacktriangledown", "backprime", "circledS" ]
 
 specialSymbols =
-   [("A", "\\ensuremath{\\mathbb{A}}"),
+   [("lastpage", "\\pageref{LastPage}"),
+
+    ("A", "\\ensuremath{\\mathbb{A}}"),
     ("B", "\\ensuremath{\\mathbb{B}}"),
     ("C", "\\ensuremath{\\mathbb{C}}"),
     ("D", "\\ensuremath{\\mathbb{D}}"),

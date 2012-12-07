@@ -6,11 +6,16 @@
     Julian Fleischer
     \today
 
-@pagestyle plain
+@cfoot
+@rfoot
+    \thepage  of \lastpage
+
+@pagestyle fancy
 
 @fontsize 10pt
 
-@margins 2.5cm 2.5cm
+@margins 2.5cm 2.5cm 3cm 3cm
+@headheight 3cm
 
 >@  |c|l|
 --

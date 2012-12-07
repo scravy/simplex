@@ -243,6 +243,8 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
           : "\\usepackage[table]{xcolor}\n"
           : "\\usepackage{multirow}\n"
 
+          : "\\usepackage{lastpage}\n"
+
           : "\\usepackage["
           : "colorlinks,"
           : "pdfpagelabels,"
