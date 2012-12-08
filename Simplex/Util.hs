@@ -1,4 +1,6 @@
-module Simplex.Util where
+module Simplex.Util (
+    when, ifElse, tail', tail'', skipOneSpace
+    ) where
 
 
 when True x = x

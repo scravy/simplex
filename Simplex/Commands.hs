@@ -1,6 +1,8 @@
 {-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
 
-module Simplex.Commands where
+module Simplex.Commands (
+        Command (..), reset
+    ) where
 
 import Simplex.ConfigData
 

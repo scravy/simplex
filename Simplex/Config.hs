@@ -1,7 +1,8 @@
 module Simplex.Config (
-    verbs, knownLengths, knownSymbols, knownCommands,
-    specialCommands, specialSymbols,
-    Config (..), config) where
+        verbs, knownLengths, knownSymbols, knownCommands,
+        specialCommands, specialSymbols,
+        Config (..), config
+    ) where
 
 import Simplex.Parser
 import Data.List (sort)

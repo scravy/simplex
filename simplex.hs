@@ -2,10 +2,11 @@ module Main (main) where
 
 import Prelude hiding (lex)
 
-import System.Environment (getArgs)
-import System.Console.GetOpt
 import Simplex.Parser
 import Simplex.ToTeX
+
+import System.Environment (getArgs)
+import System.Console.GetOpt
 import System.FilePath (takeBaseName)
 import System.Cmd (rawSystem)
 import System.Exit (ExitCode (..))

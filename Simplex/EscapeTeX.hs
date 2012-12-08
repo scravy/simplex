@@ -1,4 +1,6 @@
-module Simplex.EscapeTeX where
+module Simplex.EscapeTeX (
+        escapeTeX, escapeTeX', ensureTeX
+    ) where
 
 import Simplex.Config
 import Simplex.Util

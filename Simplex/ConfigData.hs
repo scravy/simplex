@@ -1,4 +1,6 @@
-module Simplex.ConfigData where
+module Simplex.ConfigData (
+        Config (..), defaultConfig
+    ) where
 
 data Config
  = Config {

@@ -1,4 +1,4 @@
-module Simplex.Table where
+module Simplex.Table (mkTable) where
 
 import Simplex.EscapeTeX
 import Simplex.Util

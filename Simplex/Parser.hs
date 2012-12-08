@@ -1,13 +1,15 @@
 module Simplex.Parser (
-    lex, parse,
-    Token(..), Block(..), Document (Document),
-    Table, Cell(..), CellType(..), RowType(..)) where
+        lex, parse,
+        Token(..), Block(..), Document (Document),
+        Table, Cell(..), CellType(..), RowType(..)
+    ) where
+
+import Simplex.Util
 
 import Prelude hiding (lex)
 import Data.List (intersperse, elemIndex)
-import Data.Char
+import Data.Char (isAlpha, isDigit, isLower, isUpper)
 import Data.Maybe
-import Simplex.Util
 
 data Block =
           BAny String String
