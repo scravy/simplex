@@ -1,5 +1,3 @@
-{-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
-
 module Simplex.Config (
     verbs, knownLengths, knownSymbols, knownCommands,
     specialCommands, specialSymbols,
@@ -7,19 +5,8 @@ module Simplex.Config (
 
 import Simplex.Parser
 import Data.List (sort)
-
-data Config
- = Config {
-    doNumberSections :: Bool,
-    doSectionsCutColumns :: Bool,
-    oColumns :: Int
-}
-
-defaultConfig = Config {
-    doNumberSections = False,
-    doSectionsCutColumns = True,
-    oColumns = 0
-}
+import Simplex.Commands
+import Simplex.ConfigData
 
 config (Document blocks props)
  = conf defaultConfig blocks
@@ -297,23 +284,6 @@ specialCommands
     "reset" ~> reset,
     "pagestyle" ~> (\[x] -> "\\pagestyle{" ++ x ++ "}"),
     "thispagestyle" ~> (\[x] -> "\\thispagestyle{" ++ x ++ "}")]
-
-class Command a where
-    (~>) :: String -> a -> (String, Config -> [String] -> (Config, String))
-
-instance Command String where
-    a ~> b = (a, \o _ -> (o, b))
-
-instance Command (Config -> [String] -> (Config, String)) where
-    a ~> f = (a, f)
-
-instance Command ([String] -> String) where
-    a ~> f = (a, \o x -> (o, f x))
-
-reset :: Config -> [String] -> (Config, String)
-reset opt _
-    | oColumns opt > 0 = (opt {oColumns = 0}, "\\end{multicols}}{")
-    | otherwise        = (opt, "}{")
 
 showSymbols = do
     let symbols = sort knownSymbols
