@@ -55,7 +55,9 @@ articleType [] = "article"
 itemsToTeX :: [Items] -> String
 itemsToTeX = concatMap f
     where
-        f (Item x) = "\\item " ++ escapeTeX x "\n" 
+        f (Item x) = "\\item " ++ escapeTeX x "\n"
+        f (Items Itemize is) = "\\begin{itemize}\n" ++ itemsToTeX is ++ "\\end{itemize}\n"
+        f (Items Enumerate is) = "\\begin{enumerate}\n" ++ itemsToTeX is ++ "\\end{enumerate}\n"
 
 toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ blocks
     where
@@ -257,7 +259,7 @@ toTeX' opt (BItems (Items Itemize is) : xs)
 toTeX' opt (BItems (Items Enumerate is) : xs)
     = "\\begin{enumerate}\n"
     : itemsToTeX is
-    : "\\end{itemize}\n" : toTeX' opt xs
+    : "\\end{enumerate}\n" : toTeX' opt xs
 
 toTeX' opt (BDescription l : xs)
     = "\\begin{description}\n"

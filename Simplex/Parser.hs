@@ -158,11 +158,32 @@ parseItems :: [Token] -> (Items, [Token])
 parseItems (TControl "*" : TBlock b : xs) = parseIt [Items Itemize   [Item b]] xs
 parseItems (TControl "+" : TBlock b : xs) = parseIt [Items Enumerate [Item b]] xs
 
+parseIt [it, Items Itemize is] s@(TControl "*" : TBlock b : xs)
+  = parseIt [Items Itemize $ Item b:it:is] xs
+
 parseIt [Items Itemize is] s@(TControl "*" : TBlock b : xs)
   = parseIt [Items Itemize $ Item b:is] xs
 
+parseIt [ix] s@(TControl "**" : TBlock b : xs)
+  = parseIt [Items Itemize [Item b], ix] xs
+
+parseIt (Items Itemize is : ix) s@(TControl "**" : TBlock b : xs)
+  = parseIt (Items Itemize (Item b:is) : ix) xs
+
+
+parseIt [it, Items Enumerate is] s@(TControl "+" : TBlock b : xs)
+  = parseIt [Items Enumerate $ Item b:it:is] xs
+
 parseIt [Items Enumerate is] s@(TControl "+" : TBlock b : xs)
   = parseIt [Items Enumerate $ Item b:is] xs
+
+parseIt [ix] s@(TControl "++" : TBlock b : xs)
+  = parseIt [Items Enumerate [Item b], ix] xs
+
+parseIt (Items Enumerate is : ix) s@(TControl "++" : TBlock b : xs)
+  = parseIt (Items Enumerate (Item b:is) : ix) xs
+
+
 
 parseIt (Items t is:xs) s = (Items t $ reverse is, s)
 parseIt _ s = (Items Itemize [], s)
