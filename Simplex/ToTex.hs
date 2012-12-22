@@ -52,6 +52,11 @@ articleType ((x, _): xs)
     | otherwise = articleType xs
 articleType [] = "article"
 
+itemsToTeX :: [Items] -> String
+itemsToTeX = concatMap f
+    where
+        f (Item x) = "\\item " ++ escapeTeX x "\n" 
+
 toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ blocks
     where
         preamble xs =
@@ -244,17 +249,15 @@ toTeX' opt (BAdvise l : xs)
     : (concat ("\\item " : intersperse "\\item " (map (escapeTeX "\n") l)))
     : "\\end{advise}\n" : toTeX' opt xs
 
-{-
-toTeX' opt (BItemize l : xs)
+toTeX' opt (BItems (Items Itemize is) : xs)
     = "\\begin{itemize}\n"
-    : (concat ("\\item " : intersperse "\\item " (map (escapeTeX "\n") l)))
+    : itemsToTeX is
     : "\\end{itemize}\n" : toTeX' opt xs
 
-toTeX' opt (BEnumerate l : xs)
+toTeX' opt (BItems (Items Enumerate is) : xs)
     = "\\begin{enumerate}\n"
-    : (concat ("\\item " : intersperse "\\item " (map (escapeTeX "\n") l)))
-    : "\\end{enumerate}\n" : toTeX' opt xs
--}
+    : itemsToTeX is
+    : "\\end{itemize}\n" : toTeX' opt xs
 
 toTeX' opt (BDescription l : xs)
     = "\\begin{description}\n"

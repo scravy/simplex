@@ -2,7 +2,7 @@ module Simplex.Parser (
         lex, parse,
         Token(..), Block(..), Document (Document),
         Table, Cell(..), CellType(..), RowType(..),
-        Items(..)
+        Items(..), ItemType(..)
     ) where
 
 import Simplex.Util
@@ -41,7 +41,10 @@ data Block =
 
 type Table = (String, [String], [(RowType, [(Cell, String)])])
 
-data Items = Item String | IEnumerate [Items] | IItemize [Items]
+data ItemType = Enumerate | Itemize
+    deriving (Eq, Show)
+
+data Items = Item String | Items ItemType [Items]
     deriving (Eq, Show)
 
 data Cell = Cell (Maybe String) (Maybe Char) Int Int Bool Bool CellType
@@ -139,10 +142,6 @@ parseAdvise (TControl "->" : TBlock b : xs)
     in  (b:l, r)
 parseAdvise xs = ([], xs)
 
-
-append :: Items -> String -> String -> Items
-append = undefined
-
 parseDescription :: [Token] -> ([(String, String)], [Token])
 parseDescription (TControl ":" : TBlock b : xs)
   = let (l, r) = parseDescription xs
@@ -156,7 +155,17 @@ parseDescribeItems (TControl "::" : TBlock b : xs)
 parseDescribeItems xs = ([], xs)
 
 parseItems :: [Token] -> (Items, [Token])
-parseItems = undefined
+parseItems (TControl "*" : TBlock b : xs) = parseIt [Items Itemize   [Item b]] xs
+parseItems (TControl "+" : TBlock b : xs) = parseIt [Items Enumerate [Item b]] xs
+
+parseIt [Items Itemize is] s@(TControl "*" : TBlock b : xs)
+  = parseIt [Items Itemize $ Item b:is] xs
+
+parseIt [Items Enumerate is] s@(TControl "+" : TBlock b : xs)
+  = parseIt [Items Enumerate $ Item b:is] xs
+
+parseIt (Items t is:xs) s = (Items t $ reverse is, s)
+parseIt _ s = (Items Itemize [], s)
 
 parseItem i
     | r == ""   = ("", w)
