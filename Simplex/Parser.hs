@@ -184,9 +184,13 @@ parseIt (Items Enumerate is : ix) s@(TControl "++" : TBlock b : xs)
   = parseIt (Items Enumerate (Item b:is) : ix) xs
 
 
+parseIt ix@(Items t is:xs) s = (reduce ix, s)
+    where
+        reduce (Items t1 i1:Items t2 i2:ix) = reduce (Items t2 (Items t1 (reverse i1) : i2):ix)
+        reduce [Items t is] = Items t $ reverse is
 
-parseIt (Items t is:xs) s = (Items t $ reverse is, s)
 parseIt _ s = (Items Itemize [], s)
+
 
 parseItem i
     | r == ""   = ("", w)
