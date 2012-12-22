@@ -56,7 +56,7 @@ time simple =
         if ex then liftM2 (>) t1 t2 >>= (return . tern simple "") else return simple
 
 work x@([Poll ms], [], _) = do
-    dir <- getDirectoryContents "."
+    dir  <- getDirectoryContents "."
     dir' <- fmap (filter (/= "")) $ mapM time $ filter (endsWith ".simple") dir
     let filez = filter (endsWith ".simple") dir'
     case filez of
@@ -65,7 +65,7 @@ work x@([Poll ms], [], _) = do
     work x
 
 work (_, [], _) = do
-    dir <- getDirectoryContents "."
+    dir  <- getDirectoryContents "."
     dir' <- fmap (filter (/= "")) $ mapM time $ filter (endsWith ".simple") dir
     let filez = filter (endsWith ".simple") dir'
     case filez of

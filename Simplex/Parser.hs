@@ -1,15 +1,17 @@
 module Simplex.Parser (
         lex, parse,
         Token(..), Block(..), Document (Document),
-        Table, Cell(..), CellType(..), RowType(..)
+        Table, Cell(..), CellType(..), RowType(..),
+        Items(..)
     ) where
 
 import Simplex.Util
 
-import Prelude hiding (lex)
 import Data.List (intersperse, elemIndex)
 import Data.Char (isAlpha, isDigit, isLower, isUpper)
 import Data.Maybe
+
+import Prelude hiding (lex)
 
 data Block =
           BAny String String
@@ -17,24 +19,30 @@ data Block =
         | BSection String
         | BSubsection String
         | BSubsubsection String
+        | BChapter String
+        | BPart String
         | BDefine String String
         | BRemark String String
         | BVerbatim String String
         | BAdvise [String]
-        | BItemize [String]
-        | BEnumerate [String]
+        | BItems Items
         | BDescription [(String, String)]
         | BDescribeItems [(String, String)]
         | BTherefore String
         | BBecause String
         | BNTherefore String
         | BNBecause String
+        | BIff String
+        | BNIff String
         | BLine
         | BTable Table
         | BCommand String [String]
     deriving (Eq, Show)
 
 type Table = (String, [String], [(RowType, [(Cell, String)])])
+
+data Items = Item String | IEnumerate [Items] | IItemize [Items]
+    deriving (Eq, Show)
 
 data Cell = Cell (Maybe String) (Maybe Char) Int Int Bool Bool CellType
     deriving (Eq, Show)
@@ -82,21 +90,27 @@ parse' doc s@(TControl c : TBlock b : xs)
             "=="  -> upd doc xs $ BSubsection b
             "===" -> upd doc xs $ BSubsubsection b
 
-            "--"  -> upd doc xs $ BLine
+            "##"  -> upd doc xs $ BChapter b
+            "###" -> upd doc xs $ BPart b
+
+--            "----" -> upd doc xs $ BLine
 
             "=>"  -> upd doc xs $ BTherefore b
             "<="  -> upd doc xs $ BBecause b
             "=!>" -> upd doc xs $ BNTherefore b
             "<!=" -> upd doc xs $ BNBecause b
+            "<=>" -> upd doc xs $ BIff b
+            "<!>" -> upd doc xs $ BNIff b
 
             ":="  -> upd doc xs $ mkDefine b
             ":-"  -> upd doc xs $ mkRemark b
 
-            "->"  -> let (l, r) = parseAdvise s in upd doc r $ BAdvise l
-            "*"   -> let (l, r) = parseItemize s in upd doc r $ BItemize l
-            "-"   -> let (l, r) = parseEnumerate s in upd doc r $ BEnumerate l
+            "*"   -> let (l, r) = parseItems s in upd doc r $ BItems l
+            "+"   -> let (l, r) = parseItems s in upd doc r $ BItems l
+
             ":"   -> let (l, r) = parseDescription s in upd doc r $ BDescription l
             "::"  -> let (l, r) = parseDescribeItems s in upd doc r $ BDescribeItems l
+            "->"  -> let (l, r) = parseAdvise s in upd doc r $ BAdvise l
 
             _ -> upd doc xs $ BAny c b
 
@@ -105,7 +119,6 @@ parse' doc (TBlock b : xs)
 
 parse' (Document blocks prop) []
     = Document (reverse blocks) prop
-
 
 mkDefine :: String -> Block
 mkDefine xs
@@ -117,7 +130,6 @@ mkRemark xs
   = let (w, rs) = break (== ':') xs
     in  BRemark w $ tail rs
 
-
 upd :: Document -> [Token] -> Block -> Document
 upd (Document blocks prop) xs block = parse' (Document (block:blocks) prop) xs
 
@@ -127,17 +139,9 @@ parseAdvise (TControl "->" : TBlock b : xs)
     in  (b:l, r)
 parseAdvise xs = ([], xs)
 
-parseItemize :: [Token] -> ([String], [Token])
-parseItemize (TControl "*" : TBlock b : xs)
-  = let (l, r) = parseItemize xs
-    in  (b:l, r)
-parseItemize xs = ([], xs)
 
-parseEnumerate :: [Token] -> ([String], [Token])
-parseEnumerate (TControl "-" : TBlock b : xs)
-  = let (l, r) = parseEnumerate xs
-    in  (b:l, r)
-parseEnumerate xs = ([], xs)
+append :: Items -> String -> String -> Items
+append = undefined
 
 parseDescription :: [Token] -> ([(String, String)], [Token])
 parseDescription (TControl ":" : TBlock b : xs)
@@ -150,6 +154,9 @@ parseDescribeItems (TControl "::" : TBlock b : xs)
   = let (l, r) = parseDescribeItems xs
     in  ((parseItem b):l, r)
 parseDescribeItems xs = ([], xs)
+
+parseItems :: [Token] -> (Items, [Token])
+parseItems = undefined
 
 parseItem i
     | r == ""   = ("", w)

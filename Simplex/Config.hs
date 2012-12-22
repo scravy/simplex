@@ -1,13 +1,15 @@
 module Simplex.Config (
         verbs, knownLengths, knownSymbols, knownCommands,
         specialCommands, specialSymbols,
-        Config (..), config
+        Config (..), config, documentClasses
     ) where
 
 import Simplex.Parser
-import Data.List (sort)
-import Simplex.Commands
+import Simplex.Commands (Command (..), oneArg)
+import qualified Simplex.Commands as C
 import Simplex.ConfigData
+
+import Data.List (sort)
 
 config (Document blocks props)
  = conf defaultConfig blocks
@@ -15,6 +17,8 @@ config (Document blocks props)
 conf c (BCommand "tableofcontents" [] : xs) = conf (c { doNumberSections = True }) xs
 conf c (x : xs) = conf c xs
 conf c _ = c
+
+documentClasses = ["article", "book", "report", "slides", "scrartcl"]
 
 -- chars that introduce an inline verbatim
 verbs = "#!@"
@@ -282,9 +286,10 @@ specialCommands
     "right" ~> "\\raggedleft",
     "left" ~> "\\raggedright",
     "center" ~> "\\centering",
-    "reset" ~> reset,
-    "pagestyle" ~> (\[x] -> "\\pagestyle{" ++ x ++ "}"),
-    "thispagestyle" ~> (\[x] -> "\\thispagestyle{" ++ x ++ "}")]
+    "reset" ~> C.reset,
+    "pagestyle" ~> oneArg (\x -> "\\pagestyle{" ++ x ++ "}"),
+    "thispagestyle" ~> oneArg (\x -> "\\thispagestyle{" ++ x ++ "}"),
+    "image" ~> C.image]
 
 showSymbols = do
     let symbols = sort knownSymbols

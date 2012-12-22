@@ -1,19 +1,29 @@
 module Simplex.ToTeX (toTeX) where
 
 import Simplex.Parser
+import Simplex.Config
+import Simplex.Util
+import Simplex.Table
+import Simplex.EscapeTeX
+
 import Data.List (intersperse, nubBy)
 import Data.List.Split
 import Data.Char
 import Data.Maybe
-import Simplex.Config
-import Simplex.Util
-import Simplex.Table
+
+import Text.Regex
+import Text.Printf
 
 import Prelude hiding (lex)
-import Simplex.EscapeTeX
+import Debug.Trace
+
+validUnit = mkRegex (printf "^%s( +plus +%s +minus +%s)? *$" unit unit unit)
+    where unit = "([0-9]+(\\.[0-9]+)?|\\.[0-9]+)(" ++ concat (intersperse "|" units) ++ ")"
 
 makePreambleLengths p
-  = let s x v = "\\setlength{\\" ++ x ++ "}{" ++ v ++ "}\n"
+  = let s x v
+            | isJust (matchRegex validUnit v) = ("\\setlength{\\" ++ x ++ "}{" ++ v ++ "}\n")
+            | otherwise = ""
         f (x, (def, _))
             | isJust def = maybe (s x $ fromJust def) (s x) (lookup x p)
             | otherwise  = maybe ""                   (s x) (lookup x p)
@@ -38,7 +48,7 @@ makeDimensions p
 makeFancyHeader p = ""
 
 articleType ((x, _): xs)
-    | x `elem` ["article", "book", "report", "slides"] = ""
+    | x `elem` documentClasses = x
     | otherwise = articleType xs
 articleType [] = "article"
 
@@ -72,6 +82,7 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
           : "\\usepackage{multirow}\n"
 
           : "\\usepackage{lastpage}\n"
+          : "\\usepackage{graphicx}\n"
 
           : "\\usepackage["
           : "colorlinks,"
@@ -195,8 +206,14 @@ toTeX' opt (BSubsection s : xs)
 toTeX' opt (BSubsubsection s : xs)
     = "\\subsubsection" : when (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
+toTeX' opt (BPart s : xs)
+    = "\\part{" : escapeTeX "}\n\n" s : toTeX' opt xs
+
+toTeX' opt (BChapter s : xs)
+    = "\\chapter{" : escapeTeX "}\n\n" s : toTeX' opt xs
+
 toTeX' opt (BLine : xs)
-    = "\n\n\\hspace{\\fill}\\rule{0.8\\linewidth}{0.7pt}\\hspace{\\fill}\n\n" : toTeX' opt xs
+    = "\n\\hspace{\\fill}\\rule{0.8\\linewidth}{0.7pt}\\hspace{\\fill}\n\n" : toTeX' opt xs
 
 toTeX' opt (BTherefore s : xs)
     = "\\paragraph{$\\Rightarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
@@ -210,6 +227,12 @@ toTeX' opt (BBecause s : xs)
 toTeX' opt (BNBecause s : xs)
     = "\\paragraph{$\\nLeftarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
 
+toTeX' opt (BIff s : xs)
+    = "\\paragraph{$\\Leftrightarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
+
+toTeX' opt (BNIff s : xs)
+    = "\\paragraph{$\\nLeftrightarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
+
 toTeX' opt (BDefine w s : xs)
     = "\\paragraph{" : escapeTeX ('}' : escapeTeX "\n\n" s) w : toTeX' opt xs
 
@@ -221,6 +244,7 @@ toTeX' opt (BAdvise l : xs)
     : (concat ("\\item " : intersperse "\\item " (map (escapeTeX "\n") l)))
     : "\\end{advise}\n" : toTeX' opt xs
 
+{-
 toTeX' opt (BItemize l : xs)
     = "\\begin{itemize}\n"
     : (concat ("\\item " : intersperse "\\item " (map (escapeTeX "\n") l)))
@@ -230,6 +254,7 @@ toTeX' opt (BEnumerate l : xs)
     = "\\begin{enumerate}\n"
     : (concat ("\\item " : intersperse "\\item " (map (escapeTeX "\n") l)))
     : "\\end{enumerate}\n" : toTeX' opt xs
+-}
 
 toTeX' opt (BDescription l : xs)
     = "\\begin{description}\n"

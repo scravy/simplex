@@ -6,12 +6,14 @@ data Config
  = Config {
     doNumberSections :: Bool,
     doSectionsCutColumns :: Bool,
-    oColumns :: Int
+    oColumns :: Int,
+    oFigure :: Bool
 }
 
 defaultConfig = Config {
     doNumberSections = False,
     doSectionsCutColumns = True,
-    oColumns = 0
+    oColumns = 0,
+    oFigure = False
 }
 
