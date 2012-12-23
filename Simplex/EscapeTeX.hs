@@ -85,11 +85,6 @@ ensureTeX ('\\':'b':' ':x:xs)
 ensureTeX ('\\':'t':' ':x:xs)
     | isAlpha x = ("\\t" ++ [' ', x], xs)
 
-ensureTeX ('\\':'_':xs) = ("\\_", xs)
-ensureTeX ('\\':'%':xs) = ("\\%", xs)
-ensureTeX ('\\':'&':xs) = ("\\&", xs)
-ensureTeX ('\\':'#':xs) = ("\\#", xs)
-
 ensureTeX ('\\':xs) = let (w, ws) = break (not.isAlpha) xs
                       in maybe ("", xs) (\x -> (x, skipOneSpace ws)) (known w)
 

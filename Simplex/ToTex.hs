@@ -34,7 +34,7 @@ gatherDimensions (("margin-left", v) : xs)   = ("left="   ++ v) : gatherDimensio
 gatherDimensions (("margin-right", v) : xs)  = ("right="  ++ v) : gatherDimensions xs
 gatherDimensions (("margin-top", v) : xs)    = ("top="    ++ v) : gatherDimensions xs
 gatherDimensions (("margin-bottom", v) : xs) = ("bottom=" ++ v) : gatherDimensions xs
-gatherDimensions (("margins", v) : xs)       = zipWith (++) ["left=", "right=", "top=", "bottom="] $ words v
+gatherDimensions (("margins", v) : xs)       = zipWith (++) ["top=", "right=", "bottom=", "left="] $ words v
 gatherDimensions (_ : xs) = gatherDimensions xs
 gatherDimensions [] = []
 
@@ -283,8 +283,11 @@ toTeX' opt (BVerbatim "!" l : xs)
 toTeX' opt (BVerbatim "code" l : xs)
     = "\\begin{lstlisting}[mathescape]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
 
-toTeX' opt (BVerbatim "#" l : xs)
+toTeX' opt (BVerbatim "#$" l : xs)
     = "\\begin{lstlisting}[mathescape]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
+
+toTeX' opt (BVerbatim "#" l : xs)
+    = "\\begin{lstlisting}\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
 
 toTeX' opt (BVerbatim "php" l : xs)
     = "\\begin{lstlisting}[language = php]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs

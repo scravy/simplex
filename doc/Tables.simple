@@ -18,11 +18,11 @@ columns 4
 >   1
 >   2
 >   3
-\\
+>\
 >   4
 >   5
 >   6
-\\
+>\
 >   7
 >   8
 >   9
@@ -32,46 +32,46 @@ colbreak
 >   1
 >   2
 >   3
-\\
+>\
 >   4
 >   5
 >   6
-\\
+>\
 >   7
 >   8
 >   9
 colbreak
 
 >@  l|c||r
---
+>-
 >   1
 >   2
 >   3
-\\
+>\
 >   4
 >   5
 >   6
-\\
+>\
 >   7
 >   8
 >   9
---
+>-
 colbreak
 
 >@  |l|c||r|
---
+>-
 >   1
 >   2
 >   3
---
+>-
 >   4
 >   5
 >   6
-==
+>=
 >   7
 >   8
 >   9
---
+>-
 endcolumns
 
     The Code to create these four tables can be seen below:
@@ -82,11 +82,11 @@ columnseprule 0.4pt
 .!  >   1
     >   2
     >   3
-    \\
+    >\
     >   4
     >   5
     >   6
-    \\
+    >\
     >   7
     >   8
     >   9
@@ -96,46 +96,46 @@ colbreak
     >   1
     >   2
     >   3
-    \\
+    >\
     >   4
     >   5
     >   6
-    \\
+    >\
     >   7
     >   8
     >   9
 colbreak
 
 .!  >@  l|c||r
-    --
+    >-
     >   1
     >   2
     >   3
-    \\
+    >\
     >   4
     >   5
     >   6
-    \\
+    >\
     >   7
     >   8
     >   9
-    --
+    >-
 colbreak
 
 .!  >@  |l|c||r|
-    --
+    >-
     >   1
     >   2
     >   3
-    --
+    >-
     >   4
     >   5
     >   6
-    ==
+    >=
     >   7
     >   8
     >   9
-    --
+    >-
 endcolumns
 
 newpage
@@ -147,44 +147,43 @@ newpage
     This is a table with a single cell spanning two columns:
 
 >@  |l|l|
---
+>-
 >|2|
     Team sheet
---
+>-
 >   GK
 >   Paul Robinson
-\\
+>\
 >   LB
 >   Lucus Radebe
-\\
+>\
 >   DC
 >   Michael Duberry
-\\
+>\
 >   DC
 >   Dominic Matteo
-\\
+>\
 >   RB
 >   Dider Domi
-\\
+>\
 >   MC
 >   David Batty
-\\
+>\
 >   MC
 >   Eirik Bakke
-\\
+>\
 >   MC
 >   Jody Morris
-\\
+>\
 >   FW
 >   Jamie McMaster
-\\
+>\
 >   ST
 >   Alan Smith
-\\
+>\
 >   ST
 >   Mark Viduka
---
-.
+>-
 
 ==  Columns spanning multiple rows
 
@@ -193,54 +192,54 @@ newpage
 
 
 >@  |l|l|l|
---
+>-
 >|3|
     Team sheet
---
+>-
 >   Goalkeeper
 >   GK
 >   Paul Robinson
---
+>-
 >,4 Defenders
 >   LB
 >   Lucus Radabe
-\\
+>\
 >
 >   DC
 >   Michael Duberry
-\\
+>\
 >
 >   DC
 >   Dominic Matteo
-\\
+>\
 >
 >   RB
 >   Didier Domi
---
+>-
 >,3 Midfielders
 >   MC
 >   David Batty
-\\
+>\
 >
 >   MC
 >   Eirik Bakke
-\\
+>\
 >
 >   MC
 >   Jody Morris
---
+>-
 >   Forward
 >   FW
 >   Jamie McMaster
---
+>-
 >,2 Strikers
 >   ST
 >   Alan Smith
-\\
+>\
 >
 >   ST
 >   Mark Viduka
---
+>-
 
 
 =   Colors
@@ -253,7 +252,7 @@ newpage
     A
 >blue
     B
-\\
+>\
 >green
     C
 >yellow

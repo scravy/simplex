@@ -158,8 +158,8 @@ parseItems :: [Token] -> (Items, [Token])
 parseItems (TControl "*" : TBlock b : xs) = parseIt [Items Itemize   [Item b]] xs
 parseItems (TControl "+" : TBlock b : xs) = parseIt [Items Enumerate [Item b]] xs
 
-parseIt [it, Items Itemize is] s@(TControl "*" : TBlock b : xs)
-  = parseIt [Items Itemize $ Item b:it:is] xs
+parseIt [Items t it, Items Itemize is] s@(TControl "*" : TBlock b : xs)
+  = parseIt [Items Itemize $ Item b:Items t (reverse it):is] xs
 
 parseIt [Items Itemize is] s@(TControl "*" : TBlock b : xs)
   = parseIt [Items Itemize $ Item b:is] xs
@@ -171,8 +171,8 @@ parseIt (Items Itemize is : ix) s@(TControl "**" : TBlock b : xs)
   = parseIt (Items Itemize (Item b:is) : ix) xs
 
 
-parseIt [it, Items Enumerate is] s@(TControl "+" : TBlock b : xs)
-  = parseIt [Items Enumerate $ Item b:it:is] xs
+parseIt [Items t it, Items Enumerate is] s@(TControl "+" : TBlock b : xs)
+  = parseIt [Items Enumerate $ Item b:Items t (reverse it):is] xs
 
 parseIt [Items Enumerate is] s@(TControl "+" : TBlock b : xs)
   = parseIt [Items Enumerate $ Item b:is] xs
@@ -205,20 +205,20 @@ parseTable' :: Table -> [Token] -> (Table, [Token])
 parseTable' (caption, opt, rows) (TControl ">@" : TBlock b : xs)
   = parseTable' (caption, (b:opt), rows) xs
 
-parseTable' (caption, opt, rows) (TControl ">=" : TBlock b : xs)
+parseTable' (caption, opt, rows) (TControl ">>" : TBlock b : xs)
   = parseTable' (b, opt, rows) xs
+
+parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">-" : TBlock b : xs)
+  = parseTable' (caption, opt, ((NoBorder, []) : (SingleBorder, r) : rs)) xs
+
+parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">=" : TBlock b : xs)
+  = parseTable' (caption, opt, ((NoBorder, []) : (DoubleBorder, r) : rs)) xs
+
+parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">\\" : TBlock b : xs)
+  = parseTable' (caption, opt, ((NoBorder, []) : (NoBorder, r) : rs)) xs
 
 parseTable' (caption, opt, rows@((t,r):rs)) (TControl ('>':c) : TBlock b : xs)
   = parseTable' (caption, opt, ((t, (parseCell c, b):r):rs)) xs
-
-parseTable' (caption, opt, rows@((t,r):rs)) (TControl "--" : TBlock b : xs)
-  = parseTable' (caption, opt, ((NoBorder, []) : (SingleBorder, r) : rs)) xs
-
-parseTable' (caption, opt, rows@((t,r):rs)) (TControl "==" : TBlock b : xs)
-  = parseTable' (caption, opt, ((NoBorder, []) : (DoubleBorder, r) : rs)) xs
-
-parseTable' (caption, opt, rows@((t,r):rs)) (TControl "\\\\" : TBlock b : xs)
-  = parseTable' (caption, opt, ((NoBorder, []) : (NoBorder, r) : rs)) xs
 
 parseTable' (caption, opt, rows) xs
   = ((caption, reverse opt, map (\(t,r) -> (t, reverse r)) $ reverse rows), xs)

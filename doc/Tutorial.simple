@@ -1,0 +1,239 @@
+@title
+	Simplex Tutorial
+
+@authors
+    Julian Fleischer
+
+@margins 2cm 3cm 2cm 3cm
+
+@abstract
+    Writing \LaTeX can be a laborious task. Often the syntax
+    is cumbersome and error-prone. Simplex is an attempt to fix this.
+    A solution for creating document using LaTeX which is as easy as
+    writing Markdown, without sacrificing the power of \LaTeX.
+
+tableofcontents
+newpage
+
+=   Principles
+
+    One difficulty in writing a better LaTeX is
+    that LaTeX is a very powerful tool. It's therefor rather difficult to
+    come up with something more easy yet as functional as latex.
+
+    The solution by simplex is that text and control characters are
+    set apart from each other. That is, a command is recognized at the
+    beginning of a line and it is recognized there only. On the other
+    hand, text at the beginning of a line is interpreted as a
+    command, no matter what.
+
+    Here is an example:
+
+.#  newpage
+        This is text, the newpage at the beginning
+        was a command.
+.
+
+    The building block in simplex is a paragraph. A paragraph is
+    something that may span multiple lines, without containing
+    an empty line.
+
+.#      This is a paragraph.
+        
+        This is yet another one,
+        spanning multiple lines.
+.
+
+    Every paragraph can be designated a certain markup:
+
+.#  =   This is a heading
+        
+        This is an ordinary paragraph.
+        
+    *   This is a list item.
+.
+    A command always starts a new paragraph, thus the
+    following are two paragraphs:
+
+.#  =   This is a heading
+    ==  This is a heading of the next level
+.
+
+    This is especially useful when declaring lists and
+    such:
+
+.#  *   This is list
+    **  This is a subitem
+    **  This is also a subitem
+    *   This is another item on level one.
+.
+
+
+==  Special environments
+
+    Sometimes it is useful to embed alien data in your
+    document, such as verbatim text, source code, or
+    latex code. Such text might span several lines and
+    contain newlines as well. Such sections may be
+    introduced by a class of commands beginning with a
+    dot.
+
+.#  .specialcommand
+        this text is treated differently
+        
+        here there is no new paragraph,
+        but still a specialcomman.
+.
+    Note that however, the specialcommand is over when
+    there is a new command at the beginning of a line.
+
+    Here is how you might include some verbatim text:
+
+.#      Here is how you might include some verbatim text:
+    .verbatim
+        Some verbatim text.
+        
+        This is still verbatim text.
+    .
+.
+    The dot is used to explicitly terminate the verbatim
+    environment. It is worth noting that the dot is just
+    the explicit command for creating a paragraph, i.e.
+    declaring a new paragraph by inserting a blank line
+    is the same as creating a new one of type “dot”.
+
+newpage
+=   Basic commands
+
+==  Headings, Lists, and Advises
+
+    Basic commands can be used to create headings, lists,
+    include verbatim code, etc.
+
+    The following commands create headings: \#=, ==, ===#.
+    Lists can be created using \@*, **, +, ++@.
+
+    The following list:
+
+*   These
+**  are two
+**  subitems
+*   Here there are no subitems at all
+*   This
+**  has only one subitum
+
+    has been created using the following code:
+
+.!  *   These
+    **  are two
+    **  subitems
+    *   Here there are no subitems at all
+    *   This
+    **  has only one subitum
+.
+    \#+# and \#++# create numbered lists:
+
++   First
+++  Sub 1
+++  Sub 2
+++  Sub 3
++   Second
+
+    If you want to add a little remark to a paragraph,
+    use an arrow (\#->#)
+
+->  like this.
+
+newpage
+==  Paragraphs
+
+    Different kinds of paragraphs can be set apart. \#:=# and \#:-#
+    create a paragraph that is introduced by an emphasized word
+    (which is taken from the beginning of the paragraph upto the
+    first colon).
+
+:=  This: is an example (\#:=  This: is an example#).
+
+:-  Yet: another one (\#:-  Yet: another one#).
+
+    Other commands prepend a single symbol to a
+    paragraph:
+
+>#  =>
+>   =>
+>#  <=
+>   <=
+>#  <=>
+>   <=>
+>\
+>#  =!>
+>   =!>
+>#  <!=
+>   <!=
+>#  <!>
+>   <!>
+
+
+    These look like the following:
+
+.!  =>  Donec id elit...
+
+=>  Donec id elit non mi porta gravida at eget metus.
+    Nullam quis risus eget urna mollis ornare vel eu leo.
+
+.!  <=  Vivamus sagittis...
+
+<=  Vivamus sagittis lacus vel augue laoreet rutrum faucibus
+    dolor auctor. Nulla vitae elit libero, a pharetra augue.
+    Nullam id dolor id nibh ultricies vehicula ut id elit.
+
+.!  <=> Cras justo odio...
+
+<=> Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+    Vestibulum id ligula porta felis euismod semper. Cras
+    justo odio, dapibus ac facilisis in, egestas eget quam.
+
+.!  =!> Morbi leo risus...
+
+=!> Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+    Nullam id dolor id nibh ultricies vehicula ut id elit.
+
+.!  <!= Nulla vitae elit...
+
+<!= Nulla vitae elit libero, a pharetra augue. Fusce dapibus,
+    tellus ac cursus commodo, tortor mauris condimentum nibh,
+    ut fermentum massa justo sit amet risus.
+
+.!  <!> Com sociis natoque...
+
+<!> Cum sociis natoque penatibus et magnis dis parturient montes,
+    nascetur ridiculus mus. Duis mollis, est non commodo luctus,
+    nisi erat porttitor ligula, eget lacinia odio sem nec elit.
+
+==  Special environments
+
+    The following special environments are supported (note
+    that content has to be indented just like any other
+    piece of content too):
+
+::  .latex: Inserts raw latex code.
+::  .verbatim: Inserts verbatim code, i.e. \#\begin{verbatim}#.
+::  .ascii: An alias for \#.verbatim#
+::  .code: Inserts a listing, i.e. verbatim code formatted
+    with a typewriter font and line numbers. Like \#\begin{lstlisting}#.
+::  .math: Inserts a math formula, i.e. \#\begin{displaymath}#.
+::  .graphviz: Inserts a graphviz graph.
+::  .table: Renders an ASCII table.
+
+=== Shorthands
+
+    These are shorthands for some of the above:
+
+::  .!: Shorthand for \#.verbatim#
+::  .#: Shorthand for \#.code#
+::  .$ : Shorthand for \#.math#
+
+
+=   Coding Style
+
+    
