@@ -17,9 +17,9 @@ newpage
 
 =   Principles
 
-    One difficulty in writing a better LaTeX is
-    that LaTeX is a very powerful tool. It's therefor rather difficult to
-    come up with something more easy yet as functional as latex.
+    One difficulty in writing a better \LaTeX is
+    that \LaTeX is a very powerful tool. It's therefor rather difficult to
+    come up with something more easy yet as functional as \LaTeX.
 
     The solution by simplex is that text and control characters are
     set apart from each other. That is, a command is recognized at the

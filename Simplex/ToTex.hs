@@ -80,6 +80,9 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
           : "\\usepackage{amsfonts}\n"
           : "\\usepackage{amssymb}\n"
 
+          : "\\usepackage{stmaryrd}\n"
+          : "\\usepackage{wasysym}\n"
+
           : "\\usepackage{verbatim}\n"
           : "\\usepackage{listings}\n"
           : "\\usepackage{multicol}\n"
