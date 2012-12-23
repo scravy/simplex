@@ -83,6 +83,9 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
           : "\\usepackage{stmaryrd}\n"
           : "\\usepackage{wasysym}\n"
 
+          : "\\let\\EUR\\undefined\n"
+          : "\\usepackage{marvosym}\n"
+
           : "\\usepackage{verbatim}\n"
           : "\\usepackage{listings}\n"
           : "\\usepackage{multicol}\n"
@@ -302,10 +305,10 @@ toTeX' opt (BVerbatim "haskell" l : xs)
     = "\\begin{lstlisting}[language = haskell]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
 
 toTeX' opt (BVerbatim "math" l : xs)
-    = "\\begin{displaymath}\n" : l : "\\end{displaymath}\n" : toTeX' opt xs
+    = "\\begin{displaymath}\n" : safeTeX l : "\\end{displaymath}\n" : toTeX' opt xs
 
 toTeX' opt (BVerbatim "$" l : xs)
-    = "\\begin{displaymath}\n" : l : "\\end{displaymath}\n" : toTeX' opt xs
+    = "\\begin{displaymath}\n" : safeTeX l : "\\end{displaymath}\n" : toTeX' opt xs
 
 toTeX' opt (BVerbatim "latex" l : xs)
     = "\n" : l : "\n" : toTeX' opt xs

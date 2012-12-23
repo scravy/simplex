@@ -55,7 +55,7 @@ mkTable (caption, opt, rows@((t,r):rs))
 
         cellContent Verb c = "\\verb#" ++ c ++ "#"
         cellContent Head c = "{\\bfseries " ++ escapeTeX "}" c
-        cellContent Math c = '$' : c ++ "$"
+        cellContent Math c = '$' : safeTeX c ++ "$"
         cellContent _ c = escapeTeX "" c
 
     in  when (caption /= "") "\\begin{table}[!h]\n"

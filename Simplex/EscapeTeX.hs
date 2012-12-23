@@ -1,5 +1,5 @@
 module Simplex.EscapeTeX (
-        escapeTeX, escapeTeX', ensureTeX
+        escapeTeX, escapeTeX', safeTeX
     ) where
 
 import Simplex.Config
@@ -56,7 +56,7 @@ escapeTeX t [] = t
 escapeTeX' :: String -> String -> String
 escapeTeX' t = concat . (++ [t]) . intersperse "\\\\" . map (escapeTeX "") . lines
 
-
+{-
 ensureTeX ('\\':'´':x:xs)
     | isAlpha x = ("\\´" ++ [x], xs)
 ensureTeX ('\\':'`':x:xs)
@@ -84,6 +84,7 @@ ensureTeX ('\\':'b':' ':x:xs)
     | isAlpha x = ("\\b" ++ [' ', x], xs)
 ensureTeX ('\\':'t':' ':x:xs)
     | isAlpha x = ("\\t" ++ [' ', x], xs)
+-}
 
 ensureTeX ('\\':xs) = let (w, ws) = break (not.isAlpha) xs
                       in maybe ("", xs) (\x -> (x, skipOneSpace ws)) (known w)
