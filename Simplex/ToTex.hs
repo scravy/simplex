@@ -244,7 +244,7 @@ toTeX' opt (BDefine w s : xs)
     = "\\paragraph{" : escapeTeX ('}' : escapeTeX "\n\n" s) w : toTeX' opt xs
 
 toTeX' opt (BRemark w s : xs)
-    = "\\underline{" : escapeTeX ('}' : escapeTeX "\n\n" s) w : toTeX' opt xs
+    = "\\subparagraph{\\underline{" : escapeTeX ('}' : '}' : escapeTeX "\n\n" s) w : toTeX' opt xs
 
 toTeX' opt (BAdvise l : xs)
     = "\\begin{advise}\n"
