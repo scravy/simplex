@@ -5,6 +5,8 @@ dist
 *.out
 *.o
 *.aux
+*.toc
+*.tex
 bin
 target
 .DS_Store
