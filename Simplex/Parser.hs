@@ -172,10 +172,10 @@ parseIt (Items Itemize is : ix) s@(TControl "**" : TBlock b : xs)
   = parseIt (Items Itemize (Item b:is) : ix) xs
 
 
-parseIt [Items t it, Items Enumerate is] s@(TControl (x:_) : TBlock b : xs)
+parseIt [Items t it, Items Enumerate is] s@(TControl [x] : TBlock b : xs)
     | elem x "+-" = parseIt [Items Enumerate $ Item b:Items t (reverse it):is] xs
 
-parseIt [Items Enumerate is] s@(TControl (x:_) : TBlock b : xs)
+parseIt [Items Enumerate is] s@(TControl [x] : TBlock b : xs)
     | elem x "+-" = parseIt [Items Enumerate $ Item b:is] xs
 
 parseIt [ix] s@(TControl "++" : TBlock b : xs)
