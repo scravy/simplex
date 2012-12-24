@@ -10,5 +10,5 @@ Cabal-Version:         >= 1.2
 Executable simplex
   Main-is:             simplex.hs
   Build-Depends:       base >= 4, process >= 1, filepath >= 1.2, directory >= 1,
-                       split >= 0.2, regex-compat >= 0.95, mtl >= 2.1
+                       split >= 0.2, regex-compat >= 0.95, mtl >= 2.1, old-time >= 1.1
 
