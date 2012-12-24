@@ -58,12 +58,14 @@ mkTable (caption, opt, rows@((t,r):rs))
         cellContent Math c = '$' : safeTeX c ++ "$"
         cellContent _ c = escapeTeX "" c
 
-    in  when (caption /= "") "\\begin{table}[!h]\n"
+    in  when' (caption /= "") "\\begin{table}[!h]\n"
         ++ "\\begin{center}\n"
         ++ "\\begin{tabular}{" ++ spec ++ "}\n"
         ++ body
         ++ "\n\\end{tabular}\n"
         ++ "\n\\end{center}\n"
-        ++ when (caption /= "") ("\\caption{" ++ escapeTeX "}\n" caption ++ "\\end{table}\n")
+        ++ when' (caption /= "")
+            ("\\caption{" ++ escapeTeX "}\n" caption ++ "\\end{table}\n")
         ++ "\n"
+
 

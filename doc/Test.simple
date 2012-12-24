@@ -25,7 +25,7 @@
 >$  0
 >   $x$ isolieren: $-c$
 
->\
+>+
 
 >$  <=>
 >$  x^2 + bx
@@ -33,7 +33,7 @@
 >$  -c
 >  $+\left(\frac b 2\right)^2$ *(quadratische Ergänzung)*
 
->\
+>+
 
 >$  <=>
 >$  x^2 + bx + \left(\frac b 2\right)^2
@@ -41,7 +41,7 @@
 >$  -c +\left(\frac b 2\right)^2
 >   binomische Formel rückverwandeln
 
->\
+>+
 
 >$  <=>
 >$  \left( x + \frac b 2 \right)^2
@@ -49,7 +49,7 @@
 >$  \left(\frac b 2\right)^2 - c
 >$  \sqrt{\text{\nbsp}}
 
->\
+>+
 
 >$  <=>
 >$  x + \frac b 2
@@ -57,7 +57,7 @@
 >$  \pm \sqrt{\left(\frac b 2\right)^2 - c}
 >$  -\frac b 2
 
->\
+>+
 
 >$  <=>
 >$  x

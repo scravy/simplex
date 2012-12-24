@@ -24,6 +24,7 @@ data Block =
         | BDefine String String
         | BRemark String String
         | BVerbatim String String
+        | BImport String String
         | BAdvise [String]
         | BItems Items
         | BDescription [(String, String)]
@@ -81,7 +82,8 @@ parse' doc s@(TCommand cmd args : xs)
 
 parse' doc s@(TControl ('.':cs@(_:_)) : xs)
     =   let (b, bs) = break (not.isBlock) xs
-        in  upd doc bs $ BVerbatim cs $ unlines $ map (\(TBlock x) -> x) b
+            concat' = concat . intersperse "\n\n"
+        in  upd doc bs $ BVerbatim cs $ concat' $ map (\(TBlock x) -> x) b
 
 parse' doc s@(TControl c@('>':_) : xs)
     =   let (t, r) = parseTable s in upd doc r $ BTable t
@@ -108,6 +110,7 @@ parse' doc s@(TControl c : TBlock b : xs)
 
             "*"   -> let (l, r) = parseItems s in upd doc r $ BItems l
             "+"   -> let (l, r) = parseItems s in upd doc r $ BItems l
+            "-"   -> let (l, r) = parseItems s in upd doc r $ BItems l
 
             ":"   -> let (l, r) = parseDescription s in upd doc r $ BDescription l
             "::"  -> let (l, r) = parseDescribeItems s in upd doc r $ BDescribeItems l
@@ -169,11 +172,11 @@ parseIt (Items Itemize is : ix) s@(TControl "**" : TBlock b : xs)
   = parseIt (Items Itemize (Item b:is) : ix) xs
 
 
-parseIt [Items t it, Items Enumerate is] s@(TControl "+" : TBlock b : xs)
-  = parseIt [Items Enumerate $ Item b:Items t (reverse it):is] xs
+parseIt [Items t it, Items Enumerate is] s@(TControl (x:_) : TBlock b : xs)
+    | elem x "+-" = parseIt [Items Enumerate $ Item b:Items t (reverse it):is] xs
 
-parseIt [Items Enumerate is] s@(TControl "+" : TBlock b : xs)
-  = parseIt [Items Enumerate $ Item b:is] xs
+parseIt [Items Enumerate is] s@(TControl (x:_) : TBlock b : xs)
+    | elem x "+-" = parseIt [Items Enumerate $ Item b:is] xs
 
 parseIt [ix] s@(TControl "++" : TBlock b : xs)
   = parseIt [Items Enumerate [Item b], ix] xs
@@ -212,7 +215,7 @@ parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">-" : TBlock b : xs)
 parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">=" : TBlock b : xs)
   = parseTable' (caption, opt, ((NoBorder, []) : (DoubleBorder, r) : rs)) xs
 
-parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">\\" : TBlock b : xs)
+parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">+" : TBlock b : xs)
   = parseTable' (caption, opt, ((NoBorder, []) : (NoBorder, r) : rs)) xs
 
 parseTable' (caption, opt, rows@((t,r):rs)) (TControl ('>':c) : TBlock b : xs)

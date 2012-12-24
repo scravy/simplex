@@ -1,19 +1,21 @@
-{-# LANGUAGE FlexibleInstances, TypeSynonymInstances #-}
-
 module Simplex.Util (
-    when, ifElse, tail', tail'',
+    when', ifElse, tail', tail'',
     skipOneSpace, (~=), (~~), units,
-    exec
-    ) where
+    removeIfExists, isLeft, isRight,
+    getModificationTime', exec) where
 
 import Text.Regex
 import Data.Maybe
 
 import Control.Exception
+import Control.Monad
+import System.Directory
 import System.Exit
 import System.Process
+import System.Time
 
 -- common tex units
+
 units :: [String]
 units = ["pt", "mm", "cm", "in", "ex", "em",
          "bp", "pc", "dd", "cc", "sp"]
@@ -26,11 +28,14 @@ s ~= rx = isJust (matchRegex (mkRegex rx) s)
 (~~) :: String -> String -> Maybe [String]
 s ~~ rx = matchRegex (mkRegex rx) s
 
--- controll structures
+endsWith s xs = take (length s') (reverse xs) == s'
+    where s' = reverse s
 
-when :: Bool -> [a] -> [a]
-when True x = x
-when False _ = []
+-- control structures
+
+when' :: Bool -> [a] -> [a]
+when' True x = x
+when' False _ = []
 
 ifElse :: Bool -> a -> a -> a
 ifElse True x _ = x
@@ -50,52 +55,47 @@ skipOneSpace :: String -> String
 skipOneSpace (' ':xs) = xs
 skipOneSpace s = s
 
+-- file handling
+
+removeIfExists :: String -> IO ()
+removeIfExists file = do
+    exists <- doesFileExist file
+    when exists (removeFile file)
+
+getModificationTime' :: FilePath -> IO ClockTime
+getModificationTime' file = do
+    exists <- doesFileExist file
+    if exists then getModificationTime file
+              else return $ TOD 0 0
+
 -- process execution
 
-class Exec a where
-    exec :: a
+exec :: Bool -> String -> [String]
+     -> IO (Either (Int, String) String)
 
-
-instance Exec (String -> IO String) where
-    exec cmd = exec' cmd [] "" const (\_ -> const) id
-
-instance Exec (String -> String -> IO String) where
-    exec cmd stdin = exec' cmd [] stdin const (\_ -> const) id
-
-instance Exec (String -> [String] -> IO String) where
-    exec cmd args = exec' cmd args "" const (\_ -> const) id
-
-instance Exec (String -> [String] -> String -> IO String) where
-    exec cmd args stdin = exec' cmd args stdin const (\_ -> const) id
-
-
-instance Exec (String -> IO (String, String)) where
-    exec cmd = exec' cmd [] "" (,) (\_ -> (,)) ((,) "")
-
-instance Exec (String -> String -> IO (String, String)) where
-    exec cmd stdin = exec' cmd [] stdin (,) (\_ -> (,)) ((,) "")
-
-instance Exec (String -> [String] -> IO (String, String)) where
-    exec cmd args = exec' cmd args "" (,) (\_ -> (,)) ((,) "")
-
-instance Exec (String -> [String] -> String -> IO (String, String)) where
-    exec cmd args stdin = exec' cmd args stdin (,) (\_ -> (,)) ((,) "")
-
-
-
-exec' :: String -> [String] -> String
-         -> (String -> String -> a)
-         -> (Int -> String -> String -> a)
-         -> (String -> a)
-         -> IO a
-exec' cmd args stdin successHandler failureHandler errorHandler = do
-    result <- try $ readProcessWithExitCode cmd args stdin :: IO (Either IOException (ExitCode, String, String))
-    return $ either (errorHandler . show) handle result
+exec True cmd args = do
+    r <- try $ rawSystem cmd args
+    return $ either (\e -> Left (127, show (e :: IOException))) handle r
         where
-            handle (ExitFailure 127, stdout, stderr) = errorHandler "no such command"
-            handle (ExitFailure exitCode, stdout, stderr) = failureHandler exitCode stdout stderr
-            handle (ExitSuccess, stdout, stderr) = successHandler stdout stderr
-        
+            handle (ExitFailure 127) = Left  (127, cmd ++ ": command not found")
+            handle (ExitFailure exc) = Left  (exc, "")
+            handle ExitSuccess       = Right ""
 
+exec _ cmd args = do
+    r <- try $ readProcessWithExitCode cmd args ""
+    return $ either (\e -> Left (127, show (e :: IOException))) handle r
+        where
+            handle (ExitFailure 127, out, err) = Left  (127, cmd ++ ": command not found")
+            handle (ExitFailure exc, out, err) = Left  (exc, out ++ err)
+            handle (ExitSuccess,     out, err) = Right $ out ++ err
 
+-- either utilities
+
+isLeft :: Either a b -> Bool
+isLeft (Left _) = True
+isLeft _ = False
+
+isRight :: Either a b -> Bool
+isRight (Right _) = True
+isRight _ = False
 

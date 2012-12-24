@@ -18,11 +18,11 @@ columns 4
 >   1
 >   2
 >   3
->\
+>+
 >   4
 >   5
 >   6
->\
+>+
 >   7
 >   8
 >   9
@@ -32,11 +32,11 @@ colbreak
 >   1
 >   2
 >   3
->\
+>+
 >   4
 >   5
 >   6
->\
+>+
 >   7
 >   8
 >   9
@@ -47,11 +47,11 @@ colbreak
 >   1
 >   2
 >   3
->\
+>+
 >   4
 >   5
 >   6
->\
+>+
 >   7
 >   8
 >   9
@@ -82,11 +82,11 @@ columnseprule 0.4pt
 .!  >   1
     >   2
     >   3
-    >\
+    >+
     >   4
     >   5
     >   6
-    >\
+    >+
     >   7
     >   8
     >   9
@@ -96,11 +96,11 @@ colbreak
     >   1
     >   2
     >   3
-    >\
+    >+
     >   4
     >   5
     >   6
-    >\
+    >+
     >   7
     >   8
     >   9
@@ -111,11 +111,11 @@ colbreak
     >   1
     >   2
     >   3
-    >\
+    >+
     >   4
     >   5
     >   6
-    >\
+    >+
     >   7
     >   8
     >   9
@@ -153,34 +153,34 @@ newpage
 >-
 >   GK
 >   Paul Robinson
->\
+>+
 >   LB
 >   Lucus Radebe
->\
+>+
 >   DC
 >   Michael Duberry
->\
+>+
 >   DC
 >   Dominic Matteo
->\
+>+
 >   RB
 >   Dider Domi
->\
+>+
 >   MC
 >   David Batty
->\
+>+
 >   MC
 >   Eirik Bakke
->\
+>+
 >   MC
 >   Jody Morris
->\
+>+
 >   FW
 >   Jamie McMaster
->\
+>+
 >   ST
 >   Alan Smith
->\
+>+
 >   ST
 >   Mark Viduka
 >-
@@ -203,15 +203,15 @@ newpage
 >,4 Defenders
 >   LB
 >   Lucus Radabe
->\
+>+
 >
 >   DC
 >   Michael Duberry
->\
+>+
 >
 >   DC
 >   Dominic Matteo
->\
+>+
 >
 >   RB
 >   Didier Domi
@@ -219,11 +219,11 @@ newpage
 >,3 Midfielders
 >   MC
 >   David Batty
->\
+>+
 >
 >   MC
 >   Eirik Bakke
->\
+>+
 >
 >   MC
 >   Jody Morris
@@ -235,7 +235,7 @@ newpage
 >,2 Strikers
 >   ST
 >   Alan Smith
->\
+>+
 >
 >   ST
 >   Mark Viduka
@@ -252,7 +252,7 @@ newpage
     A
 >blue
     B
->\
+>+
 >green
     C
 >yellow

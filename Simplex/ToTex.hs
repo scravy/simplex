@@ -208,16 +208,16 @@ toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ bl
           : xs
 
 toTeX' opt []
-    = when (oColumns opt > 0) "\\end{multicols}" : ["\n}\n\\end{document}\n"]
+    = when' (oColumns opt > 0) "\\end{multicols}" : ["\n}\n\\end{document}\n"]
 
 toTeX' opt (BSection s : xs)
-    = "\\section" : when (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
+    = "\\section" : when' (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
 toTeX' opt (BSubsection s : xs)
-    = "\\subsection" : when (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
+    = "\\subsection" : when' (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
 toTeX' opt (BSubsubsection s : xs)
-    = "\\subsubsection" : when (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
+    = "\\subsubsection" : when' (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
 toTeX' opt (BPart s : xs)
     = "\\part{" : escapeTeX "}\n\n" s : toTeX' opt xs
@@ -343,7 +343,7 @@ toTeX' opt (BCommand "break" [x] : xs)
 
 toTeX' opt (BCommand "columns" [x] : xs)
     | all isDigit x
-        = when (oColumns opt > 0) "\\end{multicols}\n\n"
+        = when' (oColumns opt > 0) "\\end{multicols}\n\n"
         : "\\begin{multicols}{" : x : "}\n\n"
         : toTeX' (opt { oColumns = read x } ) xs
 
