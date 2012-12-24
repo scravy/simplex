@@ -7,13 +7,15 @@ data Config
     doNumberSections :: Bool,
     doSectionsCutColumns :: Bool,
     oColumns :: Int,
-    oFigure :: Bool
+    oFigure :: Bool,
+    oStandalone :: Bool
 }
 
 defaultConfig = Config {
     doNumberSections = False,
     doSectionsCutColumns = True,
     oColumns = 0,
-    oFigure = False
+    oFigure = False,
+    oStandalone = False
 }
 

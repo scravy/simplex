@@ -47,11 +47,6 @@ makeDimensions p
 
 makeFancyHeader p = ""
 
-articleType ((x, _): xs)
-    | x `elem` documentClasses = x
-    | otherwise = articleType xs
-articleType [] = "article"
-
 itemsToTeX :: [Items] -> String
 itemsToTeX = concatMap f
     where
@@ -59,17 +54,26 @@ itemsToTeX = concatMap f
         f (Items Itemize is) = "\\begin{itemize}\n" ++ itemsToTeX is ++ "\\end{itemize}\n"
         f (Items Enumerate is) = "\\begin{enumerate}\n" ++ itemsToTeX is ++ "\\end{enumerate}\n"
 
-toTeX doc@(Document blocks props) = concat $ preamble $ toTeX' (config doc) $ blocks
-    where
-        preamble xs =
-            "\\documentclass[a4paper"
+articleType ((x, _): xs)
+    | x `elem` documentClasses = x
+    | otherwise = articleType xs
+articleType [] = "article"
+
+documentClass cfg props
+    | oStandalone cfg = "\\documentclass[crop]{standalone}\n"
+    | otherwise = concat $ "\\documentclass[a4paper"
 
           : maybe "" (',':) (lookup "fontsize" props)
           : maybe "" (const ",draft") (lookup "draft" props)
           : maybe "" (const ",landscape") (lookup "landscape" props)
 
-          : "]{" : articleType props : "}\n"
+          : "]{" : articleType props : ["}\n"]
 
+toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg doc) $ blocks
+    where
+        preamble xs =
+            documentClass cfg props
+            
           : "\\usepackage[utf8]{inputenc}\n"
           : "\\usepackage{fancyhdr}\n"
 
@@ -368,4 +372,5 @@ toTeX' opt (BCommand c args : xs)
     | otherwise = "\\textcolor{red}{Unknown Command: " : escapeTeX "}\n\n" c : toTeX' opt xs
         where c' = lookup c specialCommands
               r  = (fromJust c') opt args
+
 

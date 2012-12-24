@@ -1,4 +1,4 @@
-all: X.pdf A7.pdf
+all: X.pdf 
 
 %.pdf: %.tex mktex.hs Simplex.hs
 	pdflatex $^
@@ -11,5 +11,5 @@ clean:
 	rm -rf *.log *.aux *.out *.tex *.toc
 
 purge: clean
-	rm -rf *.pdf
+	rm -rf *.pdf *.png
 

@@ -1,7 +1,8 @@
 module Simplex.Config (
         verbs, knownLengths, knownSymbols, knownCommands,
         specialCommands, specialSymbols,
-        Config (..), config, documentClasses
+        Config (..), config, defaultConfig,
+        documentClasses
     ) where
 
 import Simplex.Parser
@@ -11,8 +12,8 @@ import Simplex.ConfigData
 
 import Data.List (sort)
 
-config (Document blocks props)
- = conf defaultConfig blocks
+config cfg (Document blocks props)
+ = conf cfg blocks
 
 conf c (BCommand "tableofcontents" [] : xs) = conf (c { doNumberSections = True }) xs
 conf c (x : xs) = conf c xs
