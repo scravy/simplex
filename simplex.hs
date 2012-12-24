@@ -102,6 +102,7 @@ parseArgs = do
                 Convert  c -> opts { optConvert  = c }
         parseOpts opts _ = opts
 
+gatherChangedFiles :: String -> FilePath -> IO [(FilePath, ClockTime)]
 gatherChangedFiles ext dir = do
     files'  <- getDirectoryContents dir
     let files = filter ((".simple" ==) . takeExtension) files'
@@ -110,6 +111,7 @@ gatherChangedFiles ext dir = do
     let files' = zip3 files mtimes1 mtimes2
     return $ map (\(f, t, _) -> (f, t)) $ filter (\(_, t, t') -> t > t') files'
 
+main :: IO ()
 main = parseArgs >>= either (uncurry simplex) (mapM_ putStr)
 
 simplex, simplex' :: Opts -> [String] -> IO ()
@@ -149,6 +151,8 @@ data Result = Exc IOException
 process :: Opts -> FilePath
         -> (Result -> ContT Result IO Result)
         -> ContT Result IO Result
+-- | ^ Does the actual processing of a simplex file.
+
 process opts file exit = do
     let filename = takeBaseName file
     let prepend  = zipWith (++) (repeat filename)

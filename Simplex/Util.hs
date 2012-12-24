@@ -43,10 +43,12 @@ ifElse _    _ y = y
 
 -- convenience functions for list processing
 
+-- | like @tail@, but returns the empty list for the empty list.
 tail' :: [a] -> [a]
 tail' [] = []
 tail' xs = tail xs
 
+-- | same as `tail' . tail'`
 tail'' :: [a] -> [a]
 tail'' [] = []
 tail'' xs = tail' $ tail' xs
