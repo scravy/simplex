@@ -56,36 +56,6 @@ escapeTeX t [] = t
 escapeTeX' :: String -> String -> String
 escapeTeX' t = concat . (++ [t]) . intersperse "\\\\" . map (escapeTeX "") . lines
 
-{-
-ensureTeX ('\\':'´':x:xs)
-    | isAlpha x = ("\\´" ++ [x], xs)
-ensureTeX ('\\':'`':x:xs)
-    | isAlpha x = ("\\`" ++ [x], xs)
-ensureTeX ('\\':'^':x:xs)
-    | isAlpha x = ("\\^" ++ [x], xs)
-ensureTeX ('\\':'~':x:xs)
-    | isAlpha x = ("\\~" ++ [x], xs)
-ensureTeX ('\\':'=':x:xs)
-    | isAlpha x = ("\\=" ++ [x], xs)
-ensureTeX ('\\':'.':x:xs)
-    | isAlpha x = ("\\." ++ [x], xs)
-ensureTeX ('\\':'"':x:xs)
-    | isAlpha x = ("\\\"" ++ [x], xs)
-
-ensureTeX ('\\':'v':' ':x:xs)
-    | isAlpha x = ("\\v" ++ [' ', x], xs)
-ensureTeX ('\\':'H':' ':x:xs)
-    | isAlpha x = ("\\H" ++ [' ', x], xs)
-ensureTeX ('\\':'c':' ':x:xs)
-    | isAlpha x = ("\\c" ++ [' ', x], xs)
-ensureTeX ('\\':'d':' ':x:xs)
-    | isAlpha x = ("\\d" ++ [' ', x], xs)
-ensureTeX ('\\':'b':' ':x:xs)
-    | isAlpha x = ("\\b" ++ [' ', x], xs)
-ensureTeX ('\\':'t':' ':x:xs)
-    | isAlpha x = ("\\t" ++ [' ', x], xs)
--}
-
 ensureTeX ('\\':xs) = let (w, ws) = break (not.isAlpha) xs
                       in maybe ("", xs) (\x -> (x, skipOneSpace ws)) (known w)
 
