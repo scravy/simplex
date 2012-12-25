@@ -100,7 +100,7 @@ newpage
     environment. It is worth noting that the dot is just
     the explicit command for creating a paragraph, i.e.
     declaring a new paragraph by inserting a blank line
-    is the same as creating a new one of type “dot”.
+    is the same as creating a new one of type "dot".
 
 newpage
 =   Basic commands
@@ -236,4 +236,9 @@ newpage
 
 =   Coding Style
 
-    
+   
+!!! Appendix
+
+=   The source for this document
+
+

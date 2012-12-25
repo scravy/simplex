@@ -291,7 +291,10 @@ toTeX' opt (BVerbatim "!" l : xs)
     = "\\begin{verbatim}\n" : l : "\\end{verbatim}\n" : toTeX' opt xs
 
 toTeX' opt (BVerbatim "code" l : xs)
-    = "\\begin{lstlisting}[mathescape]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
+    = "\\begin{lstlisting}\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
+
+toTeX' opt (BVerbatim "code$" l : xs)
+    = "\\begin{lstlisting}\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
 
 toTeX' opt (BVerbatim "#$" l : xs)
     = "\\begin{lstlisting}[mathescape]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs

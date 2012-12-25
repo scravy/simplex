@@ -182,8 +182,11 @@ loadHashbang :: String -> String -> IO (String, String)
 loadHashbang c b = do
     let f = reverse . dropWhile (`elem` " \t\n\r\"<>")
         trim = f . f
-            
-    try (readFile (trim b)) >>= return . either
+        file = trim b
+
+    h <- openFile file ReadMode
+           
+    try (hGetContents h) >>= return . either
         (\e -> ("error", show (e :: IOException)))
         (\d -> (c, d))
 
@@ -194,7 +197,12 @@ loadIncludes (TControl "#include" : TBlock b : xs) = do
         trim = f . f
         file = trim b
 
-    tok <- readFile file >>= loadIncludes . lex
+    h <- openFile file ReadMode
+    hSetEncoding h utf8
+
+    tok <- try (hGetContents h) >>= either
+        (\e -> return [TControl ".error", TBlock $ show (e :: IOException)])
+        (loadIncludes . lex)
     rest <- loadIncludes xs
     return $ tok ++ rest
 
@@ -237,7 +245,10 @@ process opts file exit = do
 
     print' $ "Processing " ++ file
 
-    f <- liftIO $ try (readFile file)
+    h <- liftIO $ openFile file ReadMode
+    liftIO $ hSetEncoding h utf8
+
+    f <- liftIO $ try (hGetContents h)
     (Str c) <- either (throw . Exc) (return . Str) f
 
     tok' <- liftIO $ loadIncludes (lex c) >>= loadHashbangs
