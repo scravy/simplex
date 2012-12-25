@@ -7,3 +7,6 @@
 ++  Sub 1
 ++  Sub 2
 
+#latex "rawlatex.tex"
+#haskell "Setup.hs"
+#include crap

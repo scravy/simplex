@@ -2,10 +2,10 @@ module Main (main) where
 
 import Prelude hiding (lex)
 
+import Simplex.ConfigData
 import Simplex.Parser
 import Simplex.ToTeX
 import Simplex.Util
-import Simplex.ConfigData
 
 import Text.Printf
 
@@ -134,6 +134,7 @@ main :: IO ()
 main = parseArgs >>= either (uncurry simplex) (mapM_ putStr)
 
 simplex, simplex' :: Opts -> [String] -> IO ()
+
 simplex opts files
     | optHelp opts = do
         cmd <- getProgName
@@ -156,6 +157,8 @@ simplex opts files
 simplex' opts files = do
     mapM_ (flip runContT return . callCC . process opts) files
 
+watch :: Opts -> FilePath -> Int -> ClockTime -> IO ()
+-- | ^ Polls the list of changed files and runs @simplex'@ periodically
 watch opts dir int time = do
     files <- gatherChangedFiles (optType opts) dir
     max <- if null files then return time else do
@@ -164,6 +167,24 @@ watch opts dir int time = do
             return max
     threadDelay (int * 1000)
     watch opts dir int max
+
+loadIncludes :: [Token] -> IO [Token]
+-- | ^ Loads includes (those lines starting with a hashbang)
+loadIncludes (TControl ('#':c@(_:_)) : TBlock b : xs) = do
+    (c', block) <- loadInclude c b
+    rest        <- loadIncludes xs
+    return $ TControl ('.':c') : TBlock block : rest
+loadIncludes (x:xs) = loadIncludes xs >>= return . (x :)
+loadIncludes _ = return []
+
+loadInclude :: String -> String -> IO (String, String)
+loadInclude c b = do
+    let f = reverse . dropWhile (`elem` " \t\n\r\"")
+        trim = f . f
+            
+    try (readFile (trim b)) >>= return . either
+        (\e -> ("error", show (e :: IOException)))
+        (\d -> (c, d))
 
 data Result = Exc IOException
             | Str String
@@ -178,18 +199,18 @@ process :: Opts -> FilePath
 
 process opts file exit = do
     let filename = takeBaseName file
-    let prepend  = zipWith (++) (repeat filename)
-    let filetype = optType opts
+        prepend  = zipWith (++) (repeat filename)
+        filetype = optType opts
 
-    let pdflatex = optPdflatex opts
-    let pdfcrop  = optPdfcrop opts
-    let convert  = optConvert opts
-    let pdfopts  = ["-interaction=nonstopmode", "-file-line-error"]
+        pdflatex = optPdflatex opts
+        pdfcrop  = optPdfcrop opts
+        convert  = optConvert opts
+        pdfopts  = ["-interaction=nonstopmode", "-file-line-error"]
 
-    let print x   = liftIO (putStr   x >> hFlush stdout)
-    let println x = liftIO (putStrLn x >> hFlush stdout)
-    let print' x  = unless (optPrint opts) (print x)
-    let throw x   = println " Splat!" >> error x >> exit x
+        print x   = liftIO (putStr   x >> hFlush stdout)
+        println x = liftIO (putStrLn x >> hFlush stdout)
+        print' x  = unless (optPrint opts) (print x)
+        throw x   = println " Splat!" >> error x >> exit x
           where
             error (Exc e) = print "-> " >> println (show e)
             error (Str s) = print "-> " >> println s
@@ -204,45 +225,47 @@ process opts file exit = do
     f <- liftIO $ try (readFile file)
     (Str c) <- either (throw . Exc) (return . Str) f
 
-    let cfg = defaultConfig { oStandalone = optType opts == "png" }
-    let tex = toTeX cfg (parse (lex c))
+    let tok = lex c
 
+    tok' <- liftIO $ loadIncludes tok
+
+    let cfg = defaultConfig { oStandalone = optType opts == "png" }
+        tex = toTeX cfg (parse tok')
     print' "."
 
     unless (optDryRun opts) $ do
+        -- write tex-file
         r <- liftIO $ try (writeFile (filename ++ ".tex") tex)
         _ <- either (throw . Exc) (return . const Ok) r
-
         print' "."
 
+        -- run pdflatex
         r <- liftIO $ exec (optVerbose opts) pdflatex (pdfopts ++ [filename ++ ".tex"])
         _ <- either (throw . Err . snd) (return . const Ok) r
-
         print' "."
 
+        -- run pdflatex a second time
         _ <- liftIO $ exec (optVerbose opts) pdflatex (pdfopts ++ [filename ++ ".tex"])
-
         print' "."
 
+        -- clean files
         unless (optNoClean opts) (liftIO $ mapM_ removeIfExists (prepend dirtyExts))
 
-    when (elem filetype ["png", "jpg", "gif"] && not (optDryRun opts)) $ do
-        print' "."
+        when (elem filetype ["png", "jpg", "gif"]) $ do
+            print' "."
+            when (optCrop opts) $ do
+                r <- liftIO $ exec (optVerbose opts) pdfcrop [filename ++ ".pdf", filename ++ "-crop.pdf"]
+                _ <- either (throw . Err . snd) (return . const Ok) r
 
-        when (optCrop opts) $ do
-            r <- liftIO $ exec (optVerbose opts) pdfcrop [filename ++ ".pdf", filename ++ "-crop.pdf"]
+                r <- liftIO $ try $ renameFile (filename ++ "-crop.pdf") (filename ++ ".pdf")
+                _ <- either (throw . Exc) (return . const Ok) r
+
+                print' "."
+
+            r <- liftIO $ exec (optVerbose opts) convert ["-density", show $ optDensity opts, filename ++ ".pdf",
+                                                          "-quality", show $ optQuality opts, filename ++ "." ++ filetype]
             _ <- either (throw . Err . snd) (return . const Ok) r
-
-            r <- liftIO $ try $ renameFile (filename ++ "-crop.pdf") (filename ++ ".pdf")
-            _ <- either (throw . Exc) (return . const Ok) r
-
             return ()
-
-        r <- liftIO $ exec (optVerbose opts) convert ["-density", show $ optDensity opts, filename ++ ".pdf",
-                                                      "-quality", show $ optQuality opts, filename ++ "." ++ filetype]
-        _ <- either (throw . Err . snd) (return . const Ok) r
-
-        return ()
 
     print' " OK\n"
 

@@ -60,7 +60,7 @@ articleType ((x, _): xs)
 articleType [] = "article"
 
 documentClass cfg props
-    | oStandalone cfg = "\\documentclass[crop]{standalone}\n"
+    | oStandalone cfg = "\\documentclass[preview]{standalone}\n"
     | otherwise = concat $ "\\documentclass[a4paper"
 
           : maybe "" (',':) (lookup "fontsize" props)
@@ -310,6 +310,9 @@ toTeX' opt (BVerbatim "haskell" l : xs)
 
 toTeX' opt (BVerbatim "math" l : xs)
     = "\\begin{displaymath}\n" : safeTeX l : "\\end{displaymath}\n" : toTeX' opt xs
+
+toTeX' opt (BVerbatim "error" l : xs)
+    = "\\textcolor{red}{IOException: " : escapeTeX "}\n\n" l : toTeX' opt xs
 
 toTeX' opt (BVerbatim "$" l : xs)
     = "\\begin{displaymath}\n" : safeTeX l : "\\end{displaymath}\n" : toTeX' opt xs
