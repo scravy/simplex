@@ -168,23 +168,38 @@ watch opts dir int time = do
     threadDelay (int * 1000)
     watch opts dir int max
 
-loadIncludes :: [Token] -> IO [Token]
+loadHashbangs :: [Token] -> IO [Token]
 -- | ^ Loads includes (those lines starting with a hashbang)
-loadIncludes (TControl ('#':c@(_:_)) : TBlock b : xs) = do
-    (c', block) <- loadInclude c b
-    rest        <- loadIncludes xs
+loadHashbangs (TControl ('#':c@(_:_)) : TBlock b : xs) = do
+    (c', block) <- loadHashbang c b
+    rest        <- loadHashbangs xs
     return $ TControl ('.':c') : TBlock block : rest
-loadIncludes (x:xs) = loadIncludes xs >>= return . (x :)
-loadIncludes _ = return []
 
-loadInclude :: String -> String -> IO (String, String)
-loadInclude c b = do
-    let f = reverse . dropWhile (`elem` " \t\n\r\"")
+loadHashbangs (x:xs) = loadHashbangs xs >>= return . (x :)
+loadHashbangs _ = return []
+
+loadHashbang :: String -> String -> IO (String, String)
+loadHashbang c b = do
+    let f = reverse . dropWhile (`elem` " \t\n\r\"<>")
         trim = f . f
             
     try (readFile (trim b)) >>= return . either
         (\e -> ("error", show (e :: IOException)))
         (\d -> (c, d))
+
+loadIncludes :: [Token] -> IO [Token]
+-- ^ load other simplex files included via `#include`
+loadIncludes (TControl "#include" : TBlock b : xs) = do
+    let f = reverse . dropWhile (`elem` " \t\n\r\"<>")
+        trim = f . f
+        file = trim b
+
+    tok <- readFile file >>= loadIncludes . lex
+    rest <- loadIncludes xs
+    return $ tok ++ rest
+
+loadIncludes (x:xs) = loadIncludes xs >>= return . (x :)
+loadIncludes _ = return []
 
 data Result = Exc IOException
             | Str String
@@ -225,9 +240,7 @@ process opts file exit = do
     f <- liftIO $ try (readFile file)
     (Str c) <- either (throw . Exc) (return . Str) f
 
-    let tok = lex c
-
-    tok' <- liftIO $ loadIncludes tok
+    tok' <- liftIO $ loadIncludes (lex c) >>= loadHashbangs
 
     let cfg = defaultConfig { oStandalone = optType opts == "png" }
         tex = toTeX cfg (parse tok')

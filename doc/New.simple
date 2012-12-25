@@ -1,0 +1,33 @@
+@title
+    This is a nice title
+
+@authors
+    Julian Fleischer
+    André Zoufahl
+
+@book
+
+newpage
+tableofcontents
+
+!!! The first part of the book
+    
+!!  What is the first chapter about?
+
+=   One
+==  Two
+==  Three
+=   One
+=   Two
+==  Three
+=== Four
+==  Yea
+==  Booga
+
+!!  What is this very next chapter about?
+
+!!! The second part of the book
+
+!!  Do you like Yahoo?
+
+

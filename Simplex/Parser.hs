@@ -271,7 +271,7 @@ parseCell c
     in  Cell color align colSpan rowSpan (head c == '|') (last c == '|') typ
 
 lex :: String -> [Token]
-lex xs = lex' 1 1 [] SStart (xs ++ "\n\n")
+lex xs = lex' 1 0 [] SStart (xs ++ "\n\n")
 
 lex' :: Int -> Int -> String -> State -> String -> [Token]
 lex' _ _ _ _ [] = []

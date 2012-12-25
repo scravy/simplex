@@ -7,6 +7,8 @@
 ++  Sub 1
 ++  Sub 2
 
+==  Section 1
+
 #latex "rawlatex.tex"
 #haskell "Setup.hs"
-
+#include "Z.simple"

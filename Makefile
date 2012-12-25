@@ -7,6 +7,9 @@ all: X.pdf
 %.tex: %.simple
 	cat $^ | runhaskell mktex.hs > $@
 
+install:
+	cabal install --prefix=${HOME}/Repository --user
+
 clean:
 	rm -rf *.log *.aux *.out *.tex *.toc
 
