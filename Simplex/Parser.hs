@@ -95,8 +95,8 @@ parse' doc s@(TControl c : TBlock b : xs)
             "=="  -> upd doc xs $ BSubsection b
             "===" -> upd doc xs $ BSubsubsection b
 
-            "##"  -> upd doc xs $ BChapter b
-            "###" -> upd doc xs $ BPart b
+            "!!"  -> upd doc xs $ BChapter b
+            "!!!" -> upd doc xs $ BPart b
 
             "=>"  -> upd doc xs $ BTherefore b
             "<="  -> upd doc xs $ BBecause b
