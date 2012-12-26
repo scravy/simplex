@@ -23,12 +23,22 @@ newSpec = Spec {
 processSpecials :: Opts -> Spec -> [Token] -> IO (Spec, [Token])
 
 processSpecials opts spec (TControl ".digraph" : TBlock b : xs) = do
-    (spec', pdf)   <- mkGraph "digraph" opts spec b
+    (spec', pdf)   <- mkGraph "dot" "digraph" opts spec b
     (spec'', rest) <- processSpecials opts spec' xs
     return (spec'', TCommand "image" [pdf] : rest)
 
 processSpecials opts spec (TControl ".graph" : TBlock b : xs) = do
-    (spec', pdf)   <- mkGraph "graph" opts spec b
+    (spec', pdf)   <- mkGraph "neato" "graph" opts spec b
+    (spec'', rest) <- processSpecials opts spec' xs
+    return (spec'', TCommand "image" [pdf] : rest)
+
+processSpecials opts spec (TControl ".neato" : TBlock b : xs) = do
+    (spec', pdf)   <- mkGraph "neato" "" opts spec b
+    (spec'', rest) <- processSpecials opts spec' xs
+    return (spec'', TCommand "image" [pdf] : rest)
+
+processSpecials opts spec (TControl ".dot" : TBlock b : xs) = do
+    (spec', pdf)   <- mkGraph "dot" "" opts spec b
     (spec'', rest) <- processSpecials opts spec' xs
     return (spec'', TCommand "image" [pdf] : rest)
 
@@ -46,13 +56,13 @@ randomString n = do
     str  <- randomString (n-1)
     return $ char : str
 
-mkGraph g opts spec c = do
+mkGraph e g opts spec c = do
     file <- randomString 10
 
     let spec' = spec { sRemoveFiles = (file ++ ".pdf") : (file ++ ".dot") : sRemoveFiles spec }
-    writeFile (file ++ ".dot") (g ++ " G {\n" ++ c ++ "\n}\n")
+    writeFile (file ++ ".dot") (if null g then c else g ++ " G {\n" ++ c ++ "\n}\n")
     
-    exec False "dot" ["-Tpdf", "-Kdot", file ++ ".dot", "-o" ++ file ++ ".pdf"]
+    exec False "dot" ["-Tpdf", "-K" ++ e, file ++ ".dot", "-o" ++ file ++ ".pdf"]
 
     return (spec', file ++ ".pdf")
 

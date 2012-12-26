@@ -2,8 +2,7 @@ module Simplex.ConfigData (
         Config (..), defaultConfig
     ) where
 
-data Config
- = Config {
+data Config = Config {
     doNumberSections :: Bool,
     doSectionsCutColumns :: Bool,
     oColumns :: Int,
