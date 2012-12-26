@@ -1,4 +1,7 @@
-module Simplex.Specials (processSpecials) where
+module Simplex.Specials (
+        processSpecials,
+        newSpec, Spec(..)
+    ) where
 
 import Simplex.Config
 import Simplex.ConfigData
@@ -9,28 +12,31 @@ import Simplex.Util
 import System.Directory
 import System.Random
 
-processSpecials :: Opts -> [Token] -> IO [Token]
+data Spec = Spec {
+        sRemoveFiles :: [String]
+    }
 
-processSpecials opts (TControl ".digraph" : TBlock b : xs) = do
-    tex  <- mkDigraph b
-    rest <- processSpecials opts xs
-    return (TControl ".latex" : TBlock tex : rest)
+newSpec = Spec {
+        sRemoveFiles = []
+    }
 
-processSpecials opts (TControl ".graph" : TBlock b : xs) = do
-    tex  <- mkGraph b
-    rest <- processSpecials opts xs
-    return (TControl ".latex" : TBlock tex : rest)
+processSpecials :: Opts -> Spec -> [Token] -> IO (Spec, [Token])
 
-processSpecials opts (TControl ".gnuplot" : TBlock b : xs) = do
-    tex  <- mkGnuplot b
-    rest <- processSpecials opts xs
-    return (TControl ".latex" : TBlock tex : rest)
+processSpecials opts spec (TControl ".digraph" : TBlock b : xs) = do
+    (spec', pdf)   <- mkGraph "digraph" opts spec b
+    (spec'', rest) <- processSpecials opts spec' xs
+    return (spec'', TCommand "image" [pdf] : rest)
 
-processSpecials opts (x : xs) = do
-    rest <- processSpecials opts xs
-    return $ x : rest
+processSpecials opts spec (TControl ".graph" : TBlock b : xs) = do
+    (spec', pdf)   <- mkGraph "graph" opts spec b
+    (spec'', rest) <- processSpecials opts spec' xs
+    return (spec'', TCommand "image" [pdf] : rest)
 
-processSpecials opts [] = return []
+processSpecials opts spec (x : xs) = do
+    (spec', rest) <- processSpecials opts spec xs
+    return (spec', x : rest)
+
+processSpecials _ spec [] = return (spec, [])
 
 
 randomString :: Int -> IO String
@@ -40,21 +46,14 @@ randomString n = do
     str  <- randomString (n-1)
     return $ char : str
 
-mkDigraph c = do
+mkGraph g opts spec c = do
     file <- randomString 10
 
-    writeFile (file ++ ".dot") ("digraph G {\n" ++ c ++ "\n}\n")
+    let spec' = spec { sRemoveFiles = (file ++ ".pdf") : (file ++ ".dot") : sRemoveFiles spec }
+    writeFile (file ++ ".dot") (g ++ " G {\n" ++ c ++ "\n}\n")
     
-    exec False "dot" ["-Tpdf", file ++ ".dot", "-o" ++ file ++ ".pdf"]
-    removeFile (file ++ ".dot")
+    exec False "dot" ["-Tpdf", "-Kdot", file ++ ".dot", "-o" ++ file ++ ".pdf"]
 
-    return $ "\\includegraphics{" ++ file ++ ".pdf}"
-
-mkGraph c = do
-    return ""
-
-mkGnuplot c = do
-    
-    return ""
+    return (spec', file ++ ".pdf")
 
 

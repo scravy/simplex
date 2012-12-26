@@ -2,7 +2,8 @@ module Simplex.Parser (
         lex, parse,
         Token(..), Block(..), Document (Document),
         Table, Cell(..), CellType(..), RowType(..),
-        Items(..), ItemType(..)
+        Items(..), ItemType(..),
+        loadIncludes, loadHashbangs
     ) where
 
 import Simplex.Util
@@ -10,6 +11,8 @@ import Simplex.Util
 import Data.List (intersperse, elemIndex)
 import Data.Char (isAlpha, isDigit, isLower, isUpper)
 import Data.Maybe
+
+import Control.Exception
 
 import Prelude hiding (lex)
 
@@ -29,12 +32,6 @@ data Block =
         | BItems Items
         | BDescription [(String, String)]
         | BDescribeItems [(String, String)]
-        | BTherefore String
-        | BBecause String
-        | BNTherefore String
-        | BNBecause String
-        | BIff String
-        | BNIff String
         | BLine
         | BTable Table
         | BCommand String [String]
@@ -97,13 +94,6 @@ parse' doc s@(TControl c : TBlock b : xs)
 
             "!!"  -> upd doc xs $ BChapter b
             "!!!" -> upd doc xs $ BPart b
-
-            "=>"  -> upd doc xs $ BTherefore b
-            "<="  -> upd doc xs $ BBecause b
-            "=!>" -> upd doc xs $ BNTherefore b
-            "<!=" -> upd doc xs $ BNBecause b
-            "<=>" -> upd doc xs $ BIff b
-            "<!>" -> upd doc xs $ BNIff b
 
             ":="  -> upd doc xs $ mkDefine b
             ":-"  -> upd doc xs $ mkRemark b
@@ -199,6 +189,7 @@ parseItem i
         where (w, r) = break (== ':') i
 
 parseTable :: [Token] -> (Table, [Token])
+-- ^ parses Tokens as a Table, returns the Table and the remaining Tokens.
 parseTable = parseTable' ("", [], [(NoBorder, [])])
 
 parseTable' :: Table -> [Token] -> (Table, [Token])
@@ -271,6 +262,7 @@ parseCell c
     in  Cell color align colSpan rowSpan (head c == '|') (last c == '|') typ
 
 lex :: String -> [Token]
+-- ^ Lexes a String into Tokens.
 lex xs = lex' 1 0 [] SStart (xs ++ "\n\n")
 
 lex' :: Int -> Int -> String -> State -> String -> [Token]
@@ -325,4 +317,44 @@ lexCommand l c cmd b a s@(x:xs)
     | otherwise         = lexCommand l (c+1) cmd (x:b) a xs
 
 mkBlock = TBlock . dropWhile (== '\n') . reverse
+
+
+loadHashbangs :: [Token] -> IO [Token]
+-- ^ Loads includes (those lines starting with a hashbang)
+loadHashbangs (TControl ('#':c@(_:_)) : TBlock b : xs) = do
+    (c', block) <- loadHashbang c b
+    rest        <- loadHashbangs xs
+    return $ TControl ('.':c') : TBlock block : rest
+
+loadHashbangs (x:xs) = loadHashbangs xs >>= return . (x :)
+loadHashbangs _ = return []
+
+
+loadHashbang :: String -> String -> IO (String, String)
+-- ^ Loads a single hashbang reference
+loadHashbang c b = do
+    let f = reverse . dropWhile (`elem` " \t\n\r\"<>")
+        trim = f . f
+        file = trim b
+
+    try (readFile file) >>= return . either
+        (\e -> ("error", show (e :: IOException)))
+        (\d -> (c, d))
+
+
+loadIncludes :: [Token] -> IO [Token]
+-- ^ load other simplex files included via `#include`
+loadIncludes (TControl "#include" : TBlock b : xs) = do
+    let f = reverse . dropWhile (`elem` " \t\n\r\"<>")
+        trim = f . f
+        file = trim b
+
+    tok <- try (readFile file) >>= either
+        (\e -> return [TControl ".error", TBlock $ show (e :: IOException)])
+        (loadIncludes . lex)
+    rest <- loadIncludes xs
+    return $ tok ++ rest
+
+loadIncludes (x:xs) = loadIncludes xs >>= return . (x :)
+loadIncludes _ = return []
 

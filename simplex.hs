@@ -82,46 +82,6 @@ watch opts dir int time = do
     watch opts dir int max
 
 
-loadHashbangs :: [Token] -> IO [Token]
--- ^ Loads includes (those lines starting with a hashbang)
-loadHashbangs (TControl ('#':c@(_:_)) : TBlock b : xs) = do
-    (c', block) <- loadHashbang c b
-    rest        <- loadHashbangs xs
-    return $ TControl ('.':c') : TBlock block : rest
-
-loadHashbangs (x:xs) = loadHashbangs xs >>= return . (x :)
-loadHashbangs _ = return []
-
-
-loadHashbang :: String -> String -> IO (String, String)
--- ^ Loads a single hashbang reference
-loadHashbang c b = do
-    let f = reverse . dropWhile (`elem` " \t\n\r\"<>")
-        trim = f . f
-        file = trim b
-
-    try (readFile file) >>= return . either
-        (\e -> ("error", show (e :: IOException)))
-        (\d -> (c, d))
-
-
-loadIncludes :: [Token] -> IO [Token]
--- ^ load other simplex files included via `#include`
-loadIncludes (TControl "#include" : TBlock b : xs) = do
-    let f = reverse . dropWhile (`elem` " \t\n\r\"<>")
-        trim = f . f
-        file = trim b
-
-    tok <- try (readFile file) >>= either
-        (\e -> return [TControl ".error", TBlock $ show (e :: IOException)])
-        (loadIncludes . lex)
-    rest <- loadIncludes xs
-    return $ tok ++ rest
-
-loadIncludes (x:xs) = loadIncludes xs >>= return . (x :)
-loadIncludes _ = return []
-
-
 data Result = Exc IOException
             | Str String
             | Err String
@@ -171,7 +131,7 @@ process opts file exit = do
     print "."
     let cfg = defaultConfig { oStandalone = optType opts == "png" }
 
-    tok' <- liftIO $ processSpecials opts tok
+    (spec, tok') <- liftIO $ processSpecials opts newSpec tok
 
     let tex = toTeX cfg (parse tok')
     print' "."
@@ -192,7 +152,8 @@ process opts file exit = do
         print' "."
 
         -- clean files
-        unless (optNoClean opts) (liftIO $ mapM_ removeIfExists (prepend dirtyExts))
+        unless (optNoClean opts) (liftIO $ do { mapM_ removeIfExists (prepend dirtyExts)
+                                              ; mapM_ removeIfExists (sRemoveFiles spec) } )
 
         when (elem filetype ["png", "jpg", "gif"]) $ do
             print' "."

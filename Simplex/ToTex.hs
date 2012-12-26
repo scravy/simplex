@@ -232,22 +232,22 @@ toTeX' opt (BChapter s : xs)
 toTeX' opt (BLine : xs)
     = "\n\\hspace{\\fill}\\rule{0.8\\linewidth}{0.7pt}\\hspace{\\fill}\n\n" : toTeX' opt xs
 
-toTeX' opt (BTherefore s : xs)
+toTeX' opt (BAny "=>" s : xs)
     = "\\paragraph{$\\Rightarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
 
-toTeX' opt (BNTherefore s : xs)
+toTeX' opt (BAny "=!>" s : xs)
     = "\\paragraph{$\\nRightarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
 
-toTeX' opt (BBecause s : xs)
+toTeX' opt (BAny "<=" s : xs)
     = "\\paragraph{$\\Leftarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
 
-toTeX' opt (BNBecause s : xs)
+toTeX' opt (BAny "<!=" s : xs)
     = "\\paragraph{$\\nLeftarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
 
-toTeX' opt (BIff s : xs)
+toTeX' opt (BAny "<=>" s : xs)
     = "\\paragraph{$\\Leftrightarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
 
-toTeX' opt (BNIff s : xs)
+toTeX' opt (BAny "<!>" s : xs)
     = "\\paragraph{$\\nLeftrightarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs
 
 toTeX' opt (BDefine w s : xs)

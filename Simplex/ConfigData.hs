@@ -8,7 +8,13 @@ data Config
     doSectionsCutColumns :: Bool,
     oColumns :: Int,
     oFigure :: Bool,
-    oStandalone :: Bool
+    oStandalone :: Bool,
+    
+    oImageWidth :: Maybe String,
+    oImageHeight :: Maybe String,
+    oImageScale :: Maybe String,
+    oImageAngle :: Maybe String,
+    oImagePage :: Maybe String
 }
 
 defaultConfig = Config {
@@ -16,6 +22,12 @@ defaultConfig = Config {
     doSectionsCutColumns = True,
     oColumns = 0,
     oFigure = False,
-    oStandalone = False
+    oStandalone = False,
+    
+    oImageWidth = Nothing,
+    oImageHeight = Nothing,
+    oImageScale = Nothing,
+    oImageAngle = Nothing,
+    oImagePage = Nothing
 }
 

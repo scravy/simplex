@@ -1,6 +1,13 @@
+image-width \textwidth
+
 .digraph
     A -> M;
     B -> M;
     M -> X;
+    M -> Y;
     M -> Z;
-.
+
+image-size 4cm 4cm
+image 4-color-wheel.png
+
+

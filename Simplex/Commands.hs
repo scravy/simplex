@@ -1,8 +1,7 @@
 {-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
 
 module Simplex.Commands (
-        Command (..), oneArg,
-        reset, image
+        Command (..), reset, image
     ) where
 
 import Simplex.Util
@@ -20,35 +19,51 @@ instance Command String where
 instance Command (Config -> [String] -> (Config, String)) where
     a ~> f = (a, f)
 
+instance Command (Config -> String -> (Config, String)) where
+    a ~> f = (a, \o x -> if null x then (o, "") else f o (head x))
+
+instance Command (Config -> String -> Config) where
+    a ~> f = (a, \o x -> if null x then (o, "") else (f o (head x), ""))
+
+instance Command (Config -> String -> String -> Config) where
+    a ~> f = (a, \o x -> if length x < 2 then (o, "") else (f o (x !! 0) (x !! 1), ""))
+
+instance Command (String -> String) where
+    a ~> f = (a, \o x -> (o, if null x then "" else f (head x)))
+
+instance Command (Config -> Config) where
+    a ~> f = (a, \o _ -> (f o, ""))
+
 instance Command ([String] -> String) where
     a ~> f = (a, \o x -> (o, f x))
-
-oneArg :: (String -> String) -> Config -> [String] -> (Config, String)
-oneArg f o (x:xs) = (o, f x)
-oneArg f o [] = (o, "")
 
 reset :: Config -> [String] -> (Config, String)
 reset opt _
     | oColumns opt > 0 = (opt {oColumns = 0}, "\\end{multicols}}{")
     | otherwise        = (opt, "}{")
 
-data ImageOpt = Angle Double
-              | File String
-              | Width Double
-              | Scale Double
-    deriving (Show, Eq)
+image :: Config -> [String] -> (Config, String)
+image opt (x:xs) = (opt, "\\includegraphics" ++ getOpts ++ "{" ++ x ++ "}\n")
+    where
+        getOpts = if null opts' then ""
+                  else "[" ++ (concat $ intersperse "," $ map (\(a,b) -> a ++ "=" ++ b) $ opts') ++ "]"
+        opts' = opts 1
+        opts 1 = if isJust (oImageWidth opt)
+                 then ("width", fromJust (oImageWidth opt)) : opts 2
+                 else opts 2
+        opts 2 = if isJust (oImageHeight opt)
+                 then ("height", fromJust (oImageHeight opt)) : opts 3
+                 else opts 3
+        opts 3 = if isJust (oImageAngle opt)
+                 then ("angle", fromJust (oImageAngle opt)) : opts 4
+                 else opts 4
+        opts 4 = if isJust (oImageScale opt)
+                 then ("scale", fromJust (oImageScale opt)) : opts 5
+                 else opts 5
+        opts 5 = if isJust (oImagePage opt)
+                 then ("page", fromJust (oImagePage opt)) : opts 6
+                 else opts 6
+        opts _ = []
+image opt _ = (opt, "")
 
-imageOpt [] = []
-imageOpt (x:xs)
-    | isJust angle = Angle (read ((fromJust angle) !! 0)) : imageOpt xs
-    | isJust width = Width (read ((fromJust width) !! 0)) : imageOpt xs
-    | isJust scale = Scale (read ((fromJust scale) !! 0)) : imageOpt xs
-    | otherwise = File x : imageOpt xs
-        where
-            angle = x ~~ "^(\\-?[0-9]+(\\.[0-9]+)?)deg$"
-            width = x ~~ "^(\\-?[0-9]+(\\.[0-9]+)?)%$"
-            scale = x ~~ "^(\\-?[0-9]+(\\.[0-9]+)?)$"
-            dim   = x ~~ ("^(\\-?[0-9]+(\\.[0-9]+)?)" ++ concat (intersperse "|" units) ++ "$")
 
-image :: [String] -> String
-image = show . imageOpt 

@@ -6,7 +6,7 @@ module Simplex.Config (
     ) where
 
 import Simplex.Parser
-import Simplex.Commands (Command (..), oneArg)
+import Simplex.Commands (Command (..))
 import qualified Simplex.Commands as C
 import Simplex.ConfigData
 
@@ -288,9 +288,21 @@ specialCommands
     "left" ~> "\\raggedright",
     "center" ~> "\\centering",
     "reset" ~> C.reset,
-    "pagestyle" ~> oneArg (\x -> "\\pagestyle{" ++ x ++ "}"),
-    "thispagestyle" ~> oneArg (\x -> "\\thispagestyle{" ++ x ++ "}"),
-    "image" ~> C.image]
+    "pagestyle" ~> (\x -> "\\pagestyle{" ++ x ++ "}"),
+    "thispagestyle" ~> (\x -> "\\thispagestyle{" ++ x ++ "}"),
+    "image-defaults" ~> (\o -> o { oImageWidth = Nothing,
+                                   oImageHeight = Nothing,
+                                   oImageScale = Nothing,
+                                   oImageAngle = Nothing,
+                                   oImagePage = Nothing }),
+    "image-size" ~> (\o x y -> o { oImageWidth = Just x, oImageHeight = Just y }),
+    "image-width" ~> (\o x -> o { oImageWidth = Just x }),
+    "image-height" ~> (\o x -> o { oImageHeight = Just x }),
+    "image-angle" ~> (\o x -> o { oImageAngle = Just x }),
+    "image-scale" ~> (\o x -> o { oImageScale = Just x }),
+    "image-page" ~> (\o x -> o { oImagePage = Just x }),
+    "image" ~> C.image
+   ]
 
 showSymbols = do
     let symbols = sort knownSymbols
