@@ -2,7 +2,7 @@ module Simplex.Parser (
         lex, parse,
         Token(..), Block(..), Document (Document),
         Table, Cell(..), CellType(..), RowType(..),
-        Items(..), ItemType(..),
+        Items(..), ItemType(..), TableOpt(..),
         loadIncludes, loadHashbangs
     ) where
 
@@ -37,7 +37,21 @@ data Block =
         | BCommand String [String]
     deriving (Eq, Show)
 
-type Table = (String, [String], [(RowType, [(Cell, String)])])
+data TableOpt = TableOpt {
+    tableDef :: String,
+    tableX :: Bool,
+    tableCaptionTop :: Maybe String,
+    tableCaptionBottom :: Maybe String
+} deriving (Eq, Show)
+
+newTableOpt = TableOpt {
+    tableDef = "",
+    tableX = False,
+    tableCaptionTop = Nothing,
+    tableCaptionBottom = Nothing
+}
+
+type Table = (TableOpt, [(RowType, [(Cell, String)])])
 
 data ItemType = Enumerate | Itemize
     deriving (Eq, Show)
@@ -116,13 +130,22 @@ parse' (Document blocks prop) []
 
 mkDefine :: String -> Block
 mkDefine xs
-  = let (w, rs) = break (== ':') xs
-    in  BDefine w $ tail rs
+  = let (w, rs) = splitHead xs
+    in  BDefine w rs
 
 mkRemark :: String -> Block
 mkRemark xs
-  = let (w, rs) = break (== ':') xs
-    in  BRemark w $ tail rs
+  = let (w, rs) = splitHead xs
+    in  BRemark w rs
+
+
+splitHead [] = ("", "")
+splitHead (':':xs) = ("", xs)
+splitHead ('\\':':':xs) = (':':x', xs')
+    where (x', xs') = splitHead xs
+splitHead (x:xs) = (x:x', xs')
+    where (x', xs') = splitHead xs
+
 
 upd :: Document -> [Token] -> Block -> Document
 upd (Document blocks prop) xs block = parse' (Document (block:blocks) prop) xs
@@ -185,35 +208,41 @@ parseIt _ s = (Items Itemize [], s)
 
 parseItem i
     | r == ""   = ("", w)
-    | otherwise = (w, tail' r)
-        where (w, r) = break (== ':') i
+    | otherwise = (w, r)
+        where (w, r) = splitHead i
 
 parseTable :: [Token] -> (Table, [Token])
 -- ^ parses Tokens as a Table, returns the Table and the remaining Tokens.
-parseTable = parseTable' ("", [], [(NoBorder, [])])
+parseTable = parseTable' (newTableOpt, [(NoBorder, [])])
 
 parseTable' :: Table -> [Token] -> (Table, [Token])
 
-parseTable' (caption, opt, rows) (TControl ">@" : TBlock b : xs)
-  = parseTable' (caption, (b:opt), rows) xs
+parseTable' (opt, rows) (TControl ">@" : TBlock b : xs)
+  = parseTable' (opt { tableDef = b }, rows) xs
 
-parseTable' (caption, opt, rows) (TControl ">>" : TBlock b : xs)
-  = parseTable' (b, opt, rows) xs
+parseTable' (opt, rows) (TControl ">X" : TBlock b : xs)
+  = parseTable' (opt { tableDef = b, tableX = True }, rows) xs
 
-parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">-" : TBlock b : xs)
-  = parseTable' (caption, opt, ((NoBorder, []) : (SingleBorder, r) : rs)) xs
+parseTable' (opt, rows) (TControl ">^" : TBlock b : xs)
+  = parseTable' (opt { tableCaptionTop = Just b }, rows) xs
 
-parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">=" : TBlock b : xs)
-  = parseTable' (caption, opt, ((NoBorder, []) : (DoubleBorder, r) : rs)) xs
+parseTable' (opt, rows) (TControl ">_" : TBlock b : xs)
+  = parseTable' (opt { tableCaptionBottom = Just b }, rows) xs
 
-parseTable' (caption, opt, rows@((t,r):rs)) (TControl ">+" : TBlock b : xs)
-  = parseTable' (caption, opt, ((NoBorder, []) : (NoBorder, r) : rs)) xs
+parseTable' (opt, rows@((t,r):rs)) (TControl ">-" : TBlock b : xs)
+  = parseTable' (opt, ((NoBorder, []) : (SingleBorder, r) : rs)) xs
 
-parseTable' (caption, opt, rows@((t,r):rs)) (TControl ('>':c) : TBlock b : xs)
-  = parseTable' (caption, opt, ((t, (parseCell c, b):r):rs)) xs
+parseTable' (opt, rows@((t,r):rs)) (TControl ">=" : TBlock b : xs)
+  = parseTable' (opt, ((NoBorder, []) : (DoubleBorder, r) : rs)) xs
 
-parseTable' (caption, opt, rows) xs
-  = ((caption, reverse opt, map (\(t,r) -> (t, reverse r)) $ reverse rows), xs)
+parseTable' (opt, rows@((t,r):rs)) (TControl ">+" : TBlock b : xs)
+  = parseTable' (opt, ((NoBorder, []) : (NoBorder, r) : rs)) xs
+
+parseTable' (opt, rows@((t,r):rs)) (TControl ('>':c) : TBlock b : xs)
+  = parseTable' (opt, ((t, (parseCell c, b):r):rs)) xs
+
+parseTable' (opt, rows) xs
+  = ((opt, map (\(t,r) -> (t, reverse r)) $ reverse rows), xs)
 
 parseCell c
   = let

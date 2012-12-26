@@ -7,16 +7,25 @@ import Simplex.Parser
 import Data.List (intersperse)
 
 mkTable :: Table -> String
-mkTable (caption, opt, rows@((t,r):rs))
+mkTable (opt, rows@((t,r):rs))
   = let
+        captionTop = maybe "" id (tableCaptionTop opt)
+        captionBottom = maybe "" id (tableCaptionBottom opt)
+
         spec
-            | opt == [] = take numCols $ repeat 'l'
-            | otherwise = mkSpec $ filter (`elem` "crl|") $ head opt
+            | tableDef opt == "" = take numCols $ repeat 'l'
+            | otherwise = mkSpec $ tableDef opt
 
         mkSpec s
             | len < numCols = s ++ (take (numCols - len) $ repeat 'l')
             | otherwise = s
-                where len = length (filter (`elem` "crl") s) 
+                where
+                    len = length (filter (`elem` "crlpmbX") $ rem False s)
+                    rem False ('{':xs) = rem True xs
+                    rem False (x:xs)   = x : rem False xs
+                    rem True  ('}':xs) = rem False xs
+                    rem True  (x:xs)   = rem True xs
+                    rem _ _ = ""
 
         numCols = maximum (map (length.snd) rows)
 
@@ -58,14 +67,17 @@ mkTable (caption, opt, rows@((t,r):rs))
         cellContent Math c = '$' : safeTeX c ++ "$"
         cellContent _ c = escapeTeX "" c
 
-    in  when' (caption /= "") "\\begin{table}[!h]\n"
+    in  when' (captionTop /= "" || captionBottom /= "") "\\begin{table}[!h]\n"
         ++ "\\begin{center}\n"
-        ++ "\\begin{tabular}{" ++ spec ++ "}\n"
+        ++ when' (captionTop /= "") ("\\caption{" ++ escapeTeX "}\n" captionTop)
+        ++ ifElse (tableX opt)
+            ("\\begin{tabularx}{\\linewidth}{" ++ spec ++ "}\n")
+            ("\\begin{tabular}{" ++ spec ++ "}\n")
         ++ body
-        ++ "\n\\end{tabular}\n"
+        ++ ifElse (tableX opt) ("\n\\end{tabularx}\n") ("\n\\end{tabular}\n")
         ++ "\n\\end{center}\n"
-        ++ when' (caption /= "")
-            ("\\caption{" ++ escapeTeX "}\n" caption ++ "\\end{table}\n")
+        ++ when' (captionBottom /= "") ("\\caption{" ++ escapeTeX "}\n" captionBottom)            
+        ++ when' (captionTop /= "" || captionBottom /= "") "\\end{table}\n"
         ++ "\n"
 
 

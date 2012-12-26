@@ -76,6 +76,7 @@ toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg d
             
           : "\\usepackage[utf8]{inputenc}\n"
           : "\\usepackage{fancyhdr}\n"
+          : "\\usepackage{tabularx}\n"
 
           : "\\usepackage{eurosym}\n"
           : "\\DeclareUnicodeCharacter{20AC}{\\euro{}}\n"

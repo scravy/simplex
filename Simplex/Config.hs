@@ -272,7 +272,7 @@ specialSymbols =
 
 knownCommands
  = ["newpage", "vfill", "hfill", "normalsize", "normalfont",
-    "noindent", "tableofcontents",
+    "noindent", "tableofcontents", "appendix",
 
     "tiny", "scriptsize", "footnotesize", "small",
     "large", "Large", "LARGE", "huge", "Huge",
@@ -287,7 +287,6 @@ specialCommands
     "right" ~> "\\raggedleft",
     "left" ~> "\\raggedright",
     "center" ~> "\\centering",
-    "appendix" ~> "\\appendix",
     "reset" ~> C.reset,
     "pagestyle" ~> (\x -> "\\pagestyle{" ++ x ++ "}"),
     "thispagestyle" ~> (\x -> "\\thispagestyle{" ++ x ++ "}"),
