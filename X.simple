@@ -9,8 +9,13 @@
 
 ==  Section 1
 
-#latex rawlatex.tex
-#haskell Setup.hs
-#include Z.simple
+#latex
+    rawlatex.tex
+
+#haskell
+    Setup.hs
+
+#include
+    Z.simple
 
 
