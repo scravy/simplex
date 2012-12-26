@@ -14,5 +14,5 @@ clean:
 	rm -rf *.log *.aux *.out *.tex *.toc
 
 purge: clean
-	rm -rf *.pdf *.png *.gif *.jpg
+	rm -rf *.pdf *.png *.gif *.jpg *.dot
 

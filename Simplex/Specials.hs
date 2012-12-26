@@ -62,7 +62,7 @@ mkGraph e g opts spec c = do
     let spec' = spec { sRemoveFiles = (file ++ ".pdf") : (file ++ ".dot") : sRemoveFiles spec }
     writeFile (file ++ ".dot") (if null g then c else g ++ " G {\n" ++ c ++ "\n}\n")
     
-    exec False "dot" ["-Tpdf", "-K" ++ e, file ++ ".dot", "-o" ++ file ++ ".pdf"]
+    exec False (optGraphviz opts) ["-Tpdf", "-K" ++ e, file ++ ".dot", "-o" ++ file ++ ".pdf"]
 
     return (spec', file ++ ".pdf")
 

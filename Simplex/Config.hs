@@ -287,6 +287,7 @@ specialCommands
     "right" ~> "\\raggedleft",
     "left" ~> "\\raggedright",
     "center" ~> "\\centering",
+    "appendix" ~> "\\appendix",
     "reset" ~> C.reset,
     "pagestyle" ~> (\x -> "\\pagestyle{" ++ x ++ "}"),
     "thispagestyle" ~> (\x -> "\\thispagestyle{" ++ x ++ "}"),

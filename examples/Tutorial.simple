@@ -236,10 +236,10 @@ newpage
 
 =   Coding Style
 
-   
-!!! Appendix
+appendix
+=   Appendix
 
-=   The source for this document
+==  The source for this document
 
 #code <Tutorial.simple>
 
