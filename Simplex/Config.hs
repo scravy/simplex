@@ -301,6 +301,7 @@ specialCommands
     "image-angle" ~> (\o x -> o { oImageAngle = Just x }),
     "image-scale" ~> (\o x -> o { oImageScale = Just x }),
     "image-page" ~> (\o x -> o { oImagePage = Just x }),
+    "image-trim" ~> (\o a b c d -> o { oImageTrim = Just (a, b, c, d) }),
     "image" ~> C.image
    ]
 

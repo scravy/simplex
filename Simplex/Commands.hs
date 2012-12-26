@@ -28,6 +28,10 @@ instance Command (Config -> String -> Config) where
 instance Command (Config -> String -> String -> Config) where
     a ~> f = (a, \o x -> if length x < 2 then (o, "") else (f o (x !! 0) (x !! 1), ""))
 
+instance Command (Config -> String -> String -> String -> String -> Config) where
+    a ~> f = (a, \o x -> if length x < 4 then (o, "")
+                         else (f o (x !! 0) (x !! 1) (x !! 2) (x !! 3), ""))
+
 instance Command (String -> String) where
     a ~> f = (a, \o x -> (o, if null x then "" else f (head x)))
 
@@ -63,6 +67,11 @@ image opt (x:xs) = (opt, "\\includegraphics" ++ getOpts ++ "{" ++ x ++ "}\n")
         opts 5 = if isJust (oImagePage opt)
                  then ("page", fromJust (oImagePage opt)) : opts 6
                  else opts 6
+        opts 6 = if isJust (oImageTrim opt)
+                 then ("clip", "true")
+                    : ("trim", (\(l,b,r,t) -> l ++ " " ++ b ++ " " ++ r ++ " " ++ t)
+                               $ fromJust (oImageTrim opt)) : opts 7
+                 else opts 7
         opts _ = []
 image opt _ = (opt, "")
 

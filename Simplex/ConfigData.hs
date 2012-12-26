@@ -14,7 +14,8 @@ data Config
     oImageHeight :: Maybe String,
     oImageScale :: Maybe String,
     oImageAngle :: Maybe String,
-    oImagePage :: Maybe String
+    oImagePage :: Maybe String,
+    oImageTrim :: Maybe (String, String, String, String)
 }
 
 defaultConfig = Config {
@@ -28,6 +29,7 @@ defaultConfig = Config {
     oImageHeight = Nothing,
     oImageScale = Nothing,
     oImageAngle = Nothing,
-    oImagePage = Nothing
+    oImagePage = Nothing,
+    oImageTrim = Nothing
 }
 
