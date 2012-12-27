@@ -4,8 +4,15 @@
 @authors
     Julian Fleischer
 
+@abstract
+    Writing \LaTeX can be a laborious task. Often the syntax
+    is cumbersome and error-prone. Simplex is an attempt to fix this.
+    A solution for creating document using LaTeX which is as easy as
+    writing Markdown, without sacrificing the power of \LaTeX. 
+
 @margins 3cm 4.5cm 3cm 4.5cm
 
+newpage
 tableofcontents
 newpage
 =   Basic Syntax
@@ -597,8 +604,8 @@ colbreak
 
 endcolumns
 
+newpage
 ==  Typesetting Equations using Tables
-
 
 >@  clcl | l
 
@@ -647,6 +654,7 @@ endcolumns
 >$  =
 >$  -\frac b 2 \pm \sqrt{\left(\frac b 2\right)^2 - c}
 
+
 .#  >@  clcl | l
 
     >$  <=>
@@ -663,7 +671,36 @@ endcolumns
     >$  -c
     >  $+\left(\frac b 2\right)^2$ *(completing the square)*
 
-    ...
+    >+
+
+    >$  <=>
+    >$  x^2 + bx + \left(\frac b 2\right)^2
+    >$  =
+    >$  -c +\left(\frac b 2\right)^2
+    >   binomial formula reverse
+
+    >+
+
+    >$  <=>
+    >$  \left( x + \frac b 2 \right)^2
+    >$  =
+    >$  \left(\frac b 2\right)^2 - c
+    >$  \sqrt{\text{\nbsp}}
+
+    >+
+
+    >$  <=>
+    >$  x + \frac b 2
+    >$  =
+    >$  \pm \sqrt{\left(\frac b 2\right)^2 - c}
+    >$  -\frac b 2
+
+    >+
+
+    >$  <=>
+    >$  x
+    >$  =
+    >$  -\frac b 2 \pm \sqrt{\left(\frac b 2\right)^2 - c}
 
 newpage
 =   Graphics / Images
@@ -718,7 +755,7 @@ newpage
     image foto3.jpg
 
 newpage
-==  Builtin *Graphviz* features
+==  Builtin *Graphviz* support
 
     Graphviz graphs can be included directly into a simplex
     document:
@@ -735,11 +772,41 @@ newpage
         
 .digraph
     rankdir=LR;
+    margin=0;
 
     A -> M;
     A -> N;
     M -> B;
     N -> B;
+
+->  Note that the image-directives apply on graphviz
+    graphs too.
+->  \#.digraph# is drawn using dot.
+->  \#.graph# is drawn using neato.
+
+columns 4
+.#  image-angle -30
+    .graph
+        margin=0;
+
+        A -- Center;
+        B -- Center;
+        C -- Center;
+        D -- Center;
+        E -- Center;
+        X -- E -- Y;
+colbreak
+image-angle -30
+.graph
+    margin=0;
+
+    A -- Center;
+    B -- Center;
+    C -- Center;
+    D -- Center;
+    E -- Center;
+    X -- E -- Y;
+endcolumns
 
 newpage
 appendix
@@ -965,14 +1032,20 @@ newpage
 ::  hfill: Like \#\hfill# in LaTeX.
 ::  huge: Like \#\huge# in LaTeX.
 ::  Huge: Like \#\Huge# in LaTeX.
-::  image-angle: 
+::  image-angle: Sets the rotation of the following images.
+    \break Usage: *image-angle <angle>*
 ::  image-defaults: 
-::  image-height: 
-::  image-page: 
+::  image-height: Sets the height of the following images.
+    \break Usage: *image-height <height>*
+::  image-page: In case of a multi-pdf file, selects which page
+    should be included.
 ::  image-scale: 
-::  image-size: 
-::  image-trim: 
-::  image-width: 
+::  image-size: Sets both image-height and image-width at once.
+    \break Usage: *image-size <width> <height>*
+::  image-trim: Crop the included image.
+    \break Usage: *image-trim <left> <bottom> <right> <top>*
+::  image-width: Sets the width of the following images.
+    \break Usage: *image-width <width>*
 ::  image: Inserts the specified image, for example
     \#image myfile.png#. Like \#\includegraphics# in \LaTeX .
     Dimensions and other additional arguments can be set using

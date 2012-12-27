@@ -384,6 +384,14 @@ loadIncludes (TControl "#include" : TBlock b : xs) = do
     rest <- loadIncludes xs
     return $ tok ++ rest
 
+loadIncludes (TControl "#image" : TBlock b : xs) = do
+    let f = reverse . dropWhile (`elem` " \t\n\r\"<>")
+        trim = f . f
+        file = trim b
+
+    rest <- loadIncludes xs
+    return (TCommand "image" [file] : rest)
+
 loadIncludes (x:xs) = loadIncludes xs >>= return . (x :)
 loadIncludes _ = return []
 
