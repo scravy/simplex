@@ -85,8 +85,8 @@ toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg d
           : "\\usepackage{amsfonts}\n"
           : "\\usepackage{amssymb}\n"
 
-          : "\\usepackage{stmaryrd}\n"
-          : "\\usepackage{wasysym}\n"
+--        : "\\usepackage{stmaryrd}\n"
+--        : "\\usepackage{wasysym}\n"
 
           : "\\let\\EUR\\undefined\n"
           : "\\usepackage{marvosym}\n"
