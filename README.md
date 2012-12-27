@@ -1,10 +1,8 @@
-simplex
-=======
+= simplex
 
 Simple LaTeX.
 
-Installing
-----------
+== Installing ==
 
 In order to build simplex you need the Haskell Platform.
 You can download it at http://www.haskell.org/platform/ 
@@ -18,14 +16,30 @@ This is similar to `./configure; make; make install`.
 
 simplex requires a latex distribution which provides the
 `pdflatex` command. TeX Live is recommended, as it provides
-all packages that simplex uses. For Mac OS X there is 
-Mac TeX (http://www.tug.org/mactex/).
+all packages that simplex uses.
 
 For certain features you will also need `graphviz` and
 `ImageMagick`, but simplex will run without.
 
-Using
------
+=== Ubuntu ===
+
+On Ubuntu you will have to install the following packages:
+
+    haskell-platform
+    texlive
+    texlive-latex-extra
+    texlive-math-extra
+
+You might need to run `cabal update` once. For a global
+installation use `sudo cabal install --global`. This will
+install the `simplex` executable in a folder on your $PATH.
+
+=== Mac OS X ===
+
+For Mac OS X there is Mac TeX (http://www.tug.org/mactex/),
+which should include all relevant packages.
+
+== Using ==
 
 simplex will automatically process all files in the
 current working directory, but you may also specify
