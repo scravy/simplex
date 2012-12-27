@@ -23,8 +23,34 @@ escapeTeX t ('$':' ':xs) = '\\' : '$' : escapeTeX t xs
 escapeTeX t ('$':xs) = let (m, ms) = break (== '$') xs
                        in '$' : (safeTeX m) ++ '$' : escapeTeX t (tail' ms)
 
+escapeTeX t ('\\':'^':'^':xs) = let (m, ms) = break (== '^') xs
+                                    (n, ns) = break (== ' ') m
+                                    url = safeTeX n
+                                in  "\\footnote{" ++ (
+                                        if null ns then "\\url{" ++ url ++ "}"
+                                                   else "\\href{" ++ url ++ "}{\\texttt{" ++ url ++ "} -- " ++ escapeTeX "}" ns
+                                        ) ++ '}' : escapeTeX t (tail' ms)
+
 escapeTeX t ('\\':'^':xs) = let (m, ms) = break (== '^') xs
                             in  "\\footnote{" ++ escapeTeX "}" m ++ escapeTeX t (tail' ms)
+
+escapeTeX t ('\\':'[':xs) = let (m, ms) = break (== ']') xs
+                                (n, ns) = break (== ' ') m
+                                url = safeTeX n
+                            in  (if null ns then "\\url{" ++ url ++ "}"
+                                            else "\\href{" ++ url ++ "}{" ++ escapeTeX "}" ns)
+                                ++ escapeTeX t (tail' ms)
+
+escapeTeX t ('\\':'{':xs) = let (m, ms) = break (== '}') xs
+                                (n, ns) = break (== ' ') m
+                                url = safeTeX n
+                            in  (if null ns then "\\url{" ++ url ++ "}"
+                                            else "\\href{" ++ url ++ "}{\\texttt{" ++ url ++ "} -- " ++ escapeTeX "}" ns)
+                                ++ escapeTeX t (tail' ms)
+
+escapeTeX t ('\\':'<':xs) = let (m, ms) = break (== '>') xs
+                            in  "\\ref{" ++ m ++ "}" ++ escapeTeX t (tail' ms)
+
 escapeTeX t ('\\':x:' ':xs)
     | x `elem` verbs = '\\' : x : escapeTeX t xs
 escapeTeX t ('\\':x:xs)

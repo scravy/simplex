@@ -976,6 +976,7 @@ newpage
 ::  @date: 
 ::  @doublespacing: 
 ::  @draft: 
+::  @endnotes: 
 ::  @fontsize: 
 ::  @landscape: 
 ::  @lfoot: 
@@ -1028,6 +1029,7 @@ newpage
 ::  columns: 
 ::  em: Like \#\em# in LaTeX.
 ::  endcolumns: 
+::  endnotes: 
 ::  footnotesize: Like \#\footnotesize# in LaTeX.
 ::  hfill: Like \#\hfill# in LaTeX.
 ::  huge: Like \#\huge# in LaTeX.

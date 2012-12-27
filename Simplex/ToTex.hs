@@ -181,6 +181,11 @@ toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg d
 
           : maybe
                 ""
+                (const "\\usepackage{endnotes}\n")
+                (lookup "endnotes" props)
+
+          : maybe
+                ""
                 (const "\\usepackage{setspace}\n\\doublespacing\n")
                 (lookup "doublespacing" props)
 
