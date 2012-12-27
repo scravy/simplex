@@ -131,9 +131,9 @@ process opts file exit = do
     print "."
     let cfg = defaultConfig { oStandalone = optType opts == "png" }
 
-    (spec, tok') <- liftIO $ processSpecials opts newSpec tok
+    (spec, tok') <- liftIO $ processSpecials opts newSpec $ parse tok
 
-    let tex = toTeX cfg (parse tok')
+    let tex = toTeX cfg tok'
     print' "."
 
     unless (optDryRun opts) $ do

@@ -297,7 +297,7 @@ toTeX' opt (BVerbatim "code" l : xs)
 toTeX' opt (BVerbatim "code$" l : xs)
     = "\\begin{lstlisting}\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
 
-toTeX' opt (BVerbatim "#$" l : xs)
+toTeX' opt (BVerbatim "@" l : xs)
     = "\\begin{lstlisting}[mathescape]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
 
 toTeX' opt (BVerbatim "#" l : xs)
@@ -308,6 +308,9 @@ toTeX' opt (BVerbatim "php" l : xs)
 
 toTeX' opt (BVerbatim "java" l : xs)
     = "\\begin{lstlisting}[language = java]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
+
+toTeX' opt (BVerbatim "python" l : xs)
+    = "\\begin{lstlisting}[language = python]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs
 
 toTeX' opt (BVerbatim "haskell" l : xs)
     = "\\begin{lstlisting}[language = haskell]\n" : l : "\\end{lstlisting}\n" : toTeX' opt xs

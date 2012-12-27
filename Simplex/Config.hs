@@ -44,9 +44,7 @@ knownLengths
     ("headheight",      (Nothing, ""))]
 
 knownSymbols
- = ["thepage", "thechapter",
-
-    "alpha", "beta", "chi", "delta", "epsilon", "eta", "gamma",
+ = ["alpha", "beta", "chi", "delta", "epsilon", "eta", "gamma",
     "iota", "kappa", "lambda", "mu", "nu", "omega", "phi",
     "pi", "psi", "rho", "sigma", "tau", "theta", "upsilon",
     "xi", "zeta", "digamma", "varepsilon", "varkappa", "varphi",
@@ -153,6 +151,9 @@ knownSymbols
 
 specialSymbols =
    [("lastpage", "\\pageref{LastPage}"),
+    ("thepage", "\\thepage"),
+    ("thechapter", "\\thechapter"),
+    ("thesection", "\\thesection"),
 
     ("A", "\\ensuremath{\\mathbb{A}}"),
     ("B", "\\ensuremath{\\mathbb{B}}"),
@@ -264,6 +265,8 @@ specialSymbols =
 
     ("space", "~"),
     ("nbsp", "~"),
+    ("newline", "\\newline "),
+    ("break", "\\\\ "),
 
     ("today", "\\text{\\today}"),
     ("TeX", "\\text{\\TeX}"),
@@ -287,6 +290,7 @@ specialCommands
     "right" ~> "\\raggedleft",
     "left" ~> "\\raggedright",
     "center" ~> "\\centering",
+    "label" ~> (\x -> "\\label{" ++ x ++ "}"),
     "reset" ~> C.reset,
     "pagestyle" ~> (\x -> "\\pagestyle{" ++ x ++ "}"),
     "thispagestyle" ~> (\x -> "\\thispagestyle{" ++ x ++ "}"),

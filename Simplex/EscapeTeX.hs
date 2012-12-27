@@ -64,6 +64,24 @@ ensureTeX ('≥':xs) = ("\\ensuremath{\\geq}", xs)
 
 ensureTeX ('.':'.':'.':xs) = ("\\ensuremath{\\dots}", xs)
 
+ensureTeX ('(':'-':')':xs) = ("\\ensuremath{\\ominus}", xs)
+ensureTeX ('(':'+':')':xs) = ("\\ensuremath{\\oplus}", xs)
+ensureTeX ('(':'.':')':xs) = ("\\ensuremath{\\odot}", xs)
+ensureTeX ('(':'x':')':xs) = ("\\ensuremath{\\otimes}", xs)
+ensureTeX ('(':'/':')':xs) = ("\\ensuremath{\\oslash}", xs)
+ensureTeX ('(':'*':')':xs) = ("\\ensuremath{\\circledast}", xs)
+
+ensureTeX ('[':'-':']':xs) = ("\\ensuremath{\\boxminus}", xs)
+ensureTeX ('[':'+':']':xs) = ("\\ensuremath{\\boxplus}", xs)
+ensureTeX ('[':'.':']':xs) = ("\\ensuremath{\\boxdot}", xs)
+ensureTeX ('[':'x':']':xs) = ("\\ensuremath{\\boxtimes}", xs)
+
+ensureTeX ('_':'|':'_':xs) = ("\\ensuremath{\\bot}", xs)
+ensureTeX ('|':'=':xs) = ("\\ensuremath{\\models}", xs)
+ensureTeX ('|':'-':'>':xs) = ("\\ensuremath{\\mapsto}", xs)
+ensureTeX ('|':'-':'-':'>':xs) = ("\\ensuremath{\\longmapsto}", xs)
+
+
 ensureTeX ('<':'=':'>':xs) = ("\\ensuremath{\\Leftrightarrow}", xs)
 ensureTeX ('<':'=':'=':'>':xs) = ("\\ensuremath{\\Longleftrightarrow}", xs)
 ensureTeX ('=':'=':'>':xs) = ("\\ensuremath{\\Longrightarrow}", xs)
@@ -71,8 +89,16 @@ ensureTeX ('<':'=':'=':xs) = ("\\ensuremath{\\Longleftarrow}", xs)
 ensureTeX ('=':'!':'>':xs) = ("\\ensuremath{\\nRightarrow}", xs)
 ensureTeX ('<':'!':'=':xs) = ("\\ensuremath{\\nLeftarrow}", xs)
 ensureTeX ('<':'!':'>':xs) = ("\\ensuremath{\\nLeftrightarrow}", xs)
+ensureTeX ('-':'!':'>':xs) = ("\\ensuremath{\\nrightarrow}", xs)
+ensureTeX ('<':'!':'-':xs) = ("\\ensuremath{\\nleftarrow}", xs)
+ensureTeX ('=':'<':xs) = ("\\ensuremath{\\leq}", xs)
 ensureTeX ('=':'>':xs) = ("\\ensuremath{\\Rightarrow}", xs)
+ensureTeX ('>':'=':xs) = ("\\ensuremath{\\geq}", xs)
 ensureTeX ('<':'=':xs) = ("\\ensuremath{\\Leftarrow}", xs)
+
+ensureTeX ('>':'-':'>':xs) = ("\\ensuremath{\\leftarrowtail}", xs)
+ensureTeX ('<':'-':'<':xs) = ("\\ensuremath{\\rightarrowtail}", xs)
+ensureTeX ('~':'>':xs) = ("\\ensuremath{\\leadsto}", xs)
 
 ensureTeX ('<':'-':'>':xs) = ("\\ensuremath{\\leftrightarrow}", xs)
 ensureTeX ('<':'-':'-':'>':xs) = ("\\ensuremath{\\longleftrightarrow}", xs)

@@ -20,33 +20,38 @@ newSpec = Spec {
         sRemoveFiles = []
     }
 
-processSpecials :: Opts -> Spec -> [Token] -> IO (Spec, [Token])
+processSpecials :: Opts -> Spec -> Document -> IO (Spec, Document)
+processSpecials o s (Document b m) = do
+    (s', b') <- processSpecials' o s b
+    return (s', Document b' m)
 
-processSpecials opts spec (TControl ".digraph" : TBlock b : xs) = do
+processSpecials' :: Opts -> Spec -> [Block] -> IO (Spec, [Block])
+
+processSpecials' opts spec (BVerbatim "digraph" b : xs) = do
     (spec', pdf)   <- mkGraph "dot" "digraph" opts spec b
-    (spec'', rest) <- processSpecials opts spec' xs
-    return (spec'', TCommand "image" [pdf] : rest)
+    (spec'', rest) <- processSpecials' opts spec' xs
+    return (spec'', BCommand "image" [pdf] : rest)
 
-processSpecials opts spec (TControl ".graph" : TBlock b : xs) = do
+processSpecials' opts spec (BVerbatim "graph" b : xs) = do
     (spec', pdf)   <- mkGraph "neato" "graph" opts spec b
-    (spec'', rest) <- processSpecials opts spec' xs
-    return (spec'', TCommand "image" [pdf] : rest)
+    (spec'', rest) <- processSpecials' opts spec' xs
+    return (spec'', BCommand "image" [pdf] : rest)
 
-processSpecials opts spec (TControl ".neato" : TBlock b : xs) = do
+processSpecials' opts spec (BVerbatim "neato" b : xs) = do
     (spec', pdf)   <- mkGraph "neato" "" opts spec b
-    (spec'', rest) <- processSpecials opts spec' xs
-    return (spec'', TCommand "image" [pdf] : rest)
+    (spec'', rest) <- processSpecials' opts spec' xs
+    return (spec'', BCommand "image" [pdf] : rest)
 
-processSpecials opts spec (TControl ".dot" : TBlock b : xs) = do
+processSpecials' opts spec (BVerbatim "dot" b : xs) = do
     (spec', pdf)   <- mkGraph "dot" "" opts spec b
-    (spec'', rest) <- processSpecials opts spec' xs
-    return (spec'', TCommand "image" [pdf] : rest)
+    (spec'', rest) <- processSpecials' opts spec' xs
+    return (spec'', BCommand "image" [pdf] : rest)
 
-processSpecials opts spec (x : xs) = do
-    (spec', rest) <- processSpecials opts spec xs
+processSpecials' opts spec (x : xs) = do
+    (spec', rest) <- processSpecials' opts spec xs
     return (spec', x : rest)
 
-processSpecials _ spec [] = return (spec, [])
+processSpecials' _ spec [] = return (spec, [])
 
 
 randomString :: Int -> IO String
