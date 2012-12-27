@@ -5,17 +5,19 @@
     Julian Fleischer
 
 @abstract
-    Writing \LaTeX can be a laborious task. Often the syntax
+    Writing \LaTeX  can be a laborious task. Often the syntax
     is cumbersome and error-prone. Simplex is an attempt to fix this.
-    A solution for creating document using LaTeX which is as easy as
+    A solution for creating documents using \LaTeX  which is as easy as
     writing Markdown, without sacrificing the power of \LaTeX. 
 
 @margins 3cm 4.5cm 3cm 4.5cm
 
 newpage
 tableofcontents
+
 newpage
 =   Basic Syntax
+label sec:basic-syntax
 
     The key idea of simplex is that control commands
     and actual text should go separated. Thus: Everything
@@ -85,6 +87,7 @@ newpage
     #code sample.simple
 
 ==  Document Structure
+label sec:document-structure
 
 .   Headings can be designated using \#=#, \#==#, and \#===#.
 
@@ -232,11 +235,127 @@ newpage
 >#  This is \@inline verbatim@
 >   This is \@inline verbatim@
 
-
 ->  Note that you can also use # and ! to delimit inline verbatim
     like so: \#\!inline verbatim!# and \!\#inline verbatim#!.
 
+=== Escaping Special Characters
+
+    You should have noticed that there are certain inline
+    control characters which you might want to escape. Doing
+    so is easy. If any of these characters is followed by a
+    white space they lose their special meaning. The white
+    space immediately following the character is not printed,
+    so in order to print such a character followed by a
+    white space you need to type two spaces.
+
+    Here is an example (the dots denote spaces):
+
+.!  \.$.*._.\..$..*.._..Yea
+=>  \ $ * _ \   $  *  _  Yea
+
+=== Hyperlinks, Labels, and References
+
+>#  \[http://www.example.org/]
+>   => \[http://www.example.org/]
+>+
+>L2 Backslash and brackets insert a hyperlink.
+>+
+>
+>+
+>#  \[http://www.example.org/ Website]
+>   => \[http://www.example.org/ Website]
+>+
+>L2 Everything after the first whitespace is treated as description.
+>+
+>
+>+
+>#  \{http://www.example.org/}
+>   => \{http://www.example.org/}
+>+
+>L2 Square brackets basically work the same...
+>+
+>
+>+
+>#  \{http://www.example.org/ Website}
+>   => \{http://www.example.org/ Website}
+>+
+>L2 ...but they print the link in any case.
+>+
+>
+>+
+>#  label sec:document-structure
+>
+>+
+>L2 Labels can be set using the command *label <name>* ...
+>+
+>
+>+
+>#  See section \<sec:document-structure>
+>   => See section \<sec:document-structure>
+>+
+>L2 ...and referenced using backslash and angle brackets.
+>+
+
+newpage
+=== Footnotes and Endnotes
+label sec:footnotes-and-endnotes
+
+    Footnotes\^This is a footnote^ are declared like hyperlinks:
+    \#\^This is a footnote^#. If you want the footnote to contain
+    a hyperlink as well, use two circumflex at the beginning:
+    \#\^^http://www.example.org/ Further reading, example.org, 2010.^#
+    \^^http://www.example.org/ Further reading, example.org, 2010.^
+
+    To turn the footnotes in your document into endnotes
+    use the global declaration \#@endnotes# (with at).
+    You can then use the \#endnotes# (no at) command to insert
+    the list of endnotes.
+
+    Here is a sample document with endnotes, labels, and references:
+
+.#  @title
+        Sample Document with Endnotes
+
+    @authors
+        Donald Duck
+        Daisy Duck
+
+    @endnotes
+
+    @abstract
+        A demo with endnotes, labels, and references.
+
+    newpage
+    tableofcontents
+
+    newpage
+    =   Section One
+    label sec:one
+
+        This is section one\^^http://www.example.org/
+        See example.org for further information^.
+
+    =   Section Two
+    label sec:two
+
+        This is\^yes it is^ section two. Have you
+        read section \<sec:one> already?
+
+    appendix
+    =   First appendix
+
+        Lorem ipsum dolor sit amet.
+
+    =   Second appendix
+
+        Bilden Sie ganze Sätze man!
+
+    endnotes
+
+
+newpage
 ==  Embedding \LaTeX
+label sec:embedding-latex
 
     If you feel the need to embed real \LaTeX  code into your
     document, you can easily do so via \#.latex#. You can also
@@ -268,6 +387,7 @@ newpage
     too: \#@doublespacing# and \#thispagestyle plain#.
 
 ==  Comments
+label sec:comments
 
     You can comment out a paragraph by marking it \#%#.
     Larger passages of comments can be declared using \#.comment#.
@@ -284,6 +404,7 @@ newpage
 
 newpage
 =   Tables
+label sec:tables
 
 columns 4
 
@@ -963,6 +1084,14 @@ newpage
     Usage: \@#include filename@. This works like the
     include-command for the c preprocessor. Note that no
     other features of cpp are available in simplex.
+
+::  #image: An alias for the ordinary command \#image#.
+    There is a slight difference: Like in #include, the
+    file name may be given in quotation marks:
+    \break \break
+    \!#image "picture.png"! -- works! \break
+    \!image "picture.png"! -- won't work (quots will be regarded
+                              as part of the filename)
 
 newpage
 =   Declarations
