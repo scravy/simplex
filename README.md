@@ -30,6 +30,10 @@ On Ubuntu you will have to install the following packages:
     texlive-latex-extra
     texlive-math-extra
 
+You should also install:
+
+    graphviz
+
 You might need to run `cabal update` once. For a global
 installation use `sudo cabal install --global`. This will
 install the `simplex` executable in a folder on your $PATH.
@@ -37,7 +41,8 @@ install the `simplex` executable in a folder on your $PATH.
 === Mac OS X ===
 
 For Mac OS X there is Mac TeX (http://www.tug.org/mactex/),
-which should include all relevant packages.
+which should include all relevant packages. Graphviz can be
+obtained from http://www.graphviz.org/Download_macos.php .
 
 == Using ==
 
