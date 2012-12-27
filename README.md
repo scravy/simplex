@@ -1,8 +1,7 @@
-= simplex
-
 Simple LaTeX.
 
-== Installing ==
+Installing
+==========
 
 In order to build simplex you need the Haskell Platform.
 You can download it at http://www.haskell.org/platform/ 
@@ -21,7 +20,8 @@ all packages that simplex uses.
 For certain features you will also need `graphviz` and
 `ImageMagick`, but simplex will run without.
 
-=== Ubuntu ===
+On Ubuntu
+---------
 
 On Ubuntu you will have to install the following packages:
 
@@ -38,13 +38,15 @@ You might need to run `cabal update` once. For a global
 installation use `sudo cabal install --global`. This will
 install the `simplex` executable in a folder on your $PATH.
 
-=== Mac OS X ===
+On Mac OS X
+-----------
 
 For Mac OS X there is Mac TeX (http://www.tug.org/mactex/),
 which should include all relevant packages. Graphviz can be
 obtained from http://www.graphviz.org/Download_macos.php .
 
-== Using ==
+Using Simplex
+=============
 
 simplex will automatically process all files in the
 current working directory, but you may also specify
