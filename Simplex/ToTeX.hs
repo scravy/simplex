@@ -97,7 +97,7 @@ toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg d
 
           : "\\usepackage[usenames,dvipsnames]{color}\n"
           : "\\usepackage[table]{xcolor}\n"
---        : "\\usepackage{multirow}\n"
+          : "\\usepackage{multirow}\n"
 
           : "\\usepackage{lastpage}\n"
           : "\\usepackage{graphicx}\n"
