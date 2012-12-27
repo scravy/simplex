@@ -290,7 +290,7 @@ specialCommands
     "right" ~> "\\raggedleft",
     "left" ~> "\\raggedright",
     "center" ~> "\\centering",
-    "endnotes" ~> "\\listofendnotes",
+    "endnotes" ~> "\\theendnotes",
     "label" ~> (\x -> "\\label{" ++ x ++ "}"),
     "reset" ~> C.reset,
     "pagestyle" ~> (\x -> "\\pagestyle{" ++ x ++ "}"),

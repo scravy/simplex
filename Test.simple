@@ -1,6 +1,8 @@
 @title
 	Testdocument
 
+@endnotes
+
 tableofcontents
 
 =   UNO
@@ -20,4 +22,6 @@ label dos
 label tres
 
     \^^http://www.scravy.de Meine Homepage^.
+
+endnotes
 
