@@ -1,6 +1,6 @@
 module Simplex.Util (
     when', ifElse, tail', tail'',
-    skipOneSpace, (~=), (~~), units,
+    skipOneSpace, (~=), (~~), (^=), units,
     removeIfExists, isLeft, isRight,
     getModificationTime', exec) where
 
@@ -27,6 +27,12 @@ s ~= rx = isJust (matchRegex (mkRegex rx) s)
 
 (~~) :: String -> String -> Maybe [String]
 s ~~ rx = matchRegex (mkRegex rx) s
+
+(^=) :: String -> String -> Bool
+s ^= [] = True
+(s:ss) ^= (x:xs)
+    | s == x = ss ^= xs
+_ ^= _ = False
 
 endsWith s xs = take (length s') (reverse xs) == s'
     where s' = reverse s

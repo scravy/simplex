@@ -31,7 +31,7 @@ dirtyExts = [".toc", ".aux", ".log", ".tex", ".out"]
 gatherChangedFiles :: String -> FilePath -> IO [(FilePath, ClockTime)]
 gatherChangedFiles ext dir = do
     files'  <- getDirectoryContents dir
-    let files = filter ((".simple" ==) . takeExtension) files'
+    let files = filter (flip elem [".simple", ".lhs", ".smplx", ".simplex"] . takeExtension) files'
     mtimes1 <- mapM getModificationTime files
     mtimes2 <- mapM (getModificationTime' . flip addExtension ext . dropExtension) files
     let files' = zip3 files mtimes1 mtimes2

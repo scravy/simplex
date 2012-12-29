@@ -302,6 +302,13 @@ lex' l c m SStart s@(x:xs)
     | x == '\n'         = lex' (l+1) 0 []  SStart xs
     | x == '\t'         = lex' l (c+1) []  SSymbol xs
     | isAlpha x         = lex' l (c+1) [x] SCommand xs
+    | x == '\\' && xs ^= "begin{code}"
+      = let (haskell, simplex) = split xs'
+            xs'                = drop 12 xs
+            split ('\n':'\\':xs)
+                | xs ^= "end{code}" = ("", drop 9 xs)
+            split (x:xs) = let (r, rs) = split xs in (x:r, rs)
+        in  TControl ".haskell" : TBlock haskell : TControl "." : lex' (l+1) 11 "" SSpace simplex
     | otherwise         = lex' l (c+1) [x] SControl xs
 
 lex' l c m SNewline s@(x:xs)

@@ -1061,6 +1061,7 @@ newpage
     with \#\begin{displaymath}#.
 ::  .php: Like \#.code#, but loads definitions for *PHP*.
 ::  .python: Like \#.code#, but loads definitions for *Python*.
+::  .table: Parses an ASCII table and renders it using LaTeX.
 ::  .verbatim: Inserts verbatim text (like \#\begin{verbatim}#).
 
 
