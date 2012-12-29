@@ -30,22 +30,30 @@ processSpecials' :: Opts -> Spec -> [Block] -> IO (Spec, [Block])
 processSpecials' opts spec (BVerbatim "digraph" b : xs) = do
     (spec', pdf)   <- mkGraph "dot" "digraph" opts spec b
     (spec'', rest) <- processSpecials' opts spec' xs
-    return (spec'', BCommand "image" [pdf] : rest)
+    return (spec'', (if null pdf
+                     then BVerbatim "error" "Graphviz .digraph failed"
+                     else BCommand "image" [pdf]) : rest)
 
 processSpecials' opts spec (BVerbatim "graph" b : xs) = do
     (spec', pdf)   <- mkGraph "neato" "graph" opts spec b
     (spec'', rest) <- processSpecials' opts spec' xs
-    return (spec'', BCommand "image" [pdf] : rest)
+    return (spec'', (if null pdf
+                     then BVerbatim "error" "Graphviz .graph failed"
+                     else BCommand "image" [pdf]) : rest)
 
 processSpecials' opts spec (BVerbatim "neato" b : xs) = do
     (spec', pdf)   <- mkGraph "neato" "" opts spec b
     (spec'', rest) <- processSpecials' opts spec' xs
-    return (spec'', BCommand "image" [pdf] : rest)
+    return (spec'', (if null pdf
+                     then BVerbatim "error" "Graphviz .neato failed"
+                     else BCommand "image" [pdf]) : rest)
 
 processSpecials' opts spec (BVerbatim "dot" b : xs) = do
     (spec', pdf)   <- mkGraph "dot" "" opts spec b
     (spec'', rest) <- processSpecials' opts spec' xs
-    return (spec'', BCommand "image" [pdf] : rest)
+    return (spec'', (if null pdf
+                     then BVerbatim "error" "Graphviz .dot failed"
+                     else BCommand "image" [pdf]) : rest)
 
 processSpecials' opts spec (x : xs) = do
     (spec', rest) <- processSpecials' opts spec xs
@@ -67,8 +75,6 @@ mkGraph e g opts spec c = do
     let spec' = spec { sRemoveFiles = (file ++ ".pdf") : (file ++ ".dot") : sRemoveFiles spec }
     writeFile (file ++ ".dot") (if null g then c else g ++ " G {\n" ++ c ++ "\n}\n")
     
-    exec False (optGraphviz opts) ["-Tpdf", "-K" ++ e, file ++ ".dot", "-o" ++ file ++ ".pdf"]
-
-    return (spec', file ++ ".pdf")
-
+    r <- exec (optVerbose opts) (optGraphviz opts) ["-Tpdf", "-K" ++ e, file ++ ".dot", "-o" ++ file ++ ".pdf"]
+    return (spec', (either (const "") (const $ file ++ ".pdf") r))
 
