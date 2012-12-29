@@ -155,16 +155,17 @@ process opts file exit = do
         unless (optNoClean opts) (liftIO $ do { mapM_ removeIfExists (prepend dirtyExts)
                                               ; mapM_ removeIfExists (sRemoveFiles spec) } )
 
+        when (optCrop opts) $ do
+            r <- liftIO $ exec verbose pdfcrop [filename ++ ".pdf", filename ++ "-crop.pdf"]
+            _ <- either (throw . Err . snd) (return . const Ok) r
+
+            r <- liftIO $ try $ renameFile (filename ++ "-crop.pdf") (filename ++ ".pdf")
+            _ <- either (throw . Exc) (return . const Ok) r
+
+            print' "."
+
         when (elem filetype ["png", "jpg", "gif"]) $ do
             print' "."
-            when (optCrop opts) $ do
-                r <- liftIO $ exec verbose pdfcrop [filename ++ ".pdf", filename ++ "-crop.pdf"]
-                _ <- either (throw . Err . snd) (return . const Ok) r
-
-                r <- liftIO $ try $ renameFile (filename ++ "-crop.pdf") (filename ++ ".pdf")
-                _ <- either (throw . Exc) (return . const Ok) r
-
-                print' "."
 
             r <- liftIO $ exec verbose convert ["-density", show $ optDensity opts, filename ++ ".pdf",
                                                 "-quality", show $ optQuality opts, filename ++ "." ++ filetype]
