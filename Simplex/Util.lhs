@@ -1,3 +1,7 @@
+@title
+    Simplex.Util
+
+\begin{code}
 module Simplex.Util (
     when', ifElse, tail', tail'',
     skipOneSpace, (~=), (~~), (^=), units,
@@ -106,4 +110,4 @@ isLeft _ = False
 isRight :: Either a b -> Bool
 isRight (Right _) = True
 isRight _ = False
-
+\end{code}

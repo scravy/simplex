@@ -399,6 +399,12 @@ loadIncludes (TControl "#image" : TBlock b : xs) = do
     rest <- loadIncludes xs
     return (TCommand "image" [file] : rest)
 
+loadIncludes (TControl "#ignore" : xs) = do
+    let f (TControl "#endignore") = False
+        f _ = True
+        
+    loadIncludes $ tail' $ dropWhile f xs 
+
 loadIncludes (x:xs) = loadIncludes xs >>= return . (x :)
 loadIncludes _ = return []
 
