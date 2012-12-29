@@ -1,27 +1,9 @@
-@title
-	Testdocument
+.digraph
+    A -> X;
+    B -> X;
+    C -> X
+    A -> M;
+    C -> M
+    M -> X;
 
-@endnotes
-
-tableofcontents
-
-=   UNO
-label uno
-
-==  uno uno
-label unouno
-
-	This is a test\^ This is a footnote.^. Reference: Hulu\<unouno>Hulu
-
-=   DOS
-label dos
-
-    This is a URL\^^http://www.scravy.de Yea Yea Yea^.
-
-=   TRES
-label tres
-
-    \^^http://www.scravy.de Meine Homepage^.
-
-endnotes
 

@@ -10,7 +10,7 @@
     A solution for creating documents using \LaTeX  which is as easy as
     writing Markdown, without sacrificing the power of \LaTeX. 
 
-@margins 3cm 4.5cm 3cm 4.5cm
+@margins 4cm 4.5cm 3cm 4.5cm
 
 newpage
 tableofcontents
@@ -895,10 +895,8 @@ newpage
     rankdir=LR;
     margin=0;
 
-    A -> M;
-    A -> N;
-    M -> B;
-    N -> B;
+    A -> M -> B;
+    A -> N -> B;
 
 ->  Note that the image-directives apply on graphviz
     graphs too.
@@ -1337,4 +1335,18 @@ newpage
 >#  |-->
 >   |-->
 
+thispagestyle fancy
+
+@lhead
+    **Hello World**
+    Wooohoooohooooo
+
+@rhead
+    \today
+    *omg tf*
+
+@cfoot
+
+@rfoot
+    \thepage   / \lastpage
 

@@ -325,7 +325,7 @@ toTeX' opt (BVerbatim "math" l : xs)
     = "\\begin{displaymath}\n" : safeTeX l : "\\end{displaymath}\n" : toTeX' opt xs
 
 toTeX' opt (BVerbatim "error" l : xs)
-    = "\\textcolor{red}{IOException: " : escapeTeX "}\n\n" l : toTeX' opt xs
+    = "\\textcolor{red}{Exception: " : escapeTeX "}\n\n" l : toTeX' opt xs
 
 toTeX' opt (BVerbatim "$" l : xs)
     = "\\begin{displaymath}\n" : safeTeX l : "\\end{displaymath}\n" : toTeX' opt xs
