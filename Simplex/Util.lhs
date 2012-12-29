@@ -7,7 +7,11 @@ module Simplex.Util (
     skipOneSpace, (~=), (~~), (^=), units,
     removeIfExists, isLeft, isRight,
     getModificationTime', exec) where
+\end{code}
 
+#ignore
+
+\begin{code}
 import Text.Regex
 import Data.Maybe
 
@@ -17,15 +21,21 @@ import System.Directory
 import System.Exit
 import System.Process
 import System.Time
+\end{code}
 
--- common tex units
+#endignore
 
+==  common tex units
+
+\begin{code}
 units :: [String]
 units = ["pt", "mm", "cm", "in", "ex", "em",
          "bp", "pc", "dd", "cc", "sp"]
+\end{code}
 
--- regex operators
+==  regex operators
 
+\begin{code}
 (~=) :: String -> String -> Bool
 s ~= rx = isJust (matchRegex (mkRegex rx) s)
 
@@ -40,9 +50,11 @@ _ ^= _ = False
 
 endsWith s xs = take (length s') (reverse xs) == s'
     where s' = reverse s
+\end{code}
 
--- control structures
+==  control flow
 
+\begin{code}
 when' :: Bool -> [a] -> [a]
 when' True x = x
 when' False _ = []
@@ -50,9 +62,11 @@ when' False _ = []
 ifElse :: Bool -> a -> a -> a
 ifElse True x _ = x
 ifElse _    _ y = y
+\end{code}
 
--- convenience functions for list processing
+==  convenience functions for list processing
 
+\begin{code}
 -- | like @tail@, but returns the empty list for the empty list.
 tail' :: [a] -> [a]
 tail' [] = []
@@ -66,9 +80,11 @@ tail'' xs = tail' $ tail' xs
 skipOneSpace :: String -> String
 skipOneSpace (' ':xs) = xs
 skipOneSpace s = s
+\end{code}
 
--- file handling
+==  file handling
 
+\begin{code}
 removeIfExists :: String -> IO ()
 removeIfExists file = do
     exists <- doesFileExist file
@@ -79,9 +95,11 @@ getModificationTime' file = do
     exists <- doesFileExist file
     if exists then getModificationTime file
               else return $ TOD 0 0
+\end{code}
 
--- process execution
+==  process execution
 
+\begin{code}
 exec :: Bool -> String -> [String]
      -> IO (Either (Int, String) String)
 
@@ -100,9 +118,11 @@ exec _ cmd args = do
             handle (ExitFailure 127, out, err) = Left  (127, cmd ++ ": command not found")
             handle (ExitFailure exc, out, err) = Left  (exc, out ++ err)
             handle (ExitSuccess,     out, err) = Right $ out ++ err
+\end{code}
 
--- either utilities
+==  either utilities
 
+\begin{code}
 isLeft :: Either a b -> Bool
 isLeft (Left _) = True
 isLeft _ = False
@@ -111,3 +131,4 @@ isRight :: Either a b -> Bool
 isRight (Right _) = True
 isRight _ = False
 \end{code}
+
