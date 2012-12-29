@@ -28,10 +28,12 @@ import Control.Monad.Cont
 
 dirtyExts = [".toc", ".aux", ".log", ".tex", ".out"]
 
+isSimplexFile = flip elem [".simple", ".lhs", ".smplx", ".simplex"] . takeExtension
+
 gatherChangedFiles :: String -> FilePath -> IO [(FilePath, ClockTime)]
 gatherChangedFiles ext dir = do
     files'  <- getDirectoryContents dir
-    let files = filter (flip elem [".simple", ".lhs", ".smplx", ".simplex"] . takeExtension) files'
+    let files = filter isSimplexFile files'
     mtimes1 <- mapM getModificationTime files
     mtimes2 <- mapM (getModificationTime' . flip addExtension ext . dropExtension) files
     let files' = zip3 files mtimes1 mtimes2
@@ -54,7 +56,7 @@ simplex opts files
 
     | null files && optForce opts = do
         files' <- getDirectoryContents "."
-        simplex' opts $ filter ((".simple" ==) . takeExtension) files'
+        simplex' opts $ filter isSimplexFile files'
 
     | null files = do
         files' <- gatherChangedFiles (optType opts) "."
@@ -126,7 +128,7 @@ process opts file exit = do
     f <- liftIO $ try (hGetContents h)
     (Str c) <- either (throw . Exc) (return . Str) f
 
-    tok <- liftIO $ loadIncludes (lex c) >>= loadHashbangs
+    tok <- liftIO $ loadIncludes True (lex c) >>= loadHashbangs
 
     print "."
     let cfg = defaultConfig { oStandalone = optType opts == "png" }

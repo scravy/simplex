@@ -378,33 +378,39 @@ loadHashbang c b = do
         (\d -> (c, d))
 
 
-loadIncludes :: [Token] -> IO [Token]
+loadIncludes :: Bool -> [Token] -> IO [Token]
 -- ^ load other simplex files included via `#include`
-loadIncludes (TControl "#include" : TBlock b : xs) = do
+loadIncludes inc (TControl "#include" : TBlock b : xs) = do
     let f = reverse . dropWhile (`elem` " \t\n\r\"<>")
         trim = f . f
         file = trim b
 
     tok <- try (readFile file) >>= either
         (\e -> return [TControl ".error", TBlock $ show (e :: IOException)])
-        (loadIncludes . lex)
-    rest <- loadIncludes xs
+        (loadIncludes False . lex)
+    rest <- loadIncludes inc xs
     return $ tok ++ rest
 
-loadIncludes (TControl "#image" : TBlock b : xs) = do
+loadIncludes inc (TControl "#image" : TBlock b : xs) = do
     let f = reverse . dropWhile (`elem` " \t\n\r\"<>")
         trim = f . f
         file = trim b
 
-    rest <- loadIncludes xs
+    rest <- loadIncludes inc xs
     return (TCommand "image" [file] : rest)
 
-loadIncludes (TControl "#ignore" : xs) = do
-    let f (TControl "#endignore") = False
+loadIncludes inc (TCommand "ignore" _ : xs) = do
+    let f (TCommand "endignore" _) = False
         f _ = True
         
-    loadIncludes $ tail' $ dropWhile f xs 
+    loadIncludes inc $ tail' $ dropWhile f xs 
 
-loadIncludes (x:xs) = loadIncludes xs >>= return . (x :)
-loadIncludes _ = return []
+loadIncludes False (TCommand "noinclude" _ : xs) = do
+    let f (TCommand "endnoinclude" _) = False
+        f _ = True
+        
+    loadIncludes False $ tail' $ dropWhile f xs 
+
+loadIncludes inc (x:xs) = loadIncludes inc xs >>= return . (x :)
+loadIncludes _ _ = return []
 

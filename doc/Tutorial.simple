@@ -1156,12 +1156,15 @@ newpage
 ::  colbreak: 
 ::  columns: 
 ::  em: Like \#\em# in LaTeX.
-::  endcolumns: 
-::  endnotes: 
+::  endcolumns: Terminates \#columns#.
+::  endignore: Terminates \#ignore#.
+::  endnoinclude: Terminates \#noinclude#.
+::  endnotes: Insert the list of endnotes, also creates a section with heading.
 ::  footnotesize: Like \#\footnotesize# in LaTeX.
 ::  hfill: Like \#\hfill# in LaTeX.
 ::  huge: Like \#\huge# in LaTeX.
 ::  Huge: Like \#\Huge# in LaTeX.
+::  ignore: Ignores the document upto the next \#endignore#.
 ::  image-angle: Sets the rotation of the following images.
     \break Usage: *image-angle <angle>*
 ::  image-defaults: 
@@ -1192,6 +1195,7 @@ newpage
     \latex does by default). Use \#reset# for this.
 ::  mdseries: Like \#\mdseries# in LaTeX.
 ::  newpage: Like \#\newpage# in LaTeX.
+::  noinclude: 
 ::  noindent: Like \#\noindent# in LaTeX.
 ::  normalfont: Like \#\normalfont# in LaTeX.
 ::  normalsize: Like \#\normalsize# in LaTeX.
