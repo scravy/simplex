@@ -3,7 +3,7 @@ module Simplex.Parser (
         Token(..), Block(..), Document (Document),
         Table, Cell(..), CellType(..), RowType(..),
         Items(..), ItemType(..), TableOpt(..),
-        loadIncludes, loadHashbangs
+        loadIncludes, loadHashbangs, newTableOpt
     ) where
 
 import Simplex.Util

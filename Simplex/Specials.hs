@@ -12,6 +12,10 @@ import Simplex.Util
 import System.Directory
 import System.Random
 
+import Data.Maybe
+import Data.List
+import Data.List.Split
+
 data Spec = Spec {
         sRemoveFiles :: [String]
     }
@@ -21,6 +25,7 @@ newSpec = Spec {
     }
 
 processSpecials :: Opts -> Spec -> Document -> IO (Spec, Document)
+
 processSpecials o s (Document b m) = do
     (s', b') <- processSpecials' o s b
     return (s', Document b' m)
@@ -55,6 +60,10 @@ processSpecials' opts spec (BVerbatim "dot" b : xs) = do
                      then BVerbatim "error" "Graphviz .dot failed"
                      else BCommand "image" [pdf]) : rest)
 
+processSpecials' opts spec (BVerbatim "table" b : xs) = do
+    (spec', rest) <- processSpecials' opts spec xs
+    return (spec', BTable (mkTable b) : rest)
+
 processSpecials' opts spec (x : xs) = do
     (spec', rest) <- processSpecials' opts spec xs
     return (spec', x : rest)
@@ -68,6 +77,19 @@ randomString n = do
     char <- getStdRandom (randomR ('a', 'z'))
     str  <- randomString (n-1)
     return $ char : str
+
+mkTable :: String -> Table
+mkTable def = (newTableOpt { tableDef = tDef }, rows)
+    where
+        rows = (SingleBorder, []) : (map fromJust $ filter isJust $ map f (lines def))
+        numCols = maximum (map (\(_, r) -> length r) rows) + 1
+        tDef = '|' : (intersperse '|' $ take numCols $ repeat 'c')
+        f s = case line of
+                ('+':_) -> Nothing
+                _ -> Just (SingleBorder, tail' $ map g $ linesBy (== '|') line)
+            where
+                line = dropWhile (flip elem " \t") s
+        g s = (Cell Nothing Nothing 1 1 True True Default, s)
 
 mkGraph e g opts spec c = do
     file <- randomString 10
