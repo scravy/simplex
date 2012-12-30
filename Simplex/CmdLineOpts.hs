@@ -13,12 +13,13 @@ data Flag = Help | Verbose | Print | NoClean
           | Graphviz String | Gnuplot String
           | Watch Int | DryRun | Type String
           | Density Int | Quality Int | Crop
-          | Convert String | Force
+          | Convert String | Force | Version
     deriving (Show, Eq)
 
 data Opts = Opts {
     optOnlyTeX  :: Bool,
     optHelp     :: Bool,
+    optVersion  :: Bool,
     optVerbose  :: Bool,
     optNoClean  :: Bool,
     optPrint    :: Bool,
@@ -39,6 +40,7 @@ data Opts = Opts {
 defOpts = Opts {
     optOnlyTeX  = False,
     optHelp     = False,
+    optVersion  = False,
     optVerbose  = False,
     optNoClean  = False,
     optPrint    = False,
@@ -58,6 +60,7 @@ defOpts = Opts {
 
 cmdOpts = [
         Option "h" ["help"]     (NoArg Help)          "Print this help text.",
+        Option ""  ["version"]  (NoArg Version)       "Print version information.",
         Option "v" ["verbose"]  (NoArg Verbose)       "Verbose output.",
         Option "d" ["dry-run"]  (NoArg DryRun)        "Dry run (do not create any files).",
         Option "n" ["no-clean"] (NoArg NoClean)       "Do not clean up after building.",
@@ -88,6 +91,7 @@ parseArgs = do
             case x of
                 Help       -> opts { optHelp     = True }
                 Print      -> opts { optPrint    = True }
+                Version    -> opts { optVersion  = True }
                 DryRun     -> opts { optDryRun   = True }
                 NoClean    -> opts { optNoClean  = True }
                 Verbose    -> opts { optVerbose  = True }

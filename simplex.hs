@@ -25,10 +25,12 @@ import Control.Exception
 import Control.Monad
 import Control.Monad.Cont
 
+versionInfo = "Simplex -- Simple LaTeX -- v0.3 by Julian Fleischer"
 
 dirtyExts = [".toc", ".aux", ".log", ".tex", ".out"]
 
 isSimplexFile = flip elem [".simple", ".lhs", ".smplx", ".simplex"] . takeExtension
+
 
 gatherChangedFiles :: String -> FilePath -> IO [(FilePath, ClockTime)]
 gatherChangedFiles ext dir = do
@@ -49,7 +51,9 @@ simplex :: Opts -> [String] -> IO ()
 simplex opts files
     | optHelp opts = do
         cmd <- getProgName
-        putStrLn (usageInfo (printf "%s [options] [files...]\n" cmd) cmdOpts)
+        putStrLn (usageInfo (printf "%s\nUsage: %s [options] [files...]\n" versionInfo cmd) cmdOpts)
+
+    | optVersion opts = putStrLn versionInfo
 
     | isJust $ optWatch opts = do
         getClockTime >>= watch opts "." (fromJust $ optWatch opts)
