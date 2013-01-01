@@ -113,7 +113,7 @@ toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg d
     where
         preamble xs =
             documentClass cfg props
-            
+
           : "\\usepackage[utf8]{inputenc}\n"
           : "\\usepackage{fancyhdr}\n"
           : "\\usepackage{tabularx}\n"
