@@ -144,12 +144,13 @@ process opts file exit = do
     let tex = toTeX cfg tok'
     print' "."
 
-    unless (optDryRun opts) $ do
+    when (optType opts == "tex" || not (optDryRun opts)) $ do
         -- write tex-file
         r <- liftIO $ try (writeFile (filename ++ ".tex") tex)
         _ <- either (throw . Exc) (return . const Ok) r
         print' "."
 
+    unless (optDryRun opts || optType opts == "tex") $ do
         -- run pdflatex
         r <- liftIO $ exec verbose pdflatex (pdfopts ++ [filename ++ ".tex"])
         _ <- either (throw . Err . snd) (return . const Ok) r
