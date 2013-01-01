@@ -306,6 +306,13 @@ newpage
 >+
 >L2 ...and referenced using backslash and angle brackets.
 >+
+>
+>+
+>#  See page \(sec:include-directive)
+>   => See page \(sec:include-directive)
+>+
+>L2 Pages can be references using parenthesis.
+>+
 
 newpage
 === Footnotes and Endnotes
@@ -1063,6 +1070,8 @@ newpage
 ::  .comment: Does not include its contents into the document.
 ::  .digraph: Creates a graphviz \#digraph# (a _di_rected graph)
     and renders it using \#dot#.
+::  .equation: Inserts raw math tex, like \#.latex#
+    with \#\begin{equation}#.
 ::  .graph: Creates a graphviz \#graph# and renders it using
     \#neato#.
 ::  .haskell: Like \#.code#, but loads definitions for *Haskell*.
@@ -1159,7 +1168,8 @@ newpage
 newpage
 =   Commands
 
-::  appendix: 
+::  appendix: Starts the appendix. Sections from this point on will
+    be counted using letters. Does not insert an appendix heading.
 ::  bfseries: Like \#\bfseries# in \LaTeX. Prints the following text
     in **bold**. Use \#reset# or \#normalfont# to terminate.
 ::  bold: Alias for \#\bfseries#. Prints the following text
@@ -1183,6 +1193,7 @@ newpage
     \break All possible values are: *h, t, b, p, H, !* (may be combined).
     \break Examples: \#figure htb#, \#figure auto#, \#figure h!#
 ::  figures: Insert a list of figures here.
+::  float-barrier: \#figure#s will not float beneath this command.
 ::  footnotesize: Like \#\footnotesize# in LaTeX.
 ::  hfill: Like \#\hfill# in LaTeX.
 ::  huge: Like \#\huge# in LaTeX.
@@ -1190,12 +1201,12 @@ newpage
 ::  ignore: Ignores the document upto the next \#endignore#.
 ::  image-angle: Sets the rotation of the following images.
     \break Usage: *image-angle <angle>*
-::  image-defaults: 
+::  image-defaults: Resets all image properties.
 ::  image-height: Sets the height of the following images.
     \break Usage: *image-height <height>*
 ::  image-page: In case of a multi-pdf file, selects which page
     should be included.
-::  image-scale: 
+::  image-scale: Scales images by the given factor.
 ::  image-size: Sets both image-height and image-width at once.
     \break Usage: *image-size <width> <height>*
 ::  image-trim: Crop the included image.
@@ -1217,37 +1228,41 @@ newpage
 ::  Large: Like \#\Large# in LaTeX.
 ::  left: Aligns the text from this point onward to the left.
     Note that this command will not justify the text (which
-    \latex does by default). Use \#reset# for this.
+    \LaTeX does by default). Use \#reset# for this.
+::  lipsum: 
 ::  mdseries: Like \#\mdseries# in LaTeX.
 ::  newpage: Like \#\newpage# in LaTeX.
 ::  noinclude: The following part of the document (up to
     the next \#endnoinclude#) won't be processed when
     included using \@#include@ (see \<sec:include-directive>).
-::  noindent: Like \#\noindent# in LaTeX.
-::  normalfont: Like \#\normalfont# in LaTeX.
-::  normalsize: Like \#\normalsize# in LaTeX.
+::  noindent: Like \#\noindent# in \LaTeX.
+::  normalfont: Like \#\normalfont# in \LaTeX.
+::  normalsize: Like \#\normalsize# in \LaTeX.
 ::  pagebreak: Alias for \#\newpage#.
+::  pagenumbering: Restart the page numbering here with the given
+    style. \break Possible values are:
+    \#arabic#, \#roman#, \#Roman#, \#alph#, \#Alph#
 ::  pagestyle: Like \#\pagestyle# in LaTeX. Sets the pagestyle for
     the next pages from this point on to the supplied argument.
     For example \#pagestyle plain# or \#pagestyle fancy#.
 ::  reset: Cancels the effects of \#left#, \#center#,
     \#right# and applies \#normalsize# and \#normalfont#.
 ::  right: Aligns the text from this point onward to the right.
-::  rmfamily: Like \#\rmfamily# in LaTeX.
-::  scriptsize: Like \#\scriptsize# in LaTeX.
-::  scschape: Like \#\scschape# in LaTeX.
-::  sffamily: Like \#\sffamily# in LaTeX.
-::  slshape: Like \#\slshape# in LaTeX.
-::  small: Like \#\small# in LaTeX.
-::  tableofcontents: Like \#\tableofcontents# in LaTeX.
+::  rmfamily: Like \#\rmfamily# in \LaTeX.
+::  scriptsize: Like \#\scriptsize# in \LaTeX.
+::  scschape: Like \#\scschape# in \LaTeX.
+::  sffamily: Like \#\sffamily# in \LaTeX.
+::  slshape: Like \#\slshape# in \LaTeX.
+::  small: Like \#\small# in \LaTeX.
+::  tableofcontents: Like \#\tableofcontents# in \LaTeX.
     Will additionally turn numbering of sections on
     (which is turned off by default in simplex).
 ::  thispagestyle: Changes the style of the current page,
     for example \#thispagestyle plain#.
-::  tiny: Like \#\tiny# in LaTeX.
-::  ttfamily: Like \#\ttfamily# in LaTeX.
-::  upshape: Like \#\upshape# in LaTeX.
-::  vfill: Like \#\vfill# in LaTeX.
+::  tiny: Like \#\tiny# in \LaTeX.
+::  ttfamily: Like \#\ttfamily# in \LaTeX.
+::  upshape: Like \#\upshape# in \LaTeX.
+::  vfill: Like \#\vfill# in \LaTeX.
 
 newpage
 =   Symbols

@@ -370,6 +370,12 @@ toTeX' opt (BVerbatim "haskell" l : xs)
 toTeX' opt (BVerbatim "math" l : xs)
     = "\\begin{displaymath}\n" : safeTeX l : "\\end{displaymath}\n" : toTeX' opt xs
 
+toTeX' opt (BVerbatim "equation" l : xs)
+    = "\\begin{equation}\n" : safeTeX l : "\\end{equation}\n" : toTeX' opt xs
+
+toTeX' opt (BVerbatim "table" l : xs)
+    = toTeX' opt (BTable (mkAsciiTable l) : xs)
+
 toTeX' opt (BVerbatim "error" l : xs)
     = "\\textcolor{red}{Exception: " : escapeTeX "}\n\n" l : toTeX' opt xs
 
@@ -377,9 +383,6 @@ toTeX' opt (BVerbatim "$" l : xs)
     = "\\begin{displaymath}\n" : safeTeX l : "\\end{displaymath}\n" : toTeX' opt xs
 
 toTeX' opt (BVerbatim "latex" l : xs)
-    = "\n" : l : "\n" : toTeX' opt xs
-
-toTeX' opt (BVerbatim "table" l : xs)
     = "\n" : l : "\n" : toTeX' opt xs
 
 toTeX' opt (BVerbatim "comment" l : xs)

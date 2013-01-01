@@ -1,10 +1,26 @@
-module Simplex.Table (mkTable) where
+module Simplex.Table (mkTable, mkAsciiTable) where
 
 import Simplex.EscapeTeX
 import Simplex.Util
 import Simplex.Parser
 
 import Data.List (intersperse)
+import Data.List.Split
+import Data.Maybe
+
+mkAsciiTable :: String -> Table
+mkAsciiTable def = (newTableOpt { tableDef = tDef }, rows)
+    where
+        rows = (SingleBorder, []) : (map fromJust $ filter isJust $ map f (lines def))
+        numCols = maximum (map (\(_, r) -> length r) rows) + 1
+        tDef = '|' : (intersperse '|' $ take numCols $ repeat 'c')
+        f s = case line of
+                ('+':_) -> Nothing
+                _ -> Just (SingleBorder, tail' $ map g $ linesBy (== '|') line)
+            where
+                line = dropWhile (flip elem " \t") s
+        g s = (Cell Nothing Nothing 1 1 True True Default, s)
+
 
 mkTable :: Table -> String
 mkTable (opt, rows@((t,r):rs))

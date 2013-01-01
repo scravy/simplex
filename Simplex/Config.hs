@@ -306,7 +306,7 @@ specialCommands
     "noinclude" ~> "",
     "pagestyle" ~> (\x -> "\\pagestyle{" ++ x ++ "}"),
     "thispagestyle" ~> (\x -> "\\thispagestyle{" ++ x ++ "}"),
-    "lipsum" ~> (\x -> "\\lipsum[" ++ x ++ "]"),
+    "lipsum" ~> (\x -> if null x then "\\lipsum" else "\\lipsum[" ++ head x ++ "]"),
 
     "image-defaults" ~> (\o -> o { oImageWidth = Nothing,
                                    oImageHeight = Nothing,
