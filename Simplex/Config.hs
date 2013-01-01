@@ -299,6 +299,7 @@ specialCommands
                         (o, "}{")),
 
     "float-barrier" ~> "\\FloatBarrier",
+    "pagenumbering" ~> (\x -> "\\pagenumbering{" ++ x ++ "}"),
 
     "endignore" ~> "",
     "endnoinclude" ~> "",

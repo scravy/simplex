@@ -17,6 +17,9 @@
 @cfoot
     \thepage \space / \lastpage
 
+@preamble
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
 
 newpage
 tableofcontents
