@@ -141,6 +141,8 @@ toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg d
 
           : "\\usepackage{lastpage}\n"
           : "\\usepackage{graphicx}\n"
+          : "\\usepackage[section]{placeins}\n"
+          : "\\usepackage{float}\n"
 
           : "\\usepackage["
           : "colorlinks,"

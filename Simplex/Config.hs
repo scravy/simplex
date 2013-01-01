@@ -321,9 +321,11 @@ specialCommands
     "columns" ~> (\o x -> (o { oColumns = read x },
                            when' (oColumns o > 0) "\\end{multicols}\n"
                         ++ "\\begin{multicols}{" ++ x ++ "}\n")),
+
     "endcolumns" ~> (\o -> ifElse (oColumns o > 0)
                         (o { oColumns = 0 }, "\\end{multicols}\n")
                         (o, "\\textcolor{orange}{endcolumns: Columns already ended.}")),
+
     "colbreak" ~> (\o -> when' (oColumns o > 0) "\\vfill\n\\columnbreak\n"),
 
     "figure" ~> (\o x -> (o { oFigure = True },
@@ -332,6 +334,7 @@ specialCommands
                        ++ when' (x /= ["auto"])
                             (ifElse (null x) "[h!]" ("[" ++ head x ++ "]"))
                        ++ "\n\\centering")),
+
     "endfigure" ~> (\o -> ifElse (oFigure o)
                        (o { oFigure = False }, "\\end{figure}\n")
                        (o, "\\textcolor{orange}{endfigure: Figure already ended.}")),

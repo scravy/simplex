@@ -10,7 +10,13 @@
     A solution for creating documents using \LaTeX  which is as easy as
     writing Markdown, without sacrificing the power of \LaTeX. 
 
-@margins 4cm 4.5cm 3cm 4.5cm
+@margins 3cm 4.5cm 3cm 4.5cm
+
+@pagestyle fancy
+
+@cfoot
+    \thepage \space / \lastpage
+
 
 newpage
 tableofcontents
@@ -1044,7 +1050,7 @@ newpage
 ->  Note: By exchanging the dot (\#.#) with a hashbang (\@#@)
     you can load data from a file and treat it like the corresponding
     special block (i.e. \@#code myfile.java@ will include the
-    contents of *myfile.java* and treat it as Java code).
+    contents of *myfile.java* and treat it as a \#.code# block).
 
 ::  .ascii: An alias for \#.verbatim#.
 ::  .code: Verbatim text, formatted as source code.
@@ -1064,7 +1070,6 @@ newpage
 ::  .table: Parses an ASCII table and renders it using LaTeX.
 ::  .verbatim: Inserts verbatim text (like \#\begin{verbatim}#).
 
-
 ==  Shortcuts
 
 ::  .#: Like \#.code#.
@@ -1078,6 +1083,7 @@ newpage
     code, \@#! file.txt@ as verbatim text, and so on. 
 
 ==  #include Directive
+label sec:include-directive
 
 ::  #include: Literally includes the contents of the file.
     Usage: \@#include filename@. This works like the
@@ -1149,8 +1155,10 @@ newpage
 =   Commands
 
 ::  appendix: 
-::  bfseries: Like \#\bfseries# in LaTeX.
-::  bold: Alias for \#\bfseries#.
+::  bfseries: Like \#\bfseries# in \LaTeX. Prints the following text
+    in **bold**. Use \#reset# or \#normalfont# to terminate.
+::  bold: Alias for \#\bfseries#. Prints the following text
+    in **bold**. Use \#reset# or \#normalfont# to terminate.
 ::  caption: Declares a caption for the current figure.
     Only works within \#figure#.
 ::  center: Centers the text from this point on.
@@ -1163,7 +1171,12 @@ newpage
 ::  endignore: Terminates \#ignore#.
 ::  endnoinclude: Terminates \#noinclude#.
 ::  endnotes: Insert the list of endnotes, also creates a section with heading.
-::  figure: 
+::  figure: Starts a figure (like \#\begin{figure}#).
+    Takes an optional parameter which specifies the placement
+    of the figure. If you omit it, \#h!# is assumed. If you
+    want to explicitly leave it blank, specify \#auto#.
+    \break All possible values are: *h, t, b, p, H, !* (may be combined).
+    \break Examples: \#figure htb#, \#figure auto#, \#figure h!#
 ::  figures: Insert a list of figures here.
 ::  footnotesize: Like \#\footnotesize# in LaTeX.
 ::  hfill: Like \#\hfill# in LaTeX.
@@ -1185,13 +1198,15 @@ newpage
 ::  image-width: Sets the width of the following images.
     \break Usage: *image-width <width>*
 ::  image: Inserts the specified image, for example
-    \#image myfile.png#. Like \#\includegraphics# in \LaTeX .
+    \#image myfile.png#. Works like \#\includegraphics# in \LaTeX .
     Dimensions and other additional arguments can be set using
     the \#image-...# commands. Note that the same limitations
     apply as for pdflatex and includegraphics in general
     (i.e. will only include **JPG**, **PNG**, and **PDF** files).
-::  italic: Alias for \#\itshape#.
-::  itshape: Like \#\itshape# in LaTeX.
+::  italic: Alias for \#\itshape#. Prints the following text
+    in *italics*. Use \#reset# or \#normalfont# to terminate.
+::  itshape: Like \#\itshape# in LaTeX. Prints the following text
+    in *italics*. Use \#reset# or \#normalfont# to terminate.
 ::  large: Like \#\large# in LaTeX.
 ::  LARGE: Like \#\LARGE# in LaTeX.
 ::  Large: Like \#\Large# in LaTeX.
@@ -1200,14 +1215,16 @@ newpage
     \latex does by default). Use \#reset# for this.
 ::  mdseries: Like \#\mdseries# in LaTeX.
 ::  newpage: Like \#\newpage# in LaTeX.
-::  noinclude: 
+::  noinclude: The following part of the document (up to
+    the next \#endnoinclude#) won't be processed when
+    included using \@#include@ (see \<sec:include-directive>).
 ::  noindent: Like \#\noindent# in LaTeX.
 ::  normalfont: Like \#\normalfont# in LaTeX.
 ::  normalsize: Like \#\normalsize# in LaTeX.
 ::  pagebreak: Alias for \#\newpage#.
 ::  pagestyle: Like \#\pagestyle# in LaTeX. Sets the pagestyle for
     the next pages from this point on to the supplied argument.
-    For example \#pagestyle plain#.
+    For example \#pagestyle plain# or \#pagestyle fancy#.
 ::  reset: Cancels the effects of \#left#, \#center#,
     \#right# and applies \#normalsize# and \#normalfont#.
 ::  right: Aligns the text from this point onward to the right.
@@ -1344,19 +1361,4 @@ newpage
 >   (/)
 >#  |-->
 >   |-->
-
-thispagestyle fancy
-
-@lhead
-    **Hello World**
-    Wooohoooohooooo
-
-@rhead
-    \today
-    *omg tf*
-
-@cfoot
-
-@rfoot
-    \thepage   / \lastpage
 
