@@ -1151,14 +1151,15 @@ newpage
 ::  appendix: 
 ::  bfseries: Like \#\bfseries# in LaTeX.
 ::  bold: Alias for \#\bfseries#.
-::  break: 
-::  caption: 
+::  caption: Declares a caption for the current figure.
+    Only works within \#figure#.
 ::  center: Centers the text from this point on.
-::  colbreak: 
-::  columns: 
+::  colbreak: Starts a new column within \#columns#.
+::  columns: Start columnized text.
+    \break Usage: *columns <how-many-columns>*
 ::  em: Like \#\em# in LaTeX.
 ::  endcolumns: Terminates \#columns#.
-::  endfigure: 
+::  endfigure: Terminates \#figure#.
 ::  endignore: Terminates \#ignore#.
 ::  endnoinclude: Terminates \#noinclude#.
 ::  endnotes: Insert the list of endnotes, also creates a section with heading.
