@@ -69,6 +69,46 @@ documentClass cfg props
 
           : "]{" : articleType props : ["}\n"]
 
+packages = [("inputenc", "\\usepackage[utf8]{inputenc}\n"),
+            ("fancyhdr", "\\usepackage{fancyhdr}\n"),
+            ("tabularx", "\\usepackage{tabularx}\n"),
+            ("eurosym",  "\\usepackage{eurosym}\n"
+                         ++ "\\DeclareUnicodeCharacter{20AC}{\\euro{}}\n"),
+
+            ("amsmath",  "\\usepackage{amsmath}\n"),
+            ("amsfonts", "\\usepackage{amsfonts}\n"),
+            ("amssymb",  "\\usepackage{amssymb}\n"),
+            ("stmaryrd", "\\usepackage{stmaryrd}\n"),
+            ("wasysym",  "\\usepackage{wasysym}\n"),
+            ("marvosym", "\\let\\EUR\\undefined"
+                         ++ "\n\\usepackage{marvosym}\n"),
+
+            ("verbatim", "\\usepackage{verbatim}\n"),
+            ("listings", "\\usepackage{listings}\n"),
+            ("multicol", "\\usepackage{multicol}\n"),
+          
+            ("color",    "\\usepackage[usenames,dvipsnames]{color}\n"),
+            ("xcolor",   "\\usepackage[table]{xcolor}\n"),
+            ("multirow", "\\usepackage{multirow}\n"),
+
+            ("lastpage", "\\usepackage{lastpage}\n"),
+            ("graphicx", "\\usepackage{graphicx}\n"),
+
+            ("hyperref", "\\usepackage["
+                         ++ "colorlinks,"
+                         ++ "pdfpagelabels,"
+                         ++ "pdfstartview=FitH,"
+                         ++ "bookmarksopen=true,"
+                         ++ "bookmarksnumbered=true,"
+                         ++ "linkcolor=black,"
+                         ++ "plainpages=false,"
+                         ++ "hypertexnames=false,"
+                         ++ "citecolor=black,"
+                         ++ "urlcolor=black]"
+                         ++ "{hyperref}\n")
+
+           ]
+
 toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg doc) $ blocks
     where
         preamble xs =
@@ -219,7 +259,9 @@ toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg d
           : xs
 
 toTeX' opt []
-    = when' (oColumns opt > 0) "\\end{multicols}" : ["\n}\n\\end{document}\n"]
+    = when' (oColumns opt > 0) "\\end{multicols}\n"
+    : when' (oFigure opt) "\\end{figure}\n"
+    : ["\n}\n\\end{document}\n"]
 
 toTeX' opt (BSection s : xs)
     = "\\section" : when' (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
@@ -357,26 +399,6 @@ toTeX' opt (BAny t s : xs)
 
 toTeX' opt (BParagraph s : xs)
     = escapeTeX "\n\n" s : toTeX' opt xs
-
-toTeX' opt (BCommand "break" [x] : xs)
-    = "\\hfill \\\\[" : x : "]" : toTeX' opt xs
-
-toTeX' opt (BCommand "columns" [x] : xs)
-    | all isDigit x
-        = when' (oColumns opt > 0) "\\end{multicols}\n\n"
-        : "\\begin{multicols}{" : x : "}\n\n"
-        : toTeX' (opt { oColumns = read x } ) xs
-
-toTeX' opt (BCommand "colbreak" _ : xs)
-    | oColumns opt > 0
-        = "\\vfill\n\\columnbreak\n" : toTeX' opt xs
-
-toTeX' opt (BCommand "endcolumns" _ : xs)
-    | oColumns opt > 0
-        = "\\end{multicols}\n\n" : toTeX' (opt { oColumns = 0 }) xs
-    | otherwise
-        = "\\textcolor{orange}{Columns already ended.}"
-        : toTeX' opt xs
 
 toTeX' opt (BCommand c (x:_) : xs)
     | isJust l = "\\setlength{\\" : c : "}{" : x : "}\n" : toTeX' opt xs

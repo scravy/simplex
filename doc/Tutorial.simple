@@ -1152,14 +1152,18 @@ newpage
 ::  bfseries: Like \#\bfseries# in LaTeX.
 ::  bold: Alias for \#\bfseries#.
 ::  break: 
+::  caption: 
 ::  center: Centers the text from this point on.
 ::  colbreak: 
 ::  columns: 
 ::  em: Like \#\em# in LaTeX.
 ::  endcolumns: Terminates \#columns#.
+::  endfigure: 
 ::  endignore: Terminates \#ignore#.
 ::  endnoinclude: Terminates \#noinclude#.
 ::  endnotes: Insert the list of endnotes, also creates a section with heading.
+::  figure: 
+::  figures: Insert a list of figures here.
 ::  footnotesize: Like \#\footnotesize# in LaTeX.
 ::  hfill: Like \#\hfill# in LaTeX.
 ::  huge: Like \#\huge# in LaTeX.

@@ -10,6 +10,19 @@ endnoinclude
 @authors
     Julian Fleischer
 
+figure
+
+image-width 4cm
+image 4-color-wheel.png
+
+caption Hello World
+
+endfigure
+
+    This is text.
+
+columns 3
+
 .table
     +-----+----+----+
     |   7 |  8 |  1 |
@@ -19,6 +32,8 @@ endnoinclude
     | 420 |  4 | 17 |
     +-----+----+----+
 
+colbreak
+
 .table
     +
     |1|2|3
@@ -27,4 +42,8 @@ endnoinclude
     +
     |7|8|9
     +
+
+endcolumns
+
+endcolumns
 

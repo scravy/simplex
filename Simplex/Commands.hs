@@ -1,7 +1,7 @@
 {-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
 
 module Simplex.Commands (
-        Command (..), reset, image
+        Command (..), image
     ) where
 
 import Simplex.Util
@@ -19,6 +19,15 @@ instance Command String where
 instance Command (Config -> [String] -> (Config, String)) where
     a ~> f = (a, f)
 
+instance Command (Config -> [String] -> String) where
+    a ~> f = (a, \o x -> (o, f o x))
+
+instance Command (Config -> (Config, String)) where
+    a ~> f = (a, \o _ -> f o)
+
+instance Command (Config -> String) where
+    a ~> f = (a, \o _ -> (o, f o))
+
 instance Command (Config -> String -> (Config, String)) where
     a ~> f = (a, \o x -> if null x then (o, "") else f o (head x))
 
@@ -27,6 +36,10 @@ instance Command (Config -> String -> Config) where
 
 instance Command (Config -> String -> String -> Config) where
     a ~> f = (a, \o x -> if length x < 2 then (o, "") else (f o (x !! 0) (x !! 1), ""))
+
+instance Command (Config -> String -> String -> String -> Config) where
+    a ~> f = (a, \o x -> if length x < 3 then (o, "")
+                         else (f o (x !! 0) (x !! 1) (x !! 2), ""))
 
 instance Command (Config -> String -> String -> String -> String -> Config) where
     a ~> f = (a, \o x -> if length x < 4 then (o, "")
@@ -40,11 +53,6 @@ instance Command (Config -> Config) where
 
 instance Command ([String] -> String) where
     a ~> f = (a, \o x -> (o, f x))
-
-reset :: Config -> [String] -> (Config, String)
-reset opt _
-    | oColumns opt > 0 = (opt {oColumns = 0}, "\\end{multicols}}{")
-    | otherwise        = (opt, "}{")
 
 image :: Config -> [String] -> (Config, String)
 image opt (x:xs) = (opt, "\\includegraphics" ++ getOpts ++ "{" ++ x ++ "}\n")

@@ -134,7 +134,7 @@ process opts file exit = do
 
     tok <- liftIO $ loadIncludes True (lex c) >>= loadHashbangs
 
-    print "."
+    print' "."
     let cfg = defaultConfig { oStandalone = optType opts == "png" }
 
     (spec, tok') <- liftIO $ processSpecials opts newSpec $ parse tok

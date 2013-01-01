@@ -9,8 +9,9 @@ import Simplex.Parser
 import Simplex.Commands (Command (..))
 import qualified Simplex.Commands as C
 import Simplex.ConfigData
+import Simplex.Util
 
-import Data.List (sort)
+import Data.List
 
 config cfg (Document blocks props)
  = conf cfg blocks
@@ -291,18 +292,23 @@ specialCommands
     "left" ~> "\\raggedright",
     "center" ~> "\\centering",
     "endnotes" ~> "\\theendnotes",
+    "figures" ~> "\\listoffigures",
     "label" ~> (\x -> "\\label{" ++ x ++ "}"),
-    "reset" ~> C.reset,
-    "endignore" ~> \x -> const "" (x :: String),
-    "endnoinclude" ~> \x -> const "" (x :: String),
-    "noinclude" ~> \x -> const "" (x :: String),
+    "reset" ~> (\o -> ifElse (oColumns o > 0)
+                        (o {oColumns = 0}, "\\end{multicols}}{")
+                        (o, "}{")),
+    "endignore" ~> "",
+    "endnoinclude" ~> "",
+    "noinclude" ~> "",
     "pagestyle" ~> (\x -> "\\pagestyle{" ++ x ++ "}"),
     "thispagestyle" ~> (\x -> "\\thispagestyle{" ++ x ++ "}"),
+
     "image-defaults" ~> (\o -> o { oImageWidth = Nothing,
                                    oImageHeight = Nothing,
                                    oImageScale = Nothing,
                                    oImageAngle = Nothing,
-                                   oImagePage = Nothing }),
+                                   oImagePage = Nothing,
+                                   oImageTrim = Nothing }),
     "image-size" ~> (\o x y -> o { oImageWidth = Just x, oImageHeight = Just y }),
     "image-width" ~> (\o x -> o { oImageWidth = Just x }),
     "image-height" ~> (\o x -> o { oImageHeight = Just x }),
@@ -310,7 +316,28 @@ specialCommands
     "image-scale" ~> (\o x -> o { oImageScale = Just x }),
     "image-page" ~> (\o x -> o { oImagePage = Just x }),
     "image-trim" ~> (\o a b c d -> o { oImageTrim = Just (a, b, c, d) }),
-    "image" ~> C.image
+    "image" ~> C.image,
+
+    "columns" ~> (\o x -> (o { oColumns = read x },
+                           when' (oColumns o > 0) "\\end{multicols}\n"
+                        ++ "\\begin{multicols}{" ++ x ++ "}\n")),
+    "endcolumns" ~> (\o -> ifElse (oColumns o > 0)
+                        (o { oColumns = 0 }, "\\end{multicols}\n")
+                        (o, "\\textcolor{orange}{endcolumns: Columns already ended.}")),
+    "colbreak" ~> (\o -> when' (oColumns o > 0) "\\vfill\n\\columnbreak\n"),
+
+    "figure" ~> (\o x -> (o { oFigure = True },
+                          when' (oFigure o) "\\end{figure}\n"
+                       ++ "\\begin{figure}"
+                       ++ when' (x /= ["auto"])
+                            (ifElse (null x) "[h!]" ("[" ++ head x ++ "]"))
+                       ++ "\n\\centering")),
+    "endfigure" ~> (\o -> ifElse (oFigure o)
+                       (o { oFigure = False }, "\\end{figure}\n")
+                       (o, "\\textcolor{orange}{endfigure: Figure already ended.}")),
+
+    "caption" ~> (\o x -> when' (oFigure o)
+                            ("\\caption{" ++ concat (intersperse " " x) ++ "}"))
    ]
 
 showSymbols = do
