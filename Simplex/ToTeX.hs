@@ -144,6 +144,8 @@ toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg d
           : "\\usepackage[section]{placeins}\n"
           : "\\usepackage{float}\n"
 
+          : "\\usepackage{lipsum}\n"
+
           : "\\usepackage["
           : "colorlinks,"
           : "pdfpagelabels,"

@@ -53,8 +53,9 @@ escapeTeX t ('\\':'{':xs) = let (m, ms) = break (== '}') xs
 escapeTeX t ('\\':'<':xs) = let (m, ms) = break (== '>') xs
                             in  "\\ref{" ++ m ++ "}" ++ escapeTeX t (tail' ms)
 
---  escapeTeX t ('\\':x:' ':xs)
---      | x `elem` verbs = '\\' : x : escapeTeX t xs
+escapeTeX t ('\\':'(':xs) = let (m, ms) = break (== ')') xs
+                            in  "\\pageref{" ++ m ++ "}" ++ escapeTeX t (tail' ms)
+
 escapeTeX t ('\\':x:xs)
     | x `elem` verbs = let (m, ms) = break (== x) xs
                        in "\\verb" ++ x : m ++ x : escapeTeX t (tail' ms)
@@ -106,11 +107,18 @@ ensureTeX ('[':'+':']':xs) = ("\\ensuremath{\\boxplus}", xs)
 ensureTeX ('[':'.':']':xs) = ("\\ensuremath{\\boxdot}", xs)
 ensureTeX ('[':'x':']':xs) = ("\\ensuremath{\\boxtimes}", xs)
 
-ensureTeX ('_':'|':'_':xs) = ("\\ensuremath{\\bot}", xs)
-ensureTeX ('|':'=':xs) = ("\\ensuremath{\\models}", xs)
 ensureTeX ('|':'-':'>':xs) = ("\\ensuremath{\\mapsto}", xs)
 ensureTeX ('|':'-':'-':'>':xs) = ("\\ensuremath{\\longmapsto}", xs)
+ensureTeX ('|':'=':'>':xs) = ("\\ensuremath{\\Mapsto}", xs)
+ensureTeX ('|':'=':'=':'>':xs) = ("\\ensuremath{\\Longmapsto}", xs)
 
+ensureTeX ('<':'-':'|':xs) = ("\\ensuremath{\\mapsfrom}", xs)
+ensureTeX ('<':'-':'-':'|':xs) = ("\\ensuremath{\\longmapsfrom}", xs)
+ensureTeX ('<':'=':'|':xs) = ("\\ensuremath{\\Mapsfrom}", xs)
+ensureTeX ('<':'=':'=':'|':xs) = ("\\ensuremath{\\Longmapsfrom}", xs)
+
+ensureTeX ('_':'|':'_':xs) = ("\\ensuremath{\\bot}", xs)
+ensureTeX ('|':'=':xs) = ("\\ensuremath{\\models}", xs)
 
 ensureTeX ('<':'=':'>':xs) = ("\\ensuremath{\\Leftrightarrow}", xs)
 ensureTeX ('<':'=':'=':'>':xs) = ("\\ensuremath{\\Longleftrightarrow}", xs)
