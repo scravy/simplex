@@ -27,7 +27,7 @@ import Control.Monad.Cont
 
 versionInfo = "Simplex -- Simple LaTeX -- v0.3 by Julian Fleischer"
 
-dirtyExts = [".toc", ".aux", ".log", ".tex", ".out"]
+dirtyExts = [".toc", ".aux", ".log", ".tex", ".out", ".lof"]
 
 isSimplexFile = flip elem [".simple", ".lhs", ".smplx", ".simplex"] . takeExtension
 

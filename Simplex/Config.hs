@@ -295,7 +295,7 @@ specialCommands
     "figures" ~> "\\listoffigures",
     "label" ~> (\x -> "\\label{" ++ x ++ "}"),
     "reset" ~> (\o -> ifElse (oColumns o > 0)
-                        (o {oColumns = 0}, "\\end{multicols}}{")
+                        (o { oColumns = 0 }, "\\end{multicols}}{")
                         (o, "}{")),
 
     "float-barrier" ~> "\\FloatBarrier",

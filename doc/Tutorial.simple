@@ -1,5 +1,5 @@
 @title
-	Simplex -- Simple \LaTeX
+	Simplex -- Simple \LaTeX (v0.3)
 
 @authors
     Julian Fleischer
@@ -25,6 +25,9 @@
 
 newpage
 tableofcontents
+
+newpage
+figures
 
 newpage
 =   Basic Syntax
@@ -82,8 +85,6 @@ label sec:basic-syntax
     special paragraphs can be found in the appendix to this
     document.
 
-    Here is a sample simplex document:
-
 .#  @title
         Sample Simplex Document
 
@@ -97,10 +98,11 @@ label sec:basic-syntax
 
     #code sample.simple
 
+
 ==  Document Structure
 label sec:document-structure
 
-.   Headings can be designated using \#=#, \#==#, and \#===#.
+    Headings can be designated using \#=#, \#==#, and \#===#.
 
     Furthermore \#:=# and \#:-# can be used to designate
     paragraphs and subparagraphs. The text upto the first colon
@@ -121,9 +123,15 @@ label sec:document-structure
     will number sections (i.e. \#=# is translated to \#\section{...}#
     -- note the missing asterisk).
 
-    Here is a sample document:
+figure
+caption A sample document featuring a tableofcontents
 
-.#  tableofcontents
+.#  @title
+        A Document with a Table of Contents
+
+    newpage
+
+    tableofcontents
     newpage
 
     =   Section One
@@ -151,6 +159,8 @@ label sec:document-structure
         Maecenas faucibus mollis interdum.
 
     :=  Nota bene: This is a paragraph.
+
+endfigure
 
 newpage
 === Lists
@@ -329,7 +339,8 @@ label sec:footnotes-and-endnotes
     You can then use the \#endnotes# (no at) command to insert
     the list of endnotes.
 
-    Here is a sample document with endnotes, labels, and references:
+figure
+caption A sample document with endnotes, labels, and references
 
 .#  @title
         Sample Document with Endnotes
@@ -370,6 +381,7 @@ label sec:footnotes-and-endnotes
 
     endnotes
 
+endfigure
 
 newpage
 ==  Embedding \LaTeX
@@ -386,7 +398,8 @@ label sec:embedding-latex
     \#@preamble# can be used (for example for including
     additional packages and the like).
 
-    Sample document:
+figure
+caption A sample document with embedded LaTeX
 
 .#  @title The Title
 
@@ -403,6 +416,8 @@ label sec:embedding-latex
 
 ->  Note that the commands demoed here are available in simplex
     too: \#@doublespacing# and \#thispagestyle plain#.
+
+endfigure
 
 ==  Comments
 label sec:comments
@@ -423,6 +438,15 @@ label sec:comments
 newpage
 =   Tables
 label sec:tables
+
+    All table commands start with \#>#. Every \#># declares a cell.
+    \#>+# starts a new table row. \#>-# starts a new table row and
+    paints a horizontal line. \#>=# starts a new table row and
+    paints a double horizontal line. A table format (just like in
+    \#\begin{tabular}{format}#) can be given with \#>@#.
+
+figure
+caption Simple sample tables
 
 columns 4
 
@@ -548,15 +572,174 @@ colbreak
     >   9
     >-
 endcolumns
+endfigure
 
-==  Text in tables
+==  Kinds of Cells
 
+    Cells can have different kinds of content. A hashbang (#)
+    designates a cell having verbatim content. An exclamation
+    mark (!) designates a header cell (that is: having
+    a **bold** type face). A dollar sign ($ ) designates a cell
+    having math content.
+
+figure
+caption A sample table with different kinds of cells
 columns 2
+.#  >@  |c|c|
+    >-
+    >$  \sum_{i=1}^n n^2
+    >!  Heading
+    >-
+    >#  Verbatim \yeah <=> \yeah
+    >   Ordinary cell.
+    >-
 
->@  |r|p{4cm}|
+colbreak
+
+>@  |c|c|
+>-
+>$  \sum_{i=1}^n n^2
+>!  Heading
+>-
+>#  Verbatim \yeah <=> \yeah
+>   Ordinary cell.
+>-
+
+endcolumns
+endfigure
+
+newpage
+==  Alignment of Cells
+
+    The alignment of cells can be changed per column (using \#>@#)
+    or per cell. All you need to do is to include \#L#, \#R#, or \#C#
+    (for _L_eft, _R_ight, or _C_enter respectively) in the cell
+    definition:
+
+figure
+caption A table demoing custom alignment of cells
+columns 3
+
+.#  >@  clr
+    >!  Heading 1
+    >!  Heading 2
+    >!  Heading 3
+    >=
+    >   A
+    >   B
+    >   C
+    >-
+    >   D
+    >   E
+    >   F
+    >-
+    >L  Le
+    >R  Ri
+    >C  Ce
+    >=
+
+colbreak
+
+>@  clr
+>!  Heading 1
+>!  Heading 2
+>!  Heading 3
+>=
+>   A
+>   B
+>   C
+>-
+>   D
+>   E
+>   F
+>-
+>L  Le
+>R  Ri
+>C  Ce
+>=
+
+colbreak
+
+hfill
+vfill
+
+endcolumns
+endfigure
+
+    Note that this will redefine the cell apart from the table
+    declaration (given via \#>@  clr#). Thus if you specified
+    vertical borders in \#>@# you will have to specify them in
+    the cell again. This is possible by putting a bar (|) left
+    and/or right to the new cell definition:
+
+columns 3
+
+.#  >@  clr
+    >!  Heading 1
+    >!  Heading 2
+    >!  Heading 3
+    >=
+    >   A
+    >   B
+    >   C
+    >-
+    >|L| Le
+    >R| Ri
+    >C| Ce
+    >=
+
+colbreak
+
+>@  |c|l|r|
+>-
+>!  Heading 1
+>!  Heading 2
+>!  Heading 3
+>-
+>   A
+>   B
+>   C
+>-
+>|L| Le
+>R| Ri
+>C| Ce
+>-
+
+colbreak
+
+hfill
+vfill
+
+endcolumns
+
+newpage
+==  Text in Tables
+
+    Tables in \LaTeX are not as easy as, say, HTML tables. Especially
+    a problem are cells containing multiline text (which, by default,
+    is not wrapped). Thus you have to declare a text column (using
+    \#>@#). The column specifier is \#p#. You will also have to declare
+    the width of the column, like so: \#p{4cm}.
+
+figure
+caption An example table with multiline text
+columns 3
+
+.#  >@  |r|p{6cm}|
+    >-
+    >!  Head
+    >!  Yet another
+    >-
+    >   1337
+    >   ...
+    >-
+
+colbreak
+
+>@  |r|p{6cm}|
 >-
 >!  Head
->!  Yet another head cell
+>!  Yet another
 >-
 >   1337  
 >   Nullam quis risus eget urna mollis ornare vel eu leo.
@@ -566,22 +749,87 @@ columns 2
 
 colbreak
 
-.!  >@  |r|p{5cm}|
-    >-
-    >!  Head
-    >! Yet another head cell
-    >-
-    >   1337
-    >   ...
-    >-
+hfill
+vfill
 
 endcolumns
+endfigure
 
+    There is also a more flexible \#tabular#-environment,
+    called \#tabluarx#. Is supports columns which contain
+    text and adjust themselves accordingly. You will still have
+    to designate a column as text column, but you do not need
+    to specify the width. Simplex will turn your table into
+    a \#tabularx#-table automatically if you define the table
+    using \#>X# instead of \#>@#. The column specifier for
+    a \#tabularx#-text-column is \#X#.
+    
+    Here is an example:
+
+figure
+caption An example X-table
+columns 2
+
+.#  >X  |r|X|
+    >-
+    >!  Head
+    >!  Yet another
+    >-
+    >   1337  
+    >   Nullam quis risus eget urna
+        mollis ornare vel eu leo. Integer posuere erat
+        a ante venenatis dapibus posuere velit aliquet.
+    >-
+
+colbreak
+
+>X  |r|X|
+>-
+>!  Head
+>!  Yet another
+>-
+>   1337  
+>   Nullam quis risus eget urna
+    mollis ornare vel eu leo. Integer posuere erat
+    a ante venenatis dapibus posuere velit aliquet.
+>-
+
+endcolumns
+endfigure
+
+    However, \#>X# tables have shortcomings of their own.
+    For example you can not use inline verbatim code in a cell
+    inside a \#tabularx#-table (that is the reason why \#>X#
+    tables are not the default tables).
+
+newpage
 ==  Rows spanning multiple columns
 
-    This is a table with a single cell spanning two columns:
+    It is possible to let a row span multiple columns by
+    simply adding the number of columns the row should span
+    in the cell definition. Note that this will nullify all
+    column declarations just as \#L#, \#R#, and \#C# do, so
+    you will have to specify borders as necessary. Columns
+    spanning multiple rows are centered by default (you can
+    combine column-spanning numbers and alignment specifiers,
+    like \#>|2L|# or \#>11C!#).
+
+figure
+caption A table with a single cell spanning two columns
 
 columns 2
+
+.#  >@  |l|l|
+    >-
+    >|2|
+        Team sheet
+    >-
+    >   GK
+    >   Paul Robinson
+    >+
+    ...
+
+colbreak
 
 >@  |l|l|
 >-
@@ -622,26 +870,32 @@ columns 2
 >   Mark Viduka
 >-
 
-colbreak
-
-.!  >@  |l|l|
-    >-
-    >|2|
-        Team sheet
-    >-
-    >   GK
-    >   Paul Robinson
-    >+
-    ...
-
 endcolumns
+endfigure
+
 
 == Columns spanning multiple rows
 
-    The following table shows how to span multiple rows
-    and columns.
+figure
+caption A table showing how to span multiple rows and columns
 
 columns 2
+
+.#  >@  |l|l|l|
+    >-
+    >|3|
+        Team sheet
+    >-
+    >   Goalkeeper
+    >   GK
+    >   Paul Robinson
+    >-
+    >,4 Defenders
+    >   LB
+    >   Lucus Radabe
+    ...
+
+colbreak 2
 
 >@  |l|l|l|
 >-
@@ -693,24 +947,10 @@ columns 2
 >   Mark Viduka
 >-
 
-colbreak 2
-
-.!  >@  |l|l|l|
-    >-
-    >|3|
-        Team sheet
-    >-
-    >   Goalkeeper
-    >   GK
-    >   Paul Robinson
-    >-
-    >,4 Defenders
-    >   LB
-    >   Lucus Radabe
-    ...
-
 endcolumns
+endfigure
 
+newpage
 ==  Colored Cells
 
 columns 2
@@ -730,7 +970,7 @@ columns 2
 
 colbreak
 
-.!  >@  cc
+.#  >@  cc
     >red
         A
     >blue
@@ -742,6 +982,35 @@ colbreak
         D
 
 endcolumns
+
+==  ASCII-Art Tables
+
+figure
+caption An ASCII-Art Table
+columns 2
+
+.table
+    +-----+----+----+
+    |   7 |  8 |  1 |
+    +-----+----+----+
+    | 172 | 19 | 42 |
+    +-----+----+----+
+    | 420 |  4 | 17 |
+    +-----+----+----+
+
+colbreak
+
+.#  .table
+        +-----+----+----+
+        |   7 |  8 |  1 |
+        +-----+----+----+
+        | 172 | 19 | 42 |
+        +-----+----+----+
+        | 420 |  4 | 17 |
+        +-----+----+----+
+
+endcolumns
+endfigure
 
 newpage
 ==  Typesetting Equations using Tables
@@ -882,8 +1151,8 @@ newpage
 
 ->  Supported image types are **png**, **jpg**, and **pdf**.
 
-    Example:
-
+figure
+caption Example image-inclusions
 .#  %   All following images should be as wide as the body is
     image-width .5\textwidth
 
@@ -892,6 +1161,7 @@ newpage
     image foto1.jpg
     image foto2.jpg
     image foto3.jpg
+endfigure
 
 newpage
 ==  Builtin *Graphviz* support
@@ -1147,6 +1417,8 @@ newpage
 newpage
 =   Lengths
 
+    
+
 ::  baselineskip: 
 ::  baselinestretch: 
 ::  columnsep: 
@@ -1180,7 +1452,7 @@ newpage
 ::  colbreak: Starts a new column within \#columns#.
 ::  columns: Start columnized text.
     \break Usage: *columns <how-many-columns>*
-::  em: Like \#\em# in LaTeX.
+::  em: Like \#\em# in \LaTeX.
 ::  endcolumns: Terminates \#columns#.
 ::  endfigure: Terminates \#figure#.
 ::  endignore: Terminates \#ignore#.
@@ -1194,10 +1466,10 @@ newpage
     \break Examples: \#figure htb#, \#figure auto#, \#figure h!#
 ::  figures: Insert a list of figures here.
 ::  float-barrier: \#figure#s will not float beneath this command.
-::  footnotesize: Like \#\footnotesize# in LaTeX.
-::  hfill: Like \#\hfill# in LaTeX.
-::  huge: Like \#\huge# in LaTeX.
-::  Huge: Like \#\Huge# in LaTeX.
+::  footnotesize: Like \#\footnotesize# in \LaTeX.
+::  hfill: Like \#\hfill# in \LaTeX.
+::  huge: Like \#\huge# in \LaTeX.
+::  Huge: Like \#\Huge# in \LaTeX.
 ::  ignore: Ignores the document upto the next \#endignore#.
 ::  image-angle: Sets the rotation of the following images.
     \break Usage: *image-angle <angle>*
@@ -1223,15 +1495,15 @@ newpage
     in *italics*. Use \#reset# or \#normalfont# to terminate.
 ::  itshape: Like \#\itshape# in LaTeX. Prints the following text
     in *italics*. Use \#reset# or \#normalfont# to terminate.
-::  large: Like \#\large# in LaTeX.
-::  LARGE: Like \#\LARGE# in LaTeX.
-::  Large: Like \#\Large# in LaTeX.
+::  large: Like \#\large# in \LaTeX.
+::  LARGE: Like \#\LARGE# in \LaTeX.
+::  Large: Like \#\Large# in \LaTeX.
 ::  left: Aligns the text from this point onward to the left.
     Note that this command will not justify the text (which
     \LaTeX does by default). Use \#reset# for this.
 ::  lipsum: 
-::  mdseries: Like \#\mdseries# in LaTeX.
-::  newpage: Like \#\newpage# in LaTeX.
+::  mdseries: Like \#\mdseries# in \LaTeX.
+::  newpage: Like \#\newpage# in \LaTeX.
 ::  noinclude: The following part of the document (up to
     the next \#endnoinclude#) won't be processed when
     included using \@#include@ (see \<sec:include-directive>).
@@ -1394,5 +1666,4 @@ newpage
 >   <==|
 >#  |==>
 >   |==>
-
 
