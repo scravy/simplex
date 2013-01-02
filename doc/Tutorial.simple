@@ -1,5 +1,5 @@
 @title
-	Simplex -- Simple \LaTeX (v0.3)
+	Simplex -- Simple \LaTeX  (v0.3)
 
 @authors
     Julian Fleischer
@@ -425,6 +425,9 @@ label sec:comments
     You can comment out a paragraph by marking it \#%#.
     Larger passages of comments can be declared using \#.comment#.
 
+figure
+caption A sample document with comments in it
+
 .#  %   A comment
     =   Not a comment (a heading)
 
@@ -434,6 +437,204 @@ label sec:comments
         Also comment
 
     ==  Subsection (terminates .comment)
+
+endfigure
+
+newpage
+=   Advanced features
+
+==  Graphics / Images
+
+    Images can be included using the \#image# command:
+
+.#  image image.png
+
+.   The size and rotation of images can be controlled using
+    these commands:
+
+::  image-width: Sets the width for all following images
+    to the given width. Example: \#image-width 8cm#.
+    Note that the values given here are passed to pdflatex
+    literally, thus it is possible to use values like
+    \#\textwidth# here. \break
+    Example: \#image-width \textwidth#.
+
+::  image-height: analog to \#image-width#.
+
+::  image-size: Sets both width and heigth for all following
+    images. \break
+    Example: \#image-size 16cm 9cm#.
+
+::  image-angle: Sets the rotation of an image.
+
+::  image-trim: Trims the following images by the given
+    lengths. \break
+    The arguments are *left bottom right top*
+    (i.e. counter clockwise). \break
+    Example: \#image-trim 1cm 0cm 2cm 1cm
+
+::  image-defaults: Clears all image directives.
+
+->  It is worth noting that image directives apply to
+    all following images, not only the next image. Thus
+    \#image-angle 180# will rotate all following images
+    upside down. Use \#image-defaults# to clear
+    the given commands.
+
+->  Supported image types are **png**, **jpg**, and **pdf**.
+
+figure
+caption Example image-inclusions
+.#  image-height 5cm
+    image-angle 170
+
+    columns 3
+    image zebra.jpg
+    image elephant.jpg
+    image-angle 350
+    image zebra.jpg
+    endcolumns
+endfigure
+
+image-height 5cm
+image-angle 170
+
+columns 3
+image zebra.jpg
+image elephant.jpg
+image-angle 350
+image zebra.jpg
+endcolumns
+
+image-defaults
+reset
+
+
+newpage
+=== Builtin *Graphviz* support
+
+    Graphviz graphs can be included directly into a simplex
+    document:
+
+.#  .digraph
+        rankdir=LR;
+
+        A -> M;
+        A -> N;
+        M -> B;
+        N -> B;
+
+.   is rendered as:
+        
+.digraph
+    rankdir=LR;
+    margin=0;
+
+    A -> M -> B;
+    A -> N -> B;
+
+->  Note that the image-directives apply on graphviz
+    graphs too.
+->  \#.digraph# is drawn using dot.
+->  \#.graph# is drawn using neato.
+
+columns 4
+.#  image-angle -30
+    .graph
+        margin=0;
+
+        A -- Center;
+        B -- Center;
+        C -- Center;
+        D -- Center;
+        E -- Center;
+        X -- E -- Y;
+colbreak
+image-angle -30
+.graph
+    margin=0;
+
+    A -- Center;
+    B -- Center;
+    C -- Center;
+    D -- Center;
+    E -- Center;
+    X -- E -- Y;
+endcolumns
+
+newpage
+==  Multi column layout
+
+    Text can be distributed over multiple columns via the
+    \#columns# command. \#columns# are terminated by the
+    \#endcolumns# command.
+
+.#  columns 2
+        Nam dui ligula...
+    endcolumns
+
+columns 2
+lipsum 2
+endcolumns
+
+    Text can be forced to continue in the next column using
+    the \#colbreak# command. Here is an example using two
+    images:
+
+columns 2
+
+.#  image-height 4cm
+    columns 2
+    center
+    image bushes.jpg
+    image duck.jpg
+    colbreak
+    image zebra.jpg
+    image elephant.jpg
+    endcolumns
+
+colbreak
+
+hfill
+    \break
+    
+->  this also demonstrates the usefulness of the image commands
+    applying to all following images.
+
+endcolumns
+
+    ...which produces the following rendering:
+
+image-defaults
+image-height 4cm
+columns 2
+center
+image bushes.jpg
+image duck.jpg
+colbreak
+image zebra.jpg
+image elephant.jpg
+endcolumns
+
+newpage
+==  Figures
+
+    Figures (like \#\begin{figure}# in \LaTeX) can be inserted
+    using the \#figure# and \#endfigure# commands. A caption
+    can be set using the \#caption# command.
+
+.#  figure
+    image-width \textwidth
+    caption This is an example figure
+    image bushes.jpg
+    endfigure
+
+image-defaults
+image-width \textwidth
+figure
+caption This is an example figure
+image bushes.jpg
+endfigure
 
 newpage
 =   Tables
@@ -512,9 +713,8 @@ endcolumns
     The Code to create these four tables can be seen below:
 
 columns 4
-columnseprule 0.4pt
 
-.!  >   1
+.#  >   1
     >   2
     >   3
     >+
@@ -527,7 +727,7 @@ columnseprule 0.4pt
     >   9
 colbreak
 
-.!  >@  l|c||r
+.#  >@  l|c||r
     >   1
     >   2
     >   3
@@ -541,7 +741,7 @@ colbreak
     >   9
 colbreak
 
-.!  >@  l|c||r
+.#  >@  l|c||r
     >-
     >   1
     >   2
@@ -557,7 +757,7 @@ colbreak
     >-
 colbreak
 
-.!  >@  |l|c||r|
+.#  >@  |l|c||r|
     >-
     >   1
     >   2
@@ -607,6 +807,11 @@ colbreak
 
 endcolumns
 endfigure
+
+->  This way tables can be used to create complex layouts,
+    for example equations. See section
+    \<sec:typesetting-equations-using-tables> for an
+    advanced example.
 
 newpage
 ==  Alignment of Cells
@@ -672,9 +877,11 @@ endfigure
     the cell again. This is possible by putting a bar (|) left
     and/or right to the new cell definition:
 
+figure
+caption A table demoing formatting of custom cells
 columns 3
 
-.#  >@  clr
+.#  >@  |c|l|r|
     >!  Heading 1
     >!  Heading 2
     >!  Heading 3
@@ -711,6 +918,7 @@ hfill
 vfill
 
 endcolumns
+endfigure
 
 newpage
 ==  Text in Tables
@@ -764,8 +972,6 @@ endfigure
     using \#>X# instead of \#>@#. The column specifier for
     a \#tabularx#-text-column is \#X#.
     
-    Here is an example:
-
 figure
 caption An example X-table
 columns 2
@@ -799,8 +1005,7 @@ endfigure
 
     However, \#>X# tables have shortcomings of their own.
     For example you can not use inline verbatim code in a cell
-    inside a \#tabularx#-table (that is the reason why \#>X#
-    tables are not the default tables).
+    inside a \#tabularx#-table.
 
 newpage
 ==  Rows spanning multiple columns
@@ -953,22 +1158,10 @@ endfigure
 newpage
 ==  Colored Cells
 
+figure
+caption Four coloured cells in a table
+
 columns 2
-
-    These are four coloured cells (code is on the right):
-
->@  cc
->red
-    A
->blue
-    B
->+
->green
-    C
->yellow
-    D
-
-colbreak
 
 .#  >@  cc
     >red
@@ -981,7 +1174,72 @@ colbreak
     >yellow
         D
 
+colbreak
+
+>@  cc
+>red
+    A
+>blue
+    B
+>+
+>green
+    C
+>yellow
+    D
+
 endcolumns
+endfigure
+
+figure
+caption A very colorful table
+
+columns 2
+
+.#  >@  |c|c|c|c|
+    >-
+    >red
+    >2yellow|
+    >red
+    >-
+    >yellow,2
+    >2,2| Table
+    >yellow,2
+    >+
+    >yellow
+    >C
+    >C|
+    >yellow
+    >-
+    >red
+    >2yellow|
+    >red
+    >-
+
+colbreak
+
+>@  |c|c|c|c|
+>-
+>red
+>2yellow|
+>red
+>-
+>yellow,2
+>2,2| Table
+>yellow,2
+>+
+>yellow
+>C
+>C|
+>yellow
+>-
+>red
+>2yellow|
+>red
+>-
+
+endcolumns
+
+endfigure
 
 ==  ASCII-Art Tables
 
@@ -989,31 +1247,32 @@ figure
 caption An ASCII-Art Table
 columns 2
 
-.table
-    +-----+----+----+
-    |   7 |  8 |  1 |
-    +-----+----+----+
-    | 172 | 19 | 42 |
-    +-----+----+----+
-    | 420 |  4 | 17 |
-    +-----+----+----+
+.#  .table
+        +-----+----+----+----+
+        |   7 |  8 |  1 | 19 |
+        +-----+----+----+----+
+        | 172 | 19 | 42 | 20 |
+        +-----+----+----+----+
+        | 420 |  4 | 17 | 64 |
+        +-----+----+----+----+
 
 colbreak
 
-.#  .table
-        +-----+----+----+
-        |   7 |  8 |  1 |
-        +-----+----+----+
-        | 172 | 19 | 42 |
-        +-----+----+----+
-        | 420 |  4 | 17 |
-        +-----+----+----+
+.table
+    +-----+----+----+----+
+    |   7 |  8 |  1 | 19 |
+    +-----+----+----+----+
+    | 172 | 19 | 42 | 20 |
+    +-----+----+----+----+
+    | 420 |  4 | 17 | 64 |
+    +-----+----+----+----+
 
 endcolumns
 endfigure
 
 newpage
 ==  Typesetting Equations using Tables
+label sec:typesetting-equations-using-tables
 
 >@  clcl | l
 
@@ -1109,111 +1368,6 @@ newpage
     >$  x
     >$  =
     >$  -\frac b 2 \pm \sqrt{\left(\frac b 2\right)^2 - c}
-
-newpage
-=   Graphics / Images
-
-    Images can be included using the \#image# command:
-
-.#  image image.png
-
-.   The size and rotation of images can be controlled using
-    these commands:
-
-::  image-width: Sets the width for all following images
-    to the given width. Example: \#image-width 8cm#.
-    Note that the values given here are passed to pdflatex
-    literally, thus it is possible to use values like
-    \#\textwidth# here. \break
-    Example: \#image-width \textwidth#.
-
-::  image-height: analog to \#image-width#.
-
-::  image-size: Sets both width and heigth for all following
-    images. \break
-    Example: \#image-size 16cm 9cm#.
-
-::  image-angle: Sets the rotation of an image.
-
-::  image-trim: Trims the following images by the given
-    lengths. \break
-    The arguments are *left bottom right top*
-    (i.e. counter clockwise). \break
-    Example: \#image-trim 1cm 0cm 2cm 1cm
-
-::  image-defaults: Clears all image directives.
-
-->  It is worth noting that image directives apply to
-    all following images, not only the next image. Thus
-    \#image-angle 180# will rotate all following images
-    upside down. Use \#image-defaults# to clear
-    the given commands.
-
-->  Supported image types are **png**, **jpg**, and **pdf**.
-
-figure
-caption Example image-inclusions
-.#  %   All following images should be as wide as the body is
-    image-width .5\textwidth
-
-    %   Center the following
-    center
-    image foto1.jpg
-    image foto2.jpg
-    image foto3.jpg
-endfigure
-
-newpage
-==  Builtin *Graphviz* support
-
-    Graphviz graphs can be included directly into a simplex
-    document:
-
-.#  .digraph
-        rankdir=LR;
-
-        A -> M;
-        A -> N;
-        M -> B;
-        N -> B;
-
-.   is rendered as:
-        
-.digraph
-    rankdir=LR;
-    margin=0;
-
-    A -> M -> B;
-    A -> N -> B;
-
-->  Note that the image-directives apply on graphviz
-    graphs too.
-->  \#.digraph# is drawn using dot.
-->  \#.graph# is drawn using neato.
-
-columns 4
-.#  image-angle -30
-    .graph
-        margin=0;
-
-        A -- Center;
-        B -- Center;
-        C -- Center;
-        D -- Center;
-        E -- Center;
-        X -- E -- Y;
-colbreak
-image-angle -30
-.graph
-    margin=0;
-
-    A -- Center;
-    B -- Center;
-    C -- Center;
-    D -- Center;
-    E -- Center;
-    X -- E -- Y;
-endcolumns
 
 newpage
 appendix
@@ -1666,4 +1820,5 @@ newpage
 >   <==|
 >#  |==>
 >   |==>
+
 

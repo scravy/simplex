@@ -25,7 +25,7 @@ import Control.Exception
 import Control.Monad
 import Control.Monad.Cont
 
-versionInfo = "Simplex -- Simple LaTeX -- v0.3 by Julian Fleischer"
+versionInfo = "Simplex -- Simple LaTeX -- v0.3.1 by Julian Fleischer"
 
 dirtyExts = [".toc", ".aux", ".log", ".tex", ".out", ".lof"]
 
@@ -114,6 +114,9 @@ process opts file exit = do
         print x   = liftIO (putStr   x >> hFlush stdout)
         println x = liftIO (putStrLn x >> hFlush stdout)
         print' x  = unless (optPrint opts) (print x)
+        throw' s x = do
+            liftIO $ mapM_ removeIfExists (sRemoveFiles s)
+            throw x
         throw x   = println " Splat!" >> error x >> exit x
           where
             error (Exc e) = print "-> " >> println (show e)
@@ -153,7 +156,7 @@ process opts file exit = do
     unless (optDryRun opts || optType opts == "tex") $ do
         -- run pdflatex
         r <- liftIO $ exec verbose pdflatex (pdfopts ++ [filename ++ ".tex"])
-        _ <- either (throw . Err . snd) (return . const Ok) r
+        _ <- either (throw' spec . Err . snd) (return . const Ok) r
         print' "."
 
         -- run pdflatex a second time
