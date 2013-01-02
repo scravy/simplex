@@ -1,0 +1,33 @@
+@pagestyle fancy
+
+@lhead
+	**First line left**
+	*Second line left*
+
+@rhead
+	First line right
+	Second line right
+
+@cfoot
+	\thepage \space / \lastpage
+
+=   First section
+
+lipsum 1
+
+==  Subsection
+
+lipsum 2
+
+=   Second section
+
+lipsum 3-5
+
+==  Another subsection
+
+lipsum 6
+
+==  Yet another subsection
+
+lipsum 7
+
