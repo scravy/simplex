@@ -163,6 +163,10 @@ process opts file exit = do
         _ <- liftIO $ exec verbose pdflatex (pdfopts ++ [filename ++ ".tex"])
         print' "."
 
+        -- run pdflatex a third time if desired
+        when (optThreeTimes opts) $ do { liftIO $ exec verbose pdflatex (pdfopts ++ [filename ++ ".tex"])
+                                       ; print' "." }
+
         -- clean files
         unless (optNoClean opts) (liftIO $ do { mapM_ removeIfExists (prepend dirtyExts)
                                               ; mapM_ removeIfExists (sRemoveFiles spec) } )

@@ -14,6 +14,7 @@ data Flag = Help | Verbose | Print | NoClean
           | Watch Int | DryRun | Type String
           | Density Int | Quality Int | Crop
           | Convert String | Force | Version
+          | ThreeTimes
     deriving (Show, Eq)
 
 data Opts = Opts {
@@ -26,6 +27,7 @@ data Opts = Opts {
     optDryRun   :: Bool,
     optCrop     :: Bool,
     optForce    :: Bool,
+    optThreeTimes :: Bool,
     optWatch    :: Maybe Int,
     optDensity  :: Int,
     optQuality  :: Int,
@@ -47,6 +49,7 @@ defOpts = Opts {
     optDryRun   = False,
     optCrop     = False,
     optForce    = False,
+    optThreeTimes = False,
     optWatch    = Nothing,
     optDensity  = 150,
     optQuality  = 90,
@@ -74,6 +77,7 @@ cmdOpts = [
         Option "g" ["gnuplot"]  (ReqArg Gnuplot   "") "Path to `gnuplot'",
         Option "m" ["convert"]  (ReqArg Convert   "") "Path to `convert' (ImageMagick)",
         Option "w" ["watch"]    (OptArg (Watch . read . fromMaybe "2000") "") "Watch files or folder (optionally amount of time in ms)",
+        Option "3" ["three-times"] (NoArg ThreeTimes) "Execute `pdflatex' three times instead of the default two times.",
 
         Option ""  ["density", "dpi"] (ReqArg (Density . read) "") "For output type `png' only, specifies dpi.",
         Option ""  ["quality"] (ReqArg (Quality . read) "") "For output type `png' only, specifies quality."
@@ -97,6 +101,7 @@ parseArgs = do
                 Verbose    -> opts { optVerbose  = True }
                 Crop       -> opts { optCrop     = True }
                 Force      -> opts { optForce    = True }
+                ThreeTimes -> opts { optThreeTimes = True }
                 Watch d    -> opts { optWatch    = Just d }
                 Density d  -> opts { optDensity  = d }
                 Quality q  -> opts { optQuality  = q }
