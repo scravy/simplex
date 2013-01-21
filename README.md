@@ -51,6 +51,7 @@ you might want to install ImageMagick and Graphviz like so:
     brew install graphviz
     brew install imagemagick
 
+
 Using Simplex
 =============
 
@@ -61,21 +62,23 @@ you when you ask it for help (`--help` or `-h`):
 
     simplex [options] [files...]
 
-      -h    --help              Print this help text.
-      -v    --verbose           Verbose output.
-      -d    --dry-run           Dry run (do not create any files).
-      -n    --no-clean          Do not clean up after building.
-      -p    --print             Print processed tex to stdout.
-      -c    --crop              Crops the document so that no margins are left.
-      -f    --force             Forces the creation of output files.
-      -t    --type=             Specify type of output (pdf, png, tex)
-      -x    --pdflatex=         Path to `pdflatex' executable
-      -k    --pdfcrop=          Path to `pdfcrop'
-      -z    --graphviz=         Path to `dot' (graphviz)
-      -g    --gnuplot=          Path to `gnuplot'
-      -m    --convert=          Path to `convert' (ImageMagick)
-      -w[]  --watch[=]          Watch files or folder (optionally amount of time in ms)
-            --density=, --dpi=  For output type `png' only, specifies dpi.
-            --quality=          For output type `png' only, specifies quality.
+      -h        --help              Print this help text.
+                --version           Print version information.
+      -v        --verbose           Verbose output.
+      -d        --dry-run           Dry run (do not create any files).
+      -n        --no-clean          Do not clean up after building.
+      -p        --print             Print processed tex to stdout.
+      -c        --crop              Crops the document so that no margins are left.
+      -f        --force             Forces the creation of output files.
+      -t , -T   --type=             Specify type of output (pdf, png, tex)
+      -x        --pdflatex=         Path to `pdflatex' executable
+      -k        --pdfcrop=          Path to `pdfcrop'
+      -z        --graphviz=         Path to `dot' (graphviz)
+      -g        --gnuplot=          Path to `gnuplot'
+      -m        --convert=          Path to `convert' (ImageMagick)
+      -w[]      --watch[=]          Watch files or folder (optionally amount of time in ms)
+      -3        --three-times       Execute `pdflatex' three times instead of the default two times.
+                --density=, --dpi=  For output type `png' only, specifies dpi.
+                --quality=          For output type `png' only, specifies quality.
 
 
