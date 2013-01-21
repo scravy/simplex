@@ -45,6 +45,12 @@ For Mac OS X there is Mac TeX (http://www.tug.org/mactex/),
 which should include all relevant packages. Graphviz can be
 obtained from http://www.graphviz.org/Download_macos.php .
 
+If you are using Homebrew (http://mxcl.github.com/homebrew/)
+you might want to install ImageMagick and Graphviz like so:
+
+    brew install graphviz
+    brew install imagemagick
+
 Using Simplex
 =============
 
