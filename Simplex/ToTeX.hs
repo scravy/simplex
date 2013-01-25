@@ -50,7 +50,7 @@ makeFancyHeader p = ""
 itemsToTeX :: [Items] -> String
 itemsToTeX = concatMap f
     where
-        f (Item x) = "\\item " ++ escapeTeX x "\n"
+        f (Item x) = "\\item " ++ escapeTeX "\n" x
         f (Items Itemize is) = "\\begin{itemize}\n" ++ itemsToTeX is ++ "\\end{itemize}\n"
         f (Items Enumerate is) = "\\begin{enumerate}\n" ++ itemsToTeX is ++ "\\end{enumerate}\n"
 
