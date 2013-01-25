@@ -519,10 +519,8 @@ newpage
 .#  .digraph
         rankdir=LR;
 
-        A -> M;
-        A -> N;
-        M -> B;
-        N -> B;
+        A -> M -> B;
+        A -> N -> B;
 
 .   is rendered as:
         
