@@ -9,8 +9,7 @@ License-File:       LICENSE
 Author:             Julian Fleischer <julian.fleischer@fu-berlin.de>
 Maintainer:         Julian Fleischer <julian.fleischer@fu-berlin.de>
 Build-Type:         Simple
-Cabal-Version:      >= 1.4
-Tested-With:        ghc-7.4
+Cabal-Version:      >= 1.6
 Extra-Source-Files: Simplex-v0.3.pdf
 
 Source-Repository head
