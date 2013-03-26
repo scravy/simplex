@@ -10,3 +10,4 @@ dist
 bin
 target
 .DS_Store
+_darcs

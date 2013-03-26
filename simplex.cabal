@@ -3,12 +3,24 @@ Version:            0.3.2
 Synopsis:           A simple markup language that translates to LaTeX
 Description:        A simple markup language that translates to LaTeX
 Category:           LaTeX
+Stability:          provisional
 License:            GPL-3
 License-File:       LICENSE
 Author:             Julian Fleischer <julian.fleischer@fu-berlin.de>
 Maintainer:         Julian Fleischer <julian.fleischer@fu-berlin.de>
 Build-Type:         Simple
 Cabal-Version:      >= 1.4
+Tested-With:        ghc-7.4
+Extra-Source-Files: Simplex-v0.3.pdf
+
+Source-Repository head
+    type: git
+    location: https://github.com/scravy/simplex.git    
+
+Source-Repository this
+    type: git
+    location: https://github.com/scravy/simplex.git
+    tag: v0.3.2
 
 Executable simplex
     Hs-Source-Dirs:     src
