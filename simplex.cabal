@@ -1,7 +1,11 @@
 Name:               simplex
-Version:            0.3.2
+Version:            0.3.3
 Synopsis:           A simple markup language that translates to LaTeX
 Description:        A simple markup language that translates to LaTeX
+                    .
+                    See the PDF included in the cabal tarball to see
+                    how Simplex works.
+
 Category:           LaTeX
 Stability:          provisional
 License:            GPL-3
@@ -11,6 +15,7 @@ Maintainer:         Julian Fleischer <julian.fleischer@fu-berlin.de>
 Build-Type:         Simple
 Cabal-Version:      >= 1.6
 Extra-Source-Files: Simplex-v0.3.pdf
+Homepage:           http://github.com/scravy/simplex
 
 Source-Repository head
     type: git
@@ -19,7 +24,7 @@ Source-Repository head
 Source-Repository this
     type: git
     location: https://github.com/scravy/simplex.git
-    tag: v0.3.2.1
+    tag: v0.3.3
 
 Executable simplex
     Hs-Source-Dirs:     src
@@ -40,7 +45,7 @@ Executable simplex
                         process,
                         filepath,
                         directory,
-                        split >= 0.2.1.1,
+                        split >= 0.2.1,
                         regex-compat >= 0.95.1,
                         mtl >= 2.1.2,
                         old-time,

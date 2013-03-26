@@ -25,7 +25,7 @@ import Control.Exception
 import Control.Monad
 import Control.Monad.Cont
 
-versionInfo = "Simplex -- Simple LaTeX -- v0.3.2 by Julian Fleischer"
+versionInfo = "Simplex -- Simple LaTeX -- v0.3.3 by Julian Fleischer"
 
 dirtyExts = [".toc", ".aux", ".log", ".tex", ".out", ".lof"]
 
