@@ -19,7 +19,7 @@ Source-Repository head
 Source-Repository this
     type: git
     location: https://github.com/scravy/simplex.git
-    tag: v0.3.2
+    tag: v0.3.2.1
 
 Executable simplex
     Hs-Source-Dirs:     src
