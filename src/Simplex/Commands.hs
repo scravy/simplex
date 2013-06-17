@@ -1,4 +1,7 @@
-{-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
+{-# LANGUAGE Haskell2010
+    , TypeSynonymInstances
+    , FlexibleInstances
+ #-}
 
 module Simplex.Commands (
         Command (..), image

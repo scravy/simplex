@@ -1,3 +1,5 @@
+{-# LANGUAGE Haskell2010 #-}
+
 module Simplex.CmdLineOpts (
         Opts (..), Flag (..), defOpts, cmdOpts,
         parseArgs
@@ -14,7 +16,7 @@ data Flag = Help | Verbose | Print | NoClean
           | Watch Int | DryRun | Type String
           | Density Int | Quality Int | Crop
           | Convert String | Force | Version
-          | ThreeTimes
+          | ListSymbols String | ThreeTimes
     deriving (Show, Eq)
 
 data Opts = Opts {
@@ -28,6 +30,7 @@ data Opts = Opts {
     optCrop     :: Bool,
     optForce    :: Bool,
     optThreeTimes :: Bool,
+    optListSymbols :: Maybe String,
     optWatch    :: Maybe Int,
     optDensity  :: Int,
     optQuality  :: Int,
@@ -50,6 +53,7 @@ defOpts = Opts {
     optCrop     = False,
     optForce    = False,
     optThreeTimes = False,
+    optListSymbols = Nothing,
     optWatch    = Nothing,
     optDensity  = 150,
     optQuality  = 90,
@@ -63,7 +67,7 @@ defOpts = Opts {
 
 cmdOpts = [
         Option "h" ["help"]     (NoArg Help)          "Print this help text.",
-        Option ""  ["version"]  (NoArg Version)       "Print version information.",
+        Option "V" ["version"]  (NoArg Version)       "Print version information.",
         Option "v" ["verbose"]  (NoArg Verbose)       "Verbose output.",
         Option "d" ["dry-run"]  (NoArg DryRun)        "Dry run (do not create any files).",
         Option "n" ["no-clean"] (NoArg NoClean)       "Do not clean up after building.",
@@ -78,6 +82,7 @@ cmdOpts = [
         Option "m" ["convert"]  (ReqArg Convert   "") "Path to `convert' (ImageMagick)",
         Option "w" ["watch"]    (OptArg (Watch . read . fromMaybe "2000") "") "Watch files or folder (optionally amount of time in ms)",
         Option "3" ["three-times"] (NoArg ThreeTimes) "Execute `pdflatex' three times instead of the default two times.",
+        Option "s" ["symbols"]  (OptArg (ListSymbols . fromMaybe "\\%s\n") "") "Show a list of symboles known to simplex.",
 
         Option ""  ["density", "dpi"] (ReqArg (Density . read) "") "For output type `png' only, specifies dpi.",
         Option ""  ["quality"] (ReqArg (Quality . read) "") "For output type `png' only, specifies quality."
@@ -103,6 +108,7 @@ parseArgs = do
                 Force      -> opts { optForce    = True }
                 ThreeTimes -> opts { optThreeTimes = True }
                 Watch d    -> opts { optWatch    = Just d }
+                ListSymbols f -> opts { optListSymbols = Just f }
                 Density d  -> opts { optDensity  = d }
                 Quality q  -> opts { optQuality  = q }
                 Type t     -> opts { optType     = t }

@@ -1,3 +1,5 @@
+{-# LANGUAGE Haskell2010 #-}
+
 module Simplex.ToTeX (toTeX) where
 
 import Simplex.Parser
@@ -30,13 +32,14 @@ makePreambleLengths p
     in  concat $ map f knownLengths
 
 gatherDimensions :: [(String, String)] -> [String]
-gatherDimensions (("margin-left", v) : xs)   = ("left="   ++ v) : gatherDimensions xs
-gatherDimensions (("margin-right", v) : xs)  = ("right="  ++ v) : gatherDimensions xs
-gatherDimensions (("margin-top", v) : xs)    = ("top="    ++ v) : gatherDimensions xs
-gatherDimensions (("margin-bottom", v) : xs) = ("bottom=" ++ v) : gatherDimensions xs
-gatherDimensions (("margins", v) : xs)       = zipWith (++) ["top=", "right=", "bottom=", "left="] $ words v
-gatherDimensions (_ : xs) = gatherDimensions xs
-gatherDimensions [] = []
+gatherDimensions decl = case decl of
+    (("margin-left", v) : xs)   -> ("left="   ++ v) : gatherDimensions xs
+    (("margin-right", v) : xs)  -> ("right="  ++ v) : gatherDimensions xs
+    (("margin-top", v) : xs)    -> ("top="    ++ v) : gatherDimensions xs
+    (("margin-bottom", v) : xs) -> ("bottom=" ++ v) : gatherDimensions xs
+    (("margins", v) : xs)       -> zipWith (++) ["top=", "right=", "bottom=", "left="] $ words v
+    (_ : xs)                    -> gatherDimensions xs
+    []                          -> []
 
 makeDimensions p
     | dim == [] = ""
@@ -51,8 +54,10 @@ itemsToTeX :: [Items] -> String
 itemsToTeX = concatMap f
     where
         f (Item x) = "\\item " ++ escapeTeX "\n" x
-        f (Items Itemize is) = "\\begin{itemize}\n" ++ itemsToTeX is ++ "\\end{itemize}\n"
-        f (Items Enumerate is) = "\\begin{enumerate}\n" ++ itemsToTeX is ++ "\\end{enumerate}\n"
+        f (Items Itemize is) =
+            "\\begin{itemize}\n" ++ itemsToTeX is ++ "\\end{itemize}\n"
+        f (Items Enumerate is) =
+            "\\begin{enumerate}\n" ++ itemsToTeX is ++ "\\end{enumerate}\n"
 
 articleType ((x, _): xs)
     | x `elem` documentClasses = x
@@ -61,6 +66,7 @@ articleType [] = "article"
 
 documentClass cfg props
     | oStandalone cfg = "\\documentclass[preview]{standalone}\n"
+    | oLetter cfg = "\\documentclass[a4paper]{scrlttr2}\n"
     | otherwise = concat $ "\\documentclass[a4paper"
 
           : maybe "" (',':) (lookup "fontsize" props)
@@ -109,12 +115,18 @@ packages = [("inputenc", "\\usepackage[utf8]{inputenc}\n"),
 
            ]
 
-toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg doc) $ blocks
+toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' cfg' $ blocks
     where
+        cfg' = config cfg doc
         preamble xs =
-            documentClass cfg props
+            documentClass cfg' props
 
           : "\\usepackage[utf8]{inputenc}\n"
+          : maybe
+                ""
+                (\x -> "\\usepackage[" ++ x ++ "]{babel}\n")
+                (lookup "language" props)
+
           : "\\usepackage{fancyhdr}\n"
           : "\\usepackage{tabularx}\n"
 
@@ -141,7 +153,10 @@ toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg d
 
           : "\\usepackage{lastpage}\n"
           : "\\usepackage{graphicx}\n"
-          : "\\usepackage[section]{placeins}\n"
+          : maybe
+                "\\usepackage[section]{placeins}\n"
+                (const "")
+                (lookup "letter" props)
           : "\\usepackage{float}\n"
 
           : "\\usepackage{lipsum}\n"
@@ -188,9 +203,6 @@ toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg d
           : makePreambleLengths props
           : makeDimensions props
           : makeFancyHeader props
-
-          : maybe "" id (lookup "preamble" props)
-          : "\n\n"
 
           : maybe
                 ""
@@ -239,6 +251,19 @@ toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg d
                 (\x -> "\\setcounter{tocdepth}{" ++ x ++ "}\n")
                 (lookup "tocdepth" props)
 
+          : maybe
+                ""
+                (\x -> "\\setkomavar{fromaddress}{" ++ escapeTeX' "}\n" x)
+                (lookup "address" props)
+          : maybe
+                ""
+                (\x -> "\\setkomavar{fromname}{" ++ escapeTeX' "}\n" x)
+                (lookup "signature" props)
+          : maybe
+                ""
+                (\x -> "\\setkomavar{subject}{" ++ escapeTeX' "}\n" x)
+                (lookup "subject" props)
+
           : maybe ""
                 (("\\author{" ++) . escapeTeX "}\n" . concat . intersperse ", " . lines)
                 (lookup "authors" props)
@@ -250,6 +275,9 @@ toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg d
                 (("\\date{" ++) . escapeTeX' "}\n")
                 (lookup "date" props)
 
+          : maybe "" id (lookup "preamble" props)
+          : "\n\n"
+
           : "\n\\begin{document}\n"
 
           : maybe ""
@@ -259,22 +287,40 @@ toTeX cfg doc@(Document blocks props) = concat $ preamble $ toTeX' (config cfg d
                 (("\\begin{abstract}\n" ++) . escapeTeX "\\end{abstract}\n\n")
                 (lookup "abstract" props)          
 
+          : maybe
+                ""
+                (const $ "\n\\begin{letter}{"
+                    ++ maybe "\\color{red} You forgot to add @recipient"
+                          (escapeTeX' "") (lookup "recipient" props)
+                    ++ "}\n\\opening{"
+                    ++ maybe defaultOpening
+                          (escapeTeX' "") (lookup "opening" props)
+                    ++ "}\n")
+                (lookup "letter" props)
+
           : "\n{\n"
           : xs
 
 toTeX' opt []
     = when' (oColumns opt > 0) "\\end{multicols}\n"
     : when' (oFigure opt) "\\end{figure}\n"
-    : ["\n}\n\\end{document}\n"]
+    : "\n}\n"
+    : when' (oLetter opt)
+            ("\\closing{" ++ escapeTeX' "}\n\\end{letter}\n" (oLetterClosing opt))
+    : ["\\end{document}\n"]
 
 toTeX' opt (BSection s : xs)
-    = "\\section" : when' (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
+    = when' (doNewPageOnTopLevelHeading opt) "\\newpage\n"
+    : "\\section" : when' (not $ doNumberSections opt) "*"
+    : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
 toTeX' opt (BSubsection s : xs)
-    = "\\subsection" : when' (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
+    = "\\subsection" : when' (not $ doNumberSections opt) "*"
+    : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
 toTeX' opt (BSubsubsection s : xs)
-    = "\\subsubsection" : when' (not $ doNumberSections opt) "*" : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
+    = "\\subsubsection" : when' (not $ doNumberSections opt) "*"
+    : "{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
 toTeX' opt (BPart s : xs)
     = "\\part{" : escapeTeX "}\n\n" s : toTeX' opt xs
@@ -283,7 +329,8 @@ toTeX' opt (BChapter s : xs)
     = "\\chapter{" : escapeTeX "}\n\n" s : toTeX' opt xs
 
 toTeX' opt (BLine : xs)
-    = "\n\\hspace{\\fill}\\rule{0.8\\linewidth}{0.7pt}\\hspace{\\fill}\n\n" : toTeX' opt xs
+    = "\n\\hspace{\\fill}\\rule{0.8\\linewidth}{0.7pt}\\hspace{\\fill}\n\n"
+    : toTeX' opt xs
 
 toTeX' opt (BAny "=>" s : xs)
     = "\\paragraph{$\\Rightarrow$} " : escapeTeX "\n\n" s : toTeX' opt xs

@@ -1,3 +1,5 @@
+{-# LANGUAGE Haskell2010 #-}
+
 module Simplex.Util (
     when', ifElse, tail', tail'',
     skipOneSpace, (~=), (~~), (^=), units,
@@ -9,16 +11,17 @@ import Data.Maybe
 
 import Control.Exception
 import Control.Monad
+import Data.Time
 import System.Directory
 import System.Exit
 import System.Process
-import System.Time
 
 --  common tex units
 
 units :: [String]
 units = ["pt", "mm", "cm", "in", "ex", "em",
          "bp", "pc", "dd", "cc", "sp"]
+
 
 --  regex operators
 
@@ -70,11 +73,11 @@ removeIfExists file = do
     exists <- doesFileExist file
     when exists (removeFile file)
 
-getModificationTime' :: FilePath -> IO ClockTime
+getModificationTime' :: FilePath -> IO UTCTime
 getModificationTime' file = do
     exists <- doesFileExist file
     if exists then getModificationTime file
-              else return $ TOD 0 0
+              else return $ UTCTime (ModifiedJulianDay 0) (secondsToDiffTime 0)
 
 --  process execution
 

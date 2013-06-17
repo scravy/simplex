@@ -2,6 +2,7 @@ module Main (main) where
 
 import Prelude hiding (lex)
 
+import Simplex.Config
 import Simplex.ConfigData
 import Simplex.CmdLineOpts
 import Simplex.Parser
@@ -11,28 +12,31 @@ import Simplex.Util
 
 import Text.Printf
 
+import Data.List (sort)
 import Data.Maybe
+import Data.Time
 
 import System.Console.GetOpt (usageInfo)
 import System.Directory
 import System.FilePath
 import System.Environment (getArgs, getProgName)
 import System.IO
-import System.Time
 
 import Control.Concurrent
 import Control.Exception
 import Control.Monad
 import Control.Monad.Cont
 
-versionInfo = "Simplex -- Simple LaTeX -- v0.3.3 by Julian Fleischer"
+versionInfo = "Simplex -- Simple LaTeX -- v0.3.8 by Julian Fleischer"
 
-dirtyExts = [".toc", ".aux", ".log", ".tex", ".out", ".lof"]
+dirtyExts = [".toc", ".aux", ".log", ".tex", ".out", ".lof", ".ent"]
 
-isSimplexFile = flip elem [".simple", ".lhs", ".smplx", ".simplex"] . takeExtension
+simplexExts = [".simple", ".lhs", ".smplx", ".simplex"]
+
+isSimplexFile = flip elem simplexExts . takeExtension
 
 
-gatherChangedFiles :: String -> FilePath -> IO [(FilePath, ClockTime)]
+gatherChangedFiles :: String -> FilePath -> IO [(FilePath, UTCTime)]
 gatherChangedFiles ext dir = do
     files'  <- getDirectoryContents dir
     let files = filter isSimplexFile files'
@@ -55,8 +59,15 @@ simplex opts files
 
     | optVersion opts = putStrLn versionInfo
 
+    | isJust $ optListSymbols opts = do
+        let prints f str = case f of
+                ('%':'s':xs) -> str ++ prints xs str
+                (x:xs) -> x : prints xs str
+                _ -> ""
+        mapM_ (putStr . prints (fromJust (optListSymbols opts))) (sort knownSymbols)
+
     | isJust $ optWatch opts = do
-        getClockTime >>= watch opts "." (fromJust $ optWatch opts)
+        getCurrentTime >>= watch opts "." (fromJust $ optWatch opts)
 
     | null files && optForce opts = do
         files' <- getDirectoryContents "."
@@ -76,7 +87,7 @@ simplex' opts files = do
     mapM_ (flip runContT return . callCC . process opts) files
 
 
-watch :: Opts -> FilePath -> Int -> ClockTime -> IO ()
+watch :: Opts -> FilePath -> Int -> UTCTime -> IO ()
 -- ^ Polls the list of changed files and runs @simplex'@ periodically
 watch opts dir int time = do
     files <- gatherChangedFiles (optType opts) dir

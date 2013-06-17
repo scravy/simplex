@@ -1,3 +1,5 @@
+{-# LANGUAGE Haskell2010 #-}
+
 module Simplex.Specials (
         processSpecials,
         newSpec, Spec(..)

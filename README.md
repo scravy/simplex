@@ -1,5 +1,10 @@
 Simple LaTeX.
 
+Current version is v0.3.7, as of 2013-05-06.
+
+See Simplex-v0.3.7.pdf for more information
+and more detailed installation instructions.
+
 Installing
 ==========
 
@@ -9,7 +14,7 @@ You can download it at http://www.haskell.org/platform/
 You can use the Haskell Cabal to install the package,
 for example like so:
 
-    cabal install --prefix=<where> --user
+    cabal install simplex
 
 This is similar to `./configure; make; make install`.
 

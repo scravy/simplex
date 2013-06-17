@@ -1,3 +1,5 @@
+{-# LANGUAGE Haskell2010 #-}
+
 module Simplex.Table (mkTable, mkAsciiTable) where
 
 import Simplex.EscapeTeX

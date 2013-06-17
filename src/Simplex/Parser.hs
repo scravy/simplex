@@ -1,3 +1,5 @@
+{-# LANGUAGE Haskell2010 #-}
+
 module Simplex.Parser (
         lex, parse,
         Token(..), Block(..), Document (Document),

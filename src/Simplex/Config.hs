@@ -1,8 +1,10 @@
+{-# LANGUAGE Haskell2010 #-}
+
 module Simplex.Config (
         verbs, knownLengths, knownSymbols, knownCommands,
         specialCommands, specialSymbols,
         Config (..), config, defaultConfig,
-        documentClasses
+        documentClasses, defaultClosing, defaultOpening
     ) where
 
 import Simplex.Parser
@@ -14,11 +16,21 @@ import Simplex.Util
 import Data.List
 
 config cfg (Document blocks props)
- = conf cfg blocks
+ = configuration { oLetter = maybe False (const True)
+                                   (lookup "letter" props),
+                   oLetterClosing = maybe defaultClosing id
+                                    (lookup "closing" props),
+                   doNewPageOnTopLevelHeading = maybe False (const True)
+                                                      (lookup "newpagesections" props) }
+ where
+    configuration = conf cfg blocks
 
 conf c (BCommand "tableofcontents" [] : xs) = conf (c { doNumberSections = True }) xs
 conf c (x : xs) = conf c xs
 conf c _ = c
+
+defaultOpening = "Dear Sir or Madam,"
+defaultClosing = "Yours Faithfully,"
 
 documentClasses = ["article", "book", "report", "slides", "scrartcl"]
 

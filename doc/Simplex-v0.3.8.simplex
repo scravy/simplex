@@ -1,5 +1,5 @@
 @title
-	Simplex -- Simple \LaTeX  (v0.3.1)
+	Simplex -- Simple \LaTeX  (v0.3.8)
 
 @authors
     Julian Fleischer
@@ -255,6 +255,9 @@ newpage
 >+
 >#  This is \@inline verbatim@
 >   This is \@inline verbatim@
+>+
+>#  //SmallCaps//
+>   //SmallCaps//
 
 ->  Note that you can also use # and ! to delimit inline verbatim
     like so: \#\!inline verbatim!# and \!\#inline verbatim#!.
@@ -1537,156 +1540,406 @@ label sec:include-directive
 newpage
 =   Declarations
 
-::  @abstract: 
-::  @article: 
+::  @abstract:
+    Used to declare an abstract of the current document.
+
+::  @address:
+    Your address if this is a \#@letter#.
+
+::  @article:
+    Declares the document to be an article. This will cause the \#article#
+    document class to be used.
+
 ::  @authors: 
-::  @book: 
-::  @cfoot: 
-::  @chead: 
-::  @date: 
-::  @doublespacing: 
-::  @draft: 
-::  @endnotes: 
-::  @fontsize: 
-::  @landscape: 
-::  @lfoot: 
+    A list of authors of the document. Each line corresponds
+    to one author. Note that there is no single \#@author# declaration.
+
+::  @book:
+    Declares the document to be a book. This will cause the \#book#
+    document class to be used.
+
+::  @cfoot:
+    Useful with \#@pagestyle fancy#. The text to be used in the center part
+    of the foot. Use \#\break# to insert line breaks in here.
+
+::  @chead:
+    Useful with \#@pagestyle fancy#. The text to be used in the center part
+    of the head. Use \#\break# to insert line breaks in here.
+
+::  @closing:
+    The closing text if this is a \#@letter#. Defaults to "Yours Faithfully".
+
+::  @date:
+    Sets the date of the document. If none is given, \#\today# is assumed.
+
+::  @doublespacing:
+    Turns on double spacing. This is useful for drafts in order to correct
+    things.
+
+::  @draft:
+    Declares the document as a draft. This will, inter alia, cause images not
+    to be included -- which in turn will reduce build times.
+
+::  @endnotes:
+    Turns all footnotes into endnotes. Use in conjunction with \#endnotes#
+    command to actually insert the endnotes (like \#tableofcontents#).
+
+::  @fontsize:
+    The standard font size in this document. Defaults to 12pt.
+
+::  @landscape:
+    Sets \#landscape# mode (90 degree rotated).
+
+::  @language:
+    Specifies the language of the document. Translates directly into
+    \#\usepage[LANGUAGE]{babal}# in the preamble, where LANGUAGE is
+    the value of the \#@language# declaration. Values are for example
+    \#ngerman#, \#frenchb#, or \#francais#.
+
+::  @letter
+    Uses the \#letter# document class. You should use it together with
+    \#recipient#, \#address#, \#signature#, \#opening#, and \#closing#.
+
+::  @lfoot:
+    Useful with \#@pagestyle fancy#. The text to be used in the left part
+    of the foot. Use \#\break# to insert line breaks in here.
+
 ::  @lhead: 
-::  @margin-bottom: 
-::  @margin-left: 
-::  @margin-right: 
-::  @margin-top: 
-::  @margins: 
-::  @pagestyle: 
-::  @preamble: 
-::  @report: 
-::  @rfoot: 
-::  @rhead: 
-::  @scrartcl: 
-::  @slides: 
-::  @title: 
-::  @tocdepth: 
+    Useful with \#@pagestyle fancy#. The text to be used in the left part
+    of the head. Use \#\break# to insert line breaks in here.
+
+::  @margin-bottom:
+    The bottom margin of each page.
+
+::  @margin-left:
+    The left margin of each page.
+
+::  @margin-right:
+    The right margin of each page.
+
+::  @margin-top:
+    The top margin of each page.
+
+::  @margins:
+    Sets the margins of the documents. A white-space separated list
+    of lengths. The first value is the top-margin and then clockwise.
+
+::  @newpagesections:
+    Automatically insert \#newpage# commands before new top level sections.
+
+::  @opening:
+    The opening text if this is a \#@letter#. Defaults to "Dear Sir or Madam,".
+
+::  @pagestyle:
+    For example \#@pagestyle fancy#. Declares the global pagestyle
+    (in contrast: the \#pagestyle# command will declare the pagestyle
+    locally).
+
+::  @preamble:
+    Inserts raw \LaTeX into the head of the document (which is normally
+    not accessible from within a simplex document).
+
+::  @recipient:
+    The address of the recipient if this is a \#@letter#.
+
+::  @report:
+    Uses the \#report# document class.
+
+::  @rfoot:
+    Useful with \#@pagestyle fancy#. The text to be used in the right part
+    of the foot. Use \#\break# to insert line breaks in here.
+
+::  @rhead:
+    Useful with \#@pagestyle fancy#. The text to be used in the right part
+    of the head. Use \#\break# to insert line breaks in here.
+
+::  @scrartcl:
+    Uses the \#scrartcl# document class.
+
+::  @slides:
+    Used the \#slides# document class (this affects the paper size)
+    -- useful for creating presentations.
+
+::  @signature:
+    Your name if this is a \#@letter#. Used in the address as sender and
+    in the closing as signature.
+
+::  @title:
+    The title of the document. Line breaks in here will be actual line
+    breaks in the target pdf.
+
+::  @tocdepth:
+    To what depth headings should be part of the table of contents.
+    Defaults to 3.
 
 newpage
 =   Lengths
 
-    
+::  baselineskip:
+    The normal vertical distance between lines in a paragraph.
 
-::  baselineskip: 
-::  baselinestretch: 
-::  columnsep: 
-::  columnseprule: 
-::  columnwidth: 
-::  evensidemargin: 
-::  headheight: 
-::  oddsidemargin: 
-::  paperheight: 
-::  paperwidth: 
-::  parindent: 
-::  parskip: 
-::  tabcolsep: 
-::  textfloatsep: 
-::  textheight: 
-::  textwidth: 
-::  topmargin: 
+::  baselinestretch:
+    Multiplies @baselineskip.
+
+::  columnsep:
+    The distance between columns.
+
+::  columnseprule: ...
+    
+::  columnwidth:
+    The width of the column.
+
+::  evensidemargin:
+    The margin for 'even' pages (think of a printed booklet).
+
+::  headheight: ...
+
+::  oddsidemargin:
+    The margin for 'odd' pages (think of a printed booklet).
+
+::  paperheight:
+    The width of the page.
+
+::  paperwidth:
+    The height of the page.
+
+::  parindent:
+    The normal paragraph indentation.
+
+::  parskip:
+    The extra vertical space between paragraphs.
+
+::  tabcolsep:
+    The default separation between columns in a tabular environment.
+
+::  textfloatsep: ...
+
+::  textheight:
+    The height of the text-box.
+
+::  textwidth:
+    The width of the text-box.
+
+::  topmargin:
+    The size of the top margin.
 
 newpage
 =   Commands
 
-::  appendix: Starts the appendix. Sections from this point on will
+::  appendix:
+    Starts the appendix. Sections from this point on will
     be counted using letters. Does not insert an appendix heading.
-::  bfseries: Like \#\bfseries# in \LaTeX. Prints the following text
+
+::  bfseries:
+    Like \#\bfseries# in \LaTeX. Prints the following text
     in **bold**. Use \#reset# or \#normalfont# to terminate.
-::  bold: Alias for \#\bfseries#. Prints the following text
+
+::  bold:
+    Alias for \#\bfseries#. Prints the following text
     in **bold**. Use \#reset# or \#normalfont# to terminate.
-::  caption: Declares a caption for the current figure.
+
+::  caption:
+    Declares a caption for the current figure.
     Only works within \#figure#.
-::  center: Centers the text from this point on.
-::  colbreak: Starts a new column within \#columns#.
-::  columns: Start columnized text.
+
+::  center:
+    Centers the text from this point on.
+
+::  colbreak:
+    Starts a new column within \#columns#.
+
+::  columns:
+    Start columnized text.
     \break Usage: *columns <how-many-columns>*
-::  em: Like \#\em# in \LaTeX.
-::  endcolumns: Terminates \#columns#.
-::  endfigure: Terminates \#figure#.
-::  endignore: Terminates \#ignore#.
-::  endnoinclude: Terminates \#noinclude#.
-::  endnotes: Insert the list of endnotes, also creates a section with heading.
-::  figure: Starts a figure (like \#\begin{figure}#).
+
+::  em:
+    Like \#\em# in \LaTeX.
+
+::  endcolumns:
+    Terminates \#columns#.
+
+::  endfigure:
+    Terminates \#figure#.
+
+::  endignore:
+    Terminates \#ignore#.
+
+::  endnoinclude:
+    Terminates \#noinclude#.
+
+::  endnotes:
+    Insert the list of endnotes, also creates a section with heading.
+
+::  figure:
+    Starts a figure (like \#\begin{figure}#).
     Takes an optional parameter which specifies the placement
     of the figure. If you omit it, \#h!# is assumed. If you
     want to explicitly leave it blank, specify \#auto#.
     \break All possible values are: *h, t, b, p, H, !* (may be combined).
     \break Examples: \#figure htb#, \#figure auto#, \#figure h!#
-::  figures: Insert a list of figures here.
-::  float-barrier: \#figure#s will not float beneath this command.
-::  footnotesize: Like \#\footnotesize# in \LaTeX.
-::  hfill: Like \#\hfill# in \LaTeX.
-::  huge: Like \#\huge# in \LaTeX.
-::  Huge: Like \#\Huge# in \LaTeX.
-::  ignore: Ignores the document upto the next \#endignore#.
-::  image-angle: Sets the rotation of the following images.
+
+::  figures:
+    Insert a list of figures here.
+
+::  float-barrier:
+    \#figure#s will not float beneath this command.
+
+::  footnotesize:
+    Like \#\footnotesize# in \LaTeX.
+
+::  hfill:
+    Like \#\hfill# in \LaTeX.
+
+::  huge:
+    Like \#\huge# in \LaTeX.
+
+::  Huge:
+    Like \#\Huge# in \LaTeX.
+
+::  ignore:
+    Ignores the document upto the next \#endignore#.
+
+::  image-angle:
+    Sets the rotation of the following images.
     \break Usage: *image-angle <angle>*
-::  image-defaults: Resets all image properties.
-::  image-height: Sets the height of the following images.
+
+::  image-defaults:
+    Resets all image properties.
+
+::  image-height:
+    Sets the height of the following images.
     \break Usage: *image-height <height>*
-::  image-page: In case of a multi-pdf file, selects which page
+
+::  image-page:
+    In case of a multi-pdf file, selects which page
     should be included.
-::  image-scale: Scales images by the given factor.
-::  image-size: Sets both image-height and image-width at once.
+
+::  image-scale:
+    Scales images by the given factor.
+
+::  image-size:
+    Sets both image-height and image-width at once.
     \break Usage: *image-size <width> <height>*
-::  image-trim: Crop the included image.
+
+::  image-trim:
+    Crop the included image.
     \break Usage: *image-trim <left> <bottom> <right> <top>*
-::  image-width: Sets the width of the following images.
+
+::  image-width:
+    Sets the width of the following images.
     \break Usage: *image-width <width>*
-::  image: Inserts the specified image, for example
+
+::  image:
+    Inserts the specified image, for example
     \#image myfile.png#. Works like \#\includegraphics# in \LaTeX .
     Dimensions and other additional arguments can be set using
     the \#image-...# commands. Note that the same limitations
     apply as for pdflatex and includegraphics in general
     (i.e. will only include **JPG**, **PNG**, and **PDF** files).
-::  italic: Alias for \#\itshape#. Prints the following text
+
+::  italic:
+    Alias for \#\itshape#. Prints the following text
     in *italics*. Use \#reset# or \#normalfont# to terminate.
-::  itshape: Like \#\itshape# in LaTeX. Prints the following text
+
+::  itshape:
+    Like \#\itshape# in LaTeX. Prints the following text
     in *italics*. Use \#reset# or \#normalfont# to terminate.
-::  large: Like \#\large# in \LaTeX.
-::  LARGE: Like \#\LARGE# in \LaTeX.
-::  Large: Like \#\Large# in \LaTeX.
-::  left: Aligns the text from this point onward to the left.
+
+::  large:
+    Like \#\large# in \LaTeX.
+
+::  LARGE:
+    Like \#\LARGE# in \LaTeX.
+
+::  Large:
+    Like \#\Large# in \LaTeX.
+
+::  left:
+    Aligns the text from this point onward to the left.
     Note that this command will not justify the text (which
     \LaTeX does by default). Use \#reset# for this.
-::  lipsum: 
-::  mdseries: Like \#\mdseries# in \LaTeX.
-::  newpage: Like \#\newpage# in \LaTeX.
-::  noinclude: The following part of the document (up to
+
+::  lipsum:
+    Includes sample text of lorem ipsum.
+
+::  mdseries:
+    Like \#\mdseries# in \LaTeX.
+
+::  newpage:
+    Like \#\newpage# in \LaTeX.
+
+::  noinclude:
+    The following part of the document (up to
     the next \#endnoinclude#) won't be processed when
     included using \@#include@ (see \<sec:include-directive>).
-::  noindent: Like \#\noindent# in \LaTeX.
-::  normalfont: Like \#\normalfont# in \LaTeX.
-::  normalsize: Like \#\normalsize# in \LaTeX.
-::  pagebreak: Alias for \#\newpage#.
-::  pagenumbering: Restart the page numbering here with the given
+
+::  noindent:
+    Like \#\noindent# in \LaTeX.
+
+::  normalfont:
+    Like \#\normalfont# in \LaTeX.
+
+::  normalsize:
+    Like \#\normalsize# in \LaTeX.
+
+::  pagebreak:
+    Alias for \#\newpage#.
+
+::  pagenumbering:
+    Restart the page numbering here with the given
     style. \break Possible values are:
     \#arabic#, \#roman#, \#Roman#, \#alph#, \#Alph#
-::  pagestyle: Like \#\pagestyle# in LaTeX. Sets the pagestyle for
+
+::  pagestyle:
+    Like \#\pagestyle# in LaTeX. Sets the pagestyle for
     the next pages from this point on to the supplied argument.
     For example \#pagestyle plain# or \#pagestyle fancy#.
-::  reset: Cancels the effects of \#left#, \#center#,
+
+::  reset:
+    Cancels the effects of \#left#, \#center#,
     \#right# and applies \#normalsize# and \#normalfont#.
-::  right: Aligns the text from this point onward to the right.
-::  rmfamily: Like \#\rmfamily# in \LaTeX.
-::  scriptsize: Like \#\scriptsize# in \LaTeX.
-::  scschape: Like \#\scschape# in \LaTeX.
-::  sffamily: Like \#\sffamily# in \LaTeX.
-::  slshape: Like \#\slshape# in \LaTeX.
-::  small: Like \#\small# in \LaTeX.
-::  tableofcontents: Like \#\tableofcontents# in \LaTeX.
+
+::  right:
+    Aligns the text from this point onward to the right.
+
+::  rmfamily:
+    Like \#\rmfamily# in \LaTeX.
+
+::  scriptsize:
+    Like \#\scriptsize# in \LaTeX.
+
+::  scschape:
+    Like \#\scschape# in \LaTeX.
+
+::  sffamily:
+    Like \#\sffamily# in \LaTeX.
+
+::  slshape:
+    Like \#\slshape# in \LaTeX.
+
+::  small:
+    Like \#\small# in \LaTeX.
+
+::  tableofcontents:
+    Like \#\tableofcontents# in \LaTeX.
     Will additionally turn numbering of sections on
     (which is turned off by default in simplex).
-::  thispagestyle: Changes the style of the current page,
+
+::  thispagestyle:
+    Changes the style of the current page,
     for example \#thispagestyle plain#.
-::  tiny: Like \#\tiny# in \LaTeX.
-::  ttfamily: Like \#\ttfamily# in \LaTeX.
-::  upshape: Like \#\upshape# in \LaTeX.
-::  vfill: Like \#\vfill# in \LaTeX.
+
+::  tiny:
+    Like \#\tiny# in \LaTeX.
+
+::  ttfamily:
+    Like \#\ttfamily# in \LaTeX.
+
+::  upshape:
+    Like \#\upshape# in \LaTeX.
+
+::  vfill:
+    Like \#\vfill# in \LaTeX.
 
 newpage
 =   Symbols
@@ -1820,7 +2073,839 @@ newpage
 >   |==>
 
 newpage
+==  All Symbols
+
+center
+columns 2
+
+    \#\Bbbk# \Bbbk
+
+    \#\Box# \Box
+
+    \#\Bumpeq# \Bumpeq
+
+    \#\Cap# \Cap
+
+    \#\Cup# \Cup
+
+    \#\Delta# \Delta
+
+    \#\Diamond# \Diamond
+
+    \#\Downarrow# \Downarrow
+
+    \#\Finv# \Finv
+
+    \#\Game# \Game
+
+    \#\Gamma# \Gamma
+
+    \#\Im# \Im
+
+    \#\Join# \Join
+
+    \#\Lambda# \Lambda
+
+    \#\Leftarrow# \Leftarrow
+
+    \#\Leftrightarrow# \Leftrightarrow
+
+    \#\Lleftarrow# \Lleftarrow
+
+    \#\Longleftarrow# \Longleftarrow
+
+    \#\Longleftrightarrow# \Longleftrightarrow
+
+    \#\Longrightarrow# \Longrightarrow
+
+    \#\Lsh# \Lsh
+
+    \#\Omega# \Omega
+
+    \#\Phi# \Phi
+
+    \#\Pi# \Pi
+
+    \#\Psi# \Psi
+
+    \#\Re# \Re
+
+    \#\Rightarrow# \Rightarrow
+
+    \#\Rsh# \Rsh
+
+    \#\Sigma# \Sigma
+
+    \#\Subset# \Subset
+
+    \#\Supset# \Supset
+
+    \#\Theta# \Theta
+
+    \#\Uparrow# \Uparrow
+
+    \#\Updownarrow# \Updownarrow
+
+    \#\Upsilon# \Upsilon
+
+    \#\Vdash# \Vdash
+
+    \#\Vert# \Vert
+
+    \#\Vvdash# \Vvdash
+
+    \#\Xi# \Xi
+
+    \#\aleph# \aleph
+
+    \#\alpha# \alpha
+
+    \#\amalg# \amalg
+
+    \#\angle# \angle
+
+    \#\approx# \approx
+
+    \#\approxeq# \approxeq
+
+    \#\ast# \ast
+
+    \#\asymp# \asymp
+
+    \#\backepsilon# \backepsilon
+
+    \#\backprime# \backprime
+
+    \#\backsim# \backsim
+
+    \#\backsimeq# \backsimeq
+
+    \#\barwedge# \barwedge
+
+    \#\because# \because
+
+    \#\beta# \beta
+
+    \#\beth# \beth
+
+    \#\between# \between
+
+    \#\bigcap# \bigcap
+
+    \#\bigcirc# \bigcirc
+
+    \#\bigcup# \bigcup
+
+    \#\bigodot# \bigodot
+
+    \#\bigoplus# \bigoplus
+
+    \#\bigotimes# \bigotimes
+
+    \#\bigsqcup# \bigsqcup
+
+    \#\bigstar# \bigstar
+
+    \#\bigtriangledown# \bigtriangledown
+
+    \#\bigtriangleup# \bigtriangleup
+
+    \#\biguplus# \biguplus
+
+    \#\bigvee# \bigvee
+
+    \#\bigwedge# \bigwedge
+
+    \#\blacklozenge# \blacklozenge
+
+    \#\blacksquare# \blacksquare
+
+    \#\blacktriangle# \blacktriangle
+
+    \#\blacktriangledown# \blacktriangledown
+
+    \#\blacktriangleleft# \blacktriangleleft
+
+    \#\blacktriangleright# \blacktriangleright
+
+    \#\bot# \bot
+
+    \#\bowtie# \bowtie
+
+    \#\boxdot# \boxdot
+
+    \#\boxminus# \boxminus
+
+    \#\boxplus# \boxplus
+
+    \#\boxtimes# \boxtimes
+
+    \#\bullet# \bullet
+
+    \#\bumpeq# \bumpeq
+
+    \#\cap# \cap
+
+    \#\cdot# \cdot
+
+    \#\cdots# \cdots
+
+    \#\centerdot# \centerdot
+
+    \#\chi# \chi
+
+    \#\circ# \circ
+
+    \#\circeq# \circeq
+
+    \#\circlearrowleft# \circlearrowleft
+
+    \#\circlearrowright# \circlearrowright
+
+    \#\circledS# \circledS
+
+    \#\circledast# \circledast
+
+    \#\circledcirc# \circledcirc
+
+    \#\circleddash# \circleddash
+
+    \#\clubsuit# \clubsuit
+
+    \#\complement# \complement
+
+    \#\cong# \cong
+
+    \#\coprod# \coprod
+
+    \#\cup# \cup
+
+    \#\curlyeqprec# \curlyeqprec
+
+    \#\curlyeqsucc# \curlyeqsucc
+
+    \#\curlyvee# \curlyvee
+
+    \#\curlywedge# \curlywedge
+
+    \#\curvearrowleft# \curvearrowleft
+
+    \#\curvearrowright# \curvearrowright
+
+    \#\dagger# \dagger
+
+    \#\daleth# \daleth
+
+    \#\dashleftarrow# \dashleftarrow
+
+    \#\dashrightarrow# \dashrightarrow
+
+    \#\dashv# \dashv
+
+    \#\ddagger# \ddagger
+
+    \#\ddots# \ddots
+
+    \#\delta# \delta
+
+    \#\diagdown# \diagdown
+
+    \#\diagup# \diagup
+
+    \#\diamond# \diamond
+
+    \#\diamondsuit# \diamondsuit
+
+    \#\digamma# \digamma
+
+    \#\div# \div
+
+    \#\divideontimes# \divideontimes
+
+    \#\doteq# \doteq
+
+    \#\doteqdot# \doteqdot
+
+    \#\dotplus# \dotplus
+
+    \#\doublebarwedge# \doublebarwedge
+
+    \#\downarrow# \downarrow
+
+    \#\downdownarrows# \downdownarrows
+
+    \#\downharpoonleft# \downharpoonleft
+
+    \#\downharpoonright# \downharpoonright
+
+    \#\ell# \ell
+
+    \#\emptyset# \emptyset
+
+    \#\epsilon# \epsilon
+
+    \#\eqcirc# \eqcirc
+
+    \#\eqslantgtr# \eqslantgtr
+
+    \#\eqslantless# \eqslantless
+
+    \#\equiv# \equiv
+
+    \#\eta# \eta
+
+    \#\eth# \eth
+
+    \#\exists# \exists
+
+    \#\fallingdotseq# \fallingdotseq
+
+    \#\flat# \flat
+
+    \#\forall# \forall
+
+    \#\frown# \frown
+
+    \#\gamma# \gamma
+
+    \#\geq# \geq
+
+    \#\geqq# \geqq
+
+    \#\geqslant# \geqslant
+
+    \#\gg# \gg
+
+    \#\ggg# \ggg
+
+    \#\gimel# \gimel
+
+    \#\gnapprox# \gnapprox
+
+    \#\gneq# \gneq
+
+    \#\gneqq# \gneqq
+
+    \#\gnsim# \gnsim
+
+    \#\gtrapprox# \gtrapprox
+
+    \#\gtrdot# \gtrdot
+
+    \#\gtreqless# \gtreqless
+
+    \#\gtreqqless# \gtreqqless
+
+    \#\gtrless# \gtrless
+
+    \#\gtrsim# \gtrsim
+
+    \#\gvertneqq# \gvertneqq
+
+    \#\hbar# \hbar
+
+    \#\heartsuit# \heartsuit
+
+    \#\hookleftarrow# \hookleftarrow
+
+    \#\hookrightarrow# \hookrightarrow
+
+    \#\hslash# \hslash
+
+    \#\iiiint# \iiiint
+
+    \#\iiint# \iiint
+
+    \#\iint# \iint
+
+    \#\imath# \imath
+
+    \#\in# \in
+
+    \#\infty# \infty
+
+    \#\int# \int
+
+    \#\intercal# \intercal
+
+    \#\iota# \iota
+
+    \#\jmath# \jmath
+
+    \#\kappa# \kappa
+
+    \#\lambda# \lambda
+
+    \#\langle# \langle
+
+    \#\lceil# \lceil
+
+    \#\ldots# \ldots
+
+    \#\leadsto# \leadsto
+
+    \#\leftarrow# \leftarrow
+
+    \#\leftarrowtail# \leftarrowtail
+
+    \#\leftharpoondown# \leftharpoondown
+
+    \#\leftharpoonup# \leftharpoonup
+
+    \#\leftleftarrows# \leftleftarrows
+
+    \#\leftrightarrow# \leftrightarrow
+
+    \#\leftrightarrows# \leftrightarrows
+
+    \#\leftrightharpoons# \leftrightharpoons
+
+    \#\leftrightsquigarrow# \leftrightsquigarrow
+
+    \#\leftthreetimes# \leftthreetimes
+
+    \#\leq# \leq
+
+    \#\leqq# \leqq
+
+    \#\leqslant# \leqslant
+
+    \#\lessapprox# \lessapprox
+
+    \#\lessdot# \lessdot
+
+    \#\lesseqgtr# \lesseqgtr
+
+    \#\lessgtr# \lessgtr
+
+    \#\lesssim# \lesssim
+
+    \#\lfloor# \lfloor
+
+    \#\lhd# \lhd
+
+    \#\ll# \ll
+
+    \#\llcorner# \llcorner
+
+    \#\lll# \lll
+
+    \#\lnapprox# \lnapprox
+
+    \#\lneq# \lneq
+
+    \#\lneqq# \lneqq
+
+    \#\lnsim# \lnsim
+
+    \#\longleftarrow# \longleftarrow
+
+    \#\longleftrightarrow# \longleftrightarrow
+
+    \#\longmapsto# \longmapsto
+
+    \#\longrightarrow# \longrightarrow
+
+    \#\looparrowleft# \looparrowleft
+
+    \#\looparrowright# \looparrowright
+
+    \#\lozenge# \lozenge
+
+    \#\lrcorner# \lrcorner
+
+    \#\ltimes# \ltimes
+
+    \#\lvertneqq# \lvertneqq
+
+    \#\mapsto# \mapsto
+
+    \#\measuredangle# \measuredangle
+
+    \#\mho# \mho
+
+    \#\mid# \mid
+
+    \#\models# \models
+
+    \#\mp# \mp
+
+    \#\mu# \mu
+
+    \#\multimap# \multimap
+
+    \#\nLeftarrow# \nLeftarrow
+
+    \#\nLeftrightarrow# \nLeftrightarrow
+
+    \#\nRightarrow# \nRightarrow
+
+    \#\nVDash# \nVDash
+
+    \#\nabla# \nabla
+
+    \#\natural# \natural
+
+    \#\ncong# \ncong
+
+    \#\nearrow# \nearrow
+
+    \#\neq# \neq
+
+    \#\nexists# \nexists
+
+    \#\ngeq# \ngeq
+
+    \#\ngeqq# \ngeqq
+
+    \#\ngeqslant# \ngeqslant
+
+    \#\ngtr# \ngtr
+
+    \#\ni# \ni
+
+    \#\nleftarrow# \nleftarrow
+
+    \#\nleftrightarrow# \nleftrightarrow
+
+    \#\nleq# \nleq
+
+    \#\nleqq# \nleqq
+
+    \#\nleqslant# \nleqslant
+
+    \#\nless# \nless
+
+    \#\nmid# \nmid
+
+    \#\notin# \notin
+
+    \#\nparallel# \nparallel
+
+    \#\nprec# \nprec
+
+    \#\npreceq# \npreceq
+
+    \#\nrightarrow# \nrightarrow
+
+    \#\nshortmid# \nshortmid
+
+    \#\nshortparallel# \nshortparallel
+
+    \#\nsim# \nsim
+
+    \#\nsubseteq# \nsubseteq
+
+    \#\nsubseteqq# \nsubseteqq
+
+    \#\nsucc# \nsucc
+
+    \#\nsucceq# \nsucceq
+
+    \#\nsupseteq# \nsupseteq
+
+    \#\nsupseteqq# \nsupseteqq
+
+    \#\ntriangleleft# \ntriangleleft
+
+    \#\ntrianglelefteq# \ntrianglelefteq
+
+    \#\ntriangleright# \ntriangleright
+
+    \#\ntrianglerighteq# \ntrianglerighteq
+
+    \#\nu# \nu
+
+    \#\nvDash# \nvDash
+
+    \#\nvdash# \nvdash
+
+    \#\nwarrow# \nwarrow
+
+    \#\odot# \odot
+
+    \#\oint# \oint
+
+    \#\omega# \omega
+
+    \#\ominus# \ominus
+
+    \#\oplus# \oplus
+
+    \#\oslash# \oslash
+
+    \#\otimes# \otimes
+
+    \#\parallel# \parallel
+
+    \#\partial# \partial
+
+    \#\perp# \perp
+
+    \#\phi# \phi
+
+    \#\pi# \pi
+
+    \#\pitchfork# \pitchfork
+
+    \#\pm# \pm
+
+    \#\prec# \prec
+
+    \#\precapprox# \precapprox
+
+    \#\preccurlyeq# \preccurlyeq
+
+    \#\preceq# \preceq
+
+    \#\precnapprox# \precnapprox
+
+    \#\precnsim# \precnsim
+
+    \#\precsim# \precsim
+
+    \#\prime# \prime
+
+    \#\prod# \prod
+
+    \#\propto# \propto
+
+    \#\psi# \psi
+
+    \#\rangle# \rangle
+
+    \#\rceil# \rceil
+
+    \#\rfloor# \rfloor
+
+    \#\rhd# \rhd
+
+    \#\rho# \rho
+
+    \#\rightarrow# \rightarrow
+
+    \#\rightarrowtail# \rightarrowtail
+
+    \#\rightharpoondown# \rightharpoondown
+
+    \#\rightharpoonup# \rightharpoonup
+
+    \#\rightleftarrows# \rightleftarrows
+
+    \#\rightleftharpoons# \rightleftharpoons
+
+    \#\rightrightarrows# \rightrightarrows
+
+    \#\rightsquigarrow# \rightsquigarrow
+
+    \#\rightthreetimes# \rightthreetimes
+
+    \#\risingdotseq# \risingdotseq
+
+    \#\rtimes# \rtimes
+
+    \#\searrow# \searrow
+
+    \#\setminus# \setminus
+
+    \#\sharp# \sharp
+
+    \#\shortmid# \shortmid
+
+    \#\shortparallel# \shortparallel
+
+    \#\sigma# \sigma
+
+    \#\sim# \sim
+
+    \#\simeq# \simeq
+
+    \#\smallfrown# \smallfrown
+
+    \#\smallsmile# \smallsmile
+
+    \#\smile# \smile
+
+    \#\spadesuit# \spadesuit
+
+    \#\sphericalangle# \sphericalangle
+
+    \#\sqcap# \sqcap
+
+    \#\sqcup# \sqcup
+
+    \#\sqsubset# \sqsubset
+
+    \#\sqsubseteq# \sqsubseteq
+
+    \#\sqsupset# \sqsupset
+
+    \#\sqsupseteq# \sqsupseteq
+
+    \#\square# \square
+
+    \#\star# \star
+
+    \#\subset# \subset
+
+    \#\subseteq# \subseteq
+
+    \#\subseteqq# \subseteqq
+
+    \#\subsetneq# \subsetneq
+
+    \#\subsetneqq# \subsetneqq
+
+    \#\succ# \succ
+
+    \#\succapprox# \succapprox
+
+    \#\succcurlyeq# \succcurlyeq
+
+    \#\succeq# \succeq
+
+    \#\succnapprox# \succnapprox
+
+    \#\succnsim# \succnsim
+
+    \#\succsim# \succsim
+
+    \#\sum# \sum
+
+    \#\supset# \supset
+
+    \#\supseteq# \supseteq
+
+    \#\supseteqq# \supseteqq
+
+    \#\supsetneq# \supsetneq
+
+    \#\supsetneqq# \supsetneqq
+
+    \#\surd# \surd
+
+    \#\swarrow# \swarrow
+
+    \#\tau# \tau
+
+    \#\therefore# \therefore
+
+    \#\theta# \theta
+
+    \#\thickapprox# \thickapprox
+
+    \#\thicksim# \thicksim
+
+    \#\times# \times
+
+    \#\top# \top
+
+    \#\triangle# \triangle
+
+    \#\triangledown# \triangledown
+
+    \#\triangleleft# \triangleleft
+
+    \#\trianglelefteq# \trianglelefteq
+
+    \#\triangleq# \triangleq
+
+    \#\triangleright# \triangleright
+
+    \#\trianglerighteq# \trianglerighteq
+
+    \#\twoheadleftarrow# \twoheadleftarrow
+
+    \#\twoheadrightarrow# \twoheadrightarrow
+
+    \#\ulcorner# \ulcorner
+
+    \#\unlhd# \unlhd
+
+    \#\unrhd# \unrhd
+
+    \#\uparrow# \uparrow
+
+    \#\updownarrow# \updownarrow
+
+    \#\upharpoonleft# \upharpoonleft
+
+    \#\upharpoonright# \upharpoonright
+
+    \#\uplus# \uplus
+
+    \#\upsilon# \upsilon
+
+    \#\upuparrows# \upuparrows
+
+    \#\urcorner# \urcorner
+
+    \#\vDash# \vDash
+
+    \#\varepsilon# \varepsilon
+
+    \#\varkappa# \varkappa
+
+    \#\varnothing# \varnothing
+
+    \#\varphi# \varphi
+
+    \#\varpi# \varpi
+
+    \#\varpropto# \varpropto
+
+    \#\varrho# \varrho
+
+    \#\varsigma# \varsigma
+
+    \#\varsubsetneq# \varsubsetneq
+
+    \#\varsubsetneqq# \varsubsetneqq
+
+    \#\varsupsetneq# \varsupsetneq
+
+    \#\varsupsetneqq# \varsupsetneqq
+
+    \#\vartheta# \vartheta
+
+    \#\vartriangle# \vartriangle
+
+    \#\vartriangleleft# \vartriangleleft
+
+    \#\vartriangleright# \vartriangleright
+
+    \#\vdash# \vdash
+
+    \#\vdots# \vdots
+
+    \#\vee# \vee
+
+    \#\veebar# \veebar
+
+    \#\vert# \vert
+
+    \#\wedge# \wedge
+
+    \#\wp# \wp
+
+    \#\wr# \wr
+
+    \#\xi# \xi
+
+    \#\zeta# \zeta
+
+endcolumns
+reset
+
+newpage
 =   Command Line Usage
+
+    When invoking \#simplex# in a terminal, it will automatically
+    process all \#*.simplex# files in the current working directory.
+
+    You can use the \#-w# switch
+    to have simplex watch your directory for changes and automatically
+    processing your files as you edit and save them.
 
 .!  simplex [options] [files...]
 
@@ -1843,8 +2928,92 @@ newpage
                                     amount of time in ms)
       -3        --three-times       Execute `pdflatex' three times instead
                                     of the default two times.
+      -s[]      --symbols[=]        Show a list of symboles known to
+                                    simplex.
                 --density=, --dpi=  For output type `png' only,
                                     specifies dpi.
                 --quality=          For output type `png' only,
                                     specifies quality.
+
+newpage
+=   Installation
+
+    Installation is pretty much straight forward. \#simplex# is known
+    to work with the Haskell Platform 2012.2.0.0 and 2012.4.0.0. The
+    Haskell Platform 2012.2.0.0 is also the one included in the most
+    recent Debian distribution (Debian 7.0 "Wheezy" at the time of this
+    writing). \break
+    --> \[http://haskell.org/platform]
+
+    If TeX Live is already installed than all you have to do is to
+    install simplex via cabal install, as simplex is available as a
+    package on hackage: \break
+    --> \#cabal install simplex#.
+
+
+==  Ubuntu / Debian
+
+    In order to install simplex you need to install the Haskell Platform,
+    which can be done via \break
+    --> \#apt-get install haskell-platform#
+
+    Furthermore you should install TeX Live (or another LaTeX
+    distribution which provides \#pdflatex#): \break
+    --> \#apt-get install texlive texlive-latex-extra texlive-math-extra#
+
+    If you want to use graphviz graphs within your simplex documents,
+    you should also install graphviz: \break
+    --> \#apt-get install graphviz#
+
+    Finally: \break
+    --> \#cabal install simplex#
+
+    If the \#simplex# executable is not on your path, you might want to add
+    \break \#$HOME/.cabal/bin# to your \#$PATH#.
+    \break to your \#PATH#.
+
+
+==  Mac OS X
+
+    You have to have a LaTeX distribution installed in your Mac OS, such
+    as TeX Live. If you do not, there is an excellent package named
+    *MacTeX* available at the TeX Users Groups Website: \break
+    --> \[http://www.tug.org/mactex/].
+
+    You should also install \#graphviz# and \#ImageMagick#, both of which
+    are available via brew -- a simple package manager for OS X: \break
+    --> \#brew install graphviz# \break
+    --> \#brew install imagemagick#
+
+    Finally: \break
+    --> \#cabal install simplex#
+
+    If the \#simplex# executable is not on your path, you might want to add
+    \break \#$HOME/Library/Haskell/bin#
+    \break to your \#PATH#.
+
+
+newpage
+==  Windows
+
+    In theory it should suffice to have the Haskell Platform and TeX
+    Live installed, but the installation of Simplex will most probably
+    pull in some newer versions of certain Haskell packages which might
+    require a Unix Toolchain on your computer. *Cygwin* is an excellent
+    choice: \break
+    --> \[http://cygwin.com/install.html]
+
+    TeX Live is also availbe for Windows. The easiest way to install it
+    is probably the network installer. Inside \#install-tl.zip# there is
+    a batch file (\#*.bat#) which will download and install all the
+    necessary LaTeX packages to your system: \break
+    --> \[http://www.tug.org/texlive/acquire-netinstall.html]
+
+    Finally (in a cygwin terminal): \break
+    --> \#cabal install simplex#
+
+    The \#simplex# executable should be on your path now, both in cygwin
+    terminals as well as in ordinary dos prompts, as the Haskell Platform
+    will have added the necessary directories to your \#PATH# already.
+
 
