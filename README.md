@@ -34,6 +34,7 @@ On Ubuntu you will have to install the following packages:
     texlive
     texlive-latex-extra
     texlive-math-extra
+    latex-xcolor
 
 You should also install:
 
