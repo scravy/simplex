@@ -44,6 +44,9 @@ You might need to run `cabal update` once. For a global
 installation use `sudo cabal install --global`. This will
 install the `simplex` executable in a folder on your $PATH.
 
+Alternatively you might just want to add it to your $PATH
+in your `.bashrc`: `export PATH=$PATH:~/Library/Haskell/bin`.
+
 On Mac OS X
 -----------
 
@@ -57,6 +60,8 @@ you might want to install ImageMagick and Graphviz like so:
     brew install graphviz
     brew install imagemagick
 
+You might want to add it to your $PATH in your `.bash_login`:
+`export PATH=$PATH:~/Library/Haskell/bin`.
 
 Using Simplex
 =============
