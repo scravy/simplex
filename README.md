@@ -1,8 +1,8 @@
 Simple LaTeX.
 
-Current version is v0.3.7, as of 2013-05-06.
+Current version is v0.3.8, as of 2013-06-18.
 
-See Simplex-v0.3.7.pdf for more information
+See Simplex-v0.3.8.pdf for more information
 and more detailed installation instructions.
 
 Installing
